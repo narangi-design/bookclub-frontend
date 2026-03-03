@@ -11,7 +11,7 @@ interface Props {
   allBooks: Book[]
 }
 
-const COVER_FORMATS = ['jpg', 'png', 'webp']
+const COVER_FORMATS = ['jpg', 'jpeg', 'png', 'webp']
 
 function CoverImage({ bookId, title }: { bookId: number; title: string }) {
   const [attempt, setAttempt] = useState(0)

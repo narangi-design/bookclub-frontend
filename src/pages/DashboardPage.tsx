@@ -1,8 +1,33 @@
+import { useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { useBooks, usePolls, useUsers, useAwardVotes, usePollVotes, usePollRunoffs } from '@/hooks'
 import AwardCard from '@/components/dashboard/AwardCard'
 import CurrentBook from '@/components/dashboard/CurrentBook'
 import styles from './DashboardPage.module.css'
+
+const COVER_FORMATS = ['jpg', 'jpeg', 'png', 'webp']
+
+function SmallCover({ bookId, title }: { bookId: number; title: string }) {
+  const [attempt, setAttempt] = useState(0)
+  if (attempt >= COVER_FORMATS.length) {
+    return <div className={styles.recentCoverPlaceholder}>{title.slice(0, 2)}</div>
+  }
+  return (
+    <img
+      key={attempt}
+      src={`/covers/${bookId}.${COVER_FORMATS[attempt]}`}
+      alt={title}
+      className={styles.recentCover}
+      onError={() => setAttempt(a => a + 1)}
+    />
+  )
+}
+
+function formatDate(iso: string) {
+  return new Intl.DateTimeFormat('ru-RU', {
+    day: 'numeric', month: 'short', year: 'numeric',
+  }).format(new Date(iso))
+}
 
 interface StatCardProps {
   value: number
@@ -32,18 +57,24 @@ export default function DashboardPage() {
   const currentBook    = readBooks
     .filter(b => b.elected_poll_id !== null)
     .sort((a, b) => (b.elected_poll_id ?? 0) - (a.elected_poll_id ?? 0))[0]
-  const currentPoll    = polls.find(p => p.id === currentBook?.elected_poll_id)
+  const electedPoll    = polls.find(p => p.id === currentBook?.elected_poll_id)
+  // If elected via runoff (stage 2), resolve to parent stage-1 poll for stage1Votes
+  const currentPoll    = electedPoll?.stage === 2
+    ? polls.find(p => p.id === electedPoll.parent_poll_id) ?? electedPoll
+    : electedPoll
   const currentAddedBy = users.find(u => u.id === currentBook?.added_by_user_id)
-  const currentRunoff  = pollRunoffs.find(r => r.poll_id === currentBook?.elected_poll_id)
+  const currentRunoff  = electedPoll?.stage === 2
+    ? pollRunoffs.find(r => r.poll_id === electedPoll.id)
+    : undefined
+
+  // Last 5 read books excluding the current one
+  const recentBooks = readBooks
+    .filter(b => b.elected_at !== null && b.id !== currentBook?.id)
+    .sort((a, b) => (b.elected_at ?? '').localeCompare(a.elected_at ?? ''))
+    .slice(0, 5)
 
   const votes2023 = awardVotes.filter(v => v.year === 2023)
   const votes2024 = awardVotes.filter(v => v.year === 2024)
-
-  // Books read per year for bar chart
-  const byYear = ['2022', '2023', '2024'].map(yr => ({
-    year: yr,
-    count: readBooks.filter(b => b.elected_at?.startsWith(yr)).length,
-  }))
 
   return (
     <div className={styles.page}>
@@ -70,45 +101,44 @@ export default function DashboardPage() {
         </section>
       )}
 
+      {recentBooks.length > 0 && (
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Последние прочитанные</h2>
+          <div className={styles.recentList}>
+            {recentBooks.map(book => {
+              const addedBy = users.find(u => u.id === book.added_by_user_id)
+              return (
+                <div key={book.id} className={styles.recentItem}>
+                  <SmallCover bookId={book.id} title={book.title} />
+                  <div className={styles.recentInfo}>
+                    <div className={styles.recentTitle}>{book.title}</div>
+                    {(book.author || book.country) && (
+                      <div className={styles.recentMeta}>
+                        {[book.author, book.country].filter(Boolean).join(' · ')}
+                      </div>
+                    )}
+                    <div className={styles.recentFooter}>
+                      {book.elected_at && <span>{formatDate(book.elected_at)}</span>}
+                      {addedBy && (
+                        <>
+                          <span className={styles.recentDot}>·</span>
+                          <span>от {addedBy.username}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+      )}
+
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Премии книжного клуба</h2>
         <div className={styles.awardsGrid}>
           <AwardCard year={2023} votes={votes2023} books={books} />
           <AwardCard year={2024} votes={votes2024} books={books} />
-        </div>
-      </section>
-
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Книг прочитано</h2>
-        <div className={styles.chartCard}>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={byYear} barSize={48}>
-              <XAxis
-                dataKey="year"
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: 'var(--color-text-muted)', fontSize: 13 }}
-              />
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: 'var(--color-text-muted)', fontSize: 12 }}
-                width={28}
-              />
-              <Tooltip
-                cursor={{ fill: 'var(--color-border)' }}
-                contentStyle={{
-                  background: 'var(--color-surface)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 8,
-                  color: 'var(--color-text)',
-                  fontSize: 13,
-                }}
-                formatter={(v: number | undefined) => [v ?? 0, 'books read']}
-              />
-              <Bar dataKey="count" radius={[4, 4, 0, 0]} fill="var(--color-accent)" />
-            </BarChart>
-          </ResponsiveContainer>
         </div>
       </section>
     </div>

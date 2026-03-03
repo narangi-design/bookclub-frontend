@@ -20,7 +20,7 @@ export async function fetchBooks(): Promise<Book[]> {
 
 export async function fetchPolls(): Promise<Poll[]> {
   await delay()
-  return mockPolls
+  return mockPolls as Poll[]
 }
 
 export async function fetchPollVotes(): Promise<PollVote[]> {

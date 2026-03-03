@@ -88,6 +88,25 @@ export function booksByUser(
     .sort((a, b) => b.count - a.count)
 }
 
+/** Per-user nominated vs elected counts, only users with ≥1 elected book */
+export function memberActivityData(
+  books: Book[],
+  users: Array<{ id: number; username: string }>,
+): Array<{ name: string; nominated: number; elected: number }> {
+  const nominated: Record<number, number> = {}
+  const elected: Record<number, number> = {}
+  for (const b of books) {
+    if (b.added_by_user_id == null) continue
+    nominated[b.added_by_user_id] = (nominated[b.added_by_user_id] ?? 0) + 1
+    if (b.status === 'read')
+      elected[b.added_by_user_id] = (elected[b.added_by_user_id] ?? 0) + 1
+  }
+  return users
+    .map(u => ({ name: u.username, nominated: nominated[u.id] ?? 0, elected: elected[u.id] ?? 0 }))
+    .filter(u => u.elected > 0)
+    .sort((a, b) => b.nominated - a.nominated)
+}
+
 /** Books added grouped by YYYY-MM for timeline */
 export function booksAddedByMonth(books: Book[]): Array<{ month: string; count: number }> {
   const counts: Record<string, number> = {}

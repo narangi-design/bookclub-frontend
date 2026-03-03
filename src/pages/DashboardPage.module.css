@@ -62,6 +62,82 @@
   gap: 1rem;
 }
 
+/* ── Recent books list ─────────────────────────────────── */
+
+.recentList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.recentItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 0.875rem 1rem;
+}
+
+.recentCover {
+  width: 40px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.recentCoverPlaceholder {
+  width: 40px;
+  height: 56px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  background: var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.recentInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  justify-content: center;
+}
+
+.recentTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recentMeta {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.recentFooter {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.15rem;
+}
+
+.recentDot {
+  opacity: 0.5;
+}
+
 /* ── Chart ─────────────────────────────────────────────── */
 
 .chartCard {

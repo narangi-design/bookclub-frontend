@@ -18,7 +18,10 @@ import type { Book, Poll, PollVote } from '@/types'
 import { votesForPoll, sortedPolls } from '@/utils'
 import styles from './charts.module.css'
 
-export const C = ['#c0394f', '#d4826a', '#c9a96e', '#7a9e7e', '#5b8db8', '#9b6eb0', '#c07850', '#6aab9e']
+// ── Visual constants ─────────────────────────────────────────────────────────
+// All chart styling lives here. To change the look of all charts — change here.
+
+export const diagramColors = ['#c0394f', '#d4826a', '#c9a96e', '#7a9e7e', '#5b8db8', '#9b6eb0', '#c07850', '#6aab9e']
 
 export const TT_STYLE = {
   background: 'var(--color-surface)',
@@ -28,8 +31,18 @@ export const TT_STYLE = {
   fontSize: 12,
 }
 
-// Shared structural props — these control SVG rendering, not just style
-const AXIS = { tickLine: false, axisLine: false } as const
+const TICK    = { fontSize: 11, fontWeight: 600, fill: 'var(--color-text-muted)' }  // standard axis labels
+const TICK_SM = { fontSize: 10, fontWeight: 600, fill: 'var(--color-text-muted)' }  // dense axes (dates, numbers)
+
+const GRID_V  = { stroke: 'var(--color-border)', vertical: false }   // CartesianGrid, no vertical lines
+const GRID_H  = { stroke: 'var(--color-border)', horizontal: false } // CartesianGrid, no horizontal lines
+const GRID    = { stroke: 'var(--color-border)' }                    // CartesianGrid, both directions
+
+const AXIS    = { tickLine: false, axisLine: false, tick: TICK }    // standard axis
+const AXIS_SM = { tickLine: false, axisLine: false, tick: TICK_SM } // axis with smaller labels
+
+const LEGEND    = { iconSize: 10, wrapperStyle: { fontSize: 12 } }
+const LEGEND_SM = { iconSize: 8,  wrapperStyle: { fontSize: 11 } }
 
 // ── Horizontal Bar Chart ──────────────────────────────────────────────────────
 
@@ -44,14 +57,14 @@ interface HBarChartProps {
 }
 
 export function HBarChart({
-  data, dataKey, color = C[0], height = 220, barSize = 14, yWidth = 150, valueLabel = '',
+  data, dataKey, color = diagramColors[0], height = 220, barSize = 14, yWidth = 150, valueLabel = '',
 }: HBarChartProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} layout="vertical" barSize={barSize}>
-        <CartesianGrid horizontal={false} />
-        <XAxis type="number" {...AXIS} />
-        <YAxis type="category" dataKey="name" {...AXIS} width={yWidth} />
+        <CartesianGrid {...GRID_H} />
+        <XAxis type="number" {...AXIS_SM} />
+        <YAxis type="category" dataKey="name" {...AXIS} width={yWidth} interval={0} />
         <Tooltip contentStyle={TT_STYLE} formatter={((v: number) => [v, valueLabel]) as never} />
         <Bar dataKey={dataKey} fill={color} radius={[0, 4, 4, 0]} name={valueLabel} />
       </BarChart>
@@ -75,14 +88,14 @@ interface SimpleLineChartProps {
 }
 
 export function SimpleLineChart({
-  data, xKey, yKey, color = C[0], height = 180, xInterval, yWidth = 24, name = '',
+  data, xKey, yKey, color = diagramColors[0], height = 180, xInterval, yWidth = 24, name = '',
   tooltipLabelFormatter, tooltipFormatter,
 }: SimpleLineChartProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <LineChart data={data}>
-        <CartesianGrid vertical={false} />
-        <XAxis dataKey={xKey} {...AXIS} interval={xInterval} />
+        <CartesianGrid {...GRID_V} />
+        <XAxis dataKey={xKey} {...AXIS_SM} interval={xInterval} />
         <YAxis {...AXIS} width={yWidth} />
         <Tooltip
           contentStyle={TT_STYLE}
@@ -109,10 +122,10 @@ export function DonutChart({ data, height = 180, innerRadius = 50, outerRadius =
     <ResponsiveContainer width="100%" height={height}>
       <PieChart>
         <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={innerRadius} outerRadius={outerRadius} paddingAngle={3}>
-          {data.map((e, i) => <Cell key={i} fill={e.color ?? C[i % C.length]} />)}
+          {data.map((e, i) => <Cell key={i} fill={e.color ?? diagramColors[i % diagramColors.length]} />)}
         </Pie>
         <Tooltip contentStyle={TT_STYLE} />
-        <Legend iconSize={10} />
+        <Legend {...LEGEND} />
       </PieChart>
     </ResponsiveContainer>
   )
@@ -133,15 +146,15 @@ export function StackedAreaChart({ data, xKey, series, height = 180 }: StackedAr
   return (
     <ResponsiveContainer width="100%" height={height}>
       <AreaChart data={data}>
-        <CartesianGrid vertical={false} />
+        <CartesianGrid {...GRID_V} />
         <XAxis dataKey={xKey} {...AXIS} />
         <YAxis {...AXIS} width={24} />
         <Tooltip contentStyle={TT_STYLE} />
         {series.map((s, i) => (
           <Area key={s.key} type="monotone" dataKey={s.key} stackId="1"
-            stroke={s.color ?? C[i % C.length]} fill={s.color ?? C[i % C.length]} fillOpacity={0.6} name={s.name} />
+            stroke={s.color ?? diagramColors[i % diagramColors.length]} fill={s.color ?? diagramColors[i % diagramColors.length]} fillOpacity={0.6} name={s.name} />
         ))}
-        <Legend iconSize={10} />
+        <Legend {...LEGEND} />
       </AreaChart>
     </ResponsiveContainer>
   )
@@ -162,21 +175,21 @@ interface SimpleBarChartProps {
 }
 
 export function SimpleBarChart({
-  data, xKey, dataKey, color = C[0], height = 180, barSize = 40,
+  data, xKey, dataKey, color = diagramColors[0], height = 180, barSize = 40,
   refY, refLabel, valueLabel = '',
 }: SimpleBarChartProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} barSize={barSize}>
-        <CartesianGrid vertical={false} />
-        <XAxis dataKey={xKey} {...AXIS} />
+        <CartesianGrid {...GRID_V} />
+        <XAxis dataKey={xKey} {...AXIS} interval={0} />
         <YAxis {...AXIS} width={24} />
         <Tooltip contentStyle={TT_STYLE} formatter={((v: number) => [v, valueLabel]) as never} />
         {refY != null && (
-          <ReferenceLine y={refY} stroke={C[1]} strokeDasharray="4 3"
+          <ReferenceLine y={refY} stroke={diagramColors[1]} strokeDasharray="4 3"
             label={{ value: refLabel, fill: 'var(--color-text-muted)', fontSize: 10 }} />
         )}
-        <Bar dataKey={dataKey} fill={color} radius={[4, 4, 0, 0]} name={valueLabel} />
+        <Bar dataKey={dataKey} fill={color} name={valueLabel} />
       </BarChart>
     </ResponsiveContainer>
   )
@@ -193,10 +206,10 @@ export function WinRateScatter({ data, height = 220 }: WinRateScatterProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <ScatterChart>
-        <CartesianGrid />
-        <XAxis type="number" dataKey="nominations" name="Номинаций" {...AXIS}
+        <CartesianGrid {...GRID} />
+        <XAxis type="number" dataKey="nominations" name="Номинаций" {...AXIS_SM}
           label={{ value: 'Номинаций', position: 'insideBottom', offset: -2, fontSize: 10, fill: 'var(--color-text-muted)' }} />
-        <YAxis type="number" dataKey="totalVotes" name="Голосов" {...AXIS} width={30} />
+        <YAxis type="number" dataKey="totalVotes" name="Голосов" {...AXIS_SM} width={30} />
         <ZAxis range={[30, 30]} />
         <Tooltip contentStyle={TT_STYLE} cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => {
           if (!payload?.length) return null
@@ -209,8 +222,8 @@ export function WinRateScatter({ data, height = 220 }: WinRateScatterProps) {
           )
         }} />
         <Scatter data={data.filter(d => !d.won)} fill="var(--color-border)" name="Не победили" />
-        <Scatter data={data.filter(d => d.won)}  fill={C[0]}               name="Победители" />
-        <Legend iconSize={10} />
+        <Scatter data={data.filter(d => d.won)}  fill={diagramColors[0]}    name="Победители" />
+        <Legend {...LEGEND} />
       </ScatterChart>
     </ResponsiveContainer>
   )
@@ -246,10 +259,10 @@ export function PollPieChart({ polls, votes, bookById, height = 180 }: PollPieCh
       <ResponsiveContainer width="100%" height={height}>
         <PieChart>
           <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={75} paddingAngle={2}>
-            {pieData.map((_, i) => <Cell key={i} fill={C[i % C.length]} />)}
+            {pieData.map((_, i) => <Cell key={i} fill={diagramColors[i % diagramColors.length]} />)}
           </Pie>
           <Tooltip contentStyle={TT_STYLE} formatter={((v: number) => [v, 'Голосов']) as never} />
-          <Legend iconSize={8} />
+          <Legend {...LEGEND_SM} />
         </PieChart>
       </ResponsiveContainer>
     </>
@@ -264,7 +277,7 @@ interface CompetitivenessChartProps {
 }
 
 export function CompetitivenessChart({ data, height = 220 }: CompetitivenessChartProps) {
-  const chartData = data.slice(-12).map((d, i) => ({ ...d, fill: C[i % C.length] }))
+  const chartData = data.slice(-12).map((d, i) => ({ ...d, fill: diagramColors[i % diagramColors.length] }))
   return (
     <ResponsiveContainer width="100%" height={height}>
       <RadialBarChart innerRadius={20} outerRadius={100} data={chartData} startAngle={180} endAngle={0}>
@@ -288,7 +301,7 @@ export function StageDepthFunnel({ data, height = 180 }: StageDepthFunnelProps) 
       <FunnelChart>
         <Tooltip contentStyle={TT_STYLE} formatter={((v: number) => [v, 'Голосований']) as never} />
         <Funnel dataKey="value" data={data} isAnimationActive>
-          {data.map((_, i) => <Cell key={i} fill={C[i]} />)}
+          {data.map((_, i) => <Cell key={i} fill={diagramColors[i]} />)}
           <LabelList dataKey="label" position="center" style={{ fill: '#fff', fontSize: 13, fontWeight: 600 }} />
         </Funnel>
       </FunnelChart>
@@ -308,7 +321,7 @@ export function NominationSankey({ data, height = 220 }: NominationSankeyProps) 
     <ResponsiveContainer width="100%" height={height}>
       <Sankey data={data} nodePadding={20} nodeWidth={12}
         link={{ stroke: 'var(--color-border)', strokeOpacity: 0.6 }}
-        node={{ fill: C[0] }}
+        node={{ fill: diagramColors[0] }}
       >
         <Tooltip contentStyle={TT_STYLE} />
       </Sankey>
@@ -325,20 +338,24 @@ interface GroupedBarChartProps {
   xKey: string
   bars: BarSeries[]
   height?: number
+  barSize?: number
   xInterval?: number
+  stacked?: boolean
 }
 
-export function GroupedBarChart({ data, xKey, bars, height = 200, xInterval }: GroupedBarChartProps) {
+export function GroupedBarChart({ data, xKey, bars, height = 200, barSize = 36, xInterval, stacked }: GroupedBarChartProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <BarChart data={data} barGap={2} barSize={10}>
-        <CartesianGrid vertical={false} />
-        <XAxis dataKey={xKey} {...AXIS} interval={xInterval} />
+      <BarChart data={data} barGap={4} barSize={barSize}>
+        <CartesianGrid {...GRID_V} />
+        <XAxis dataKey={xKey} {...AXIS} interval={xInterval ?? 0} />
         <YAxis {...AXIS} width={24} />
         <Tooltip contentStyle={TT_STYLE} />
-        <Legend iconSize={10} />
+        <Legend {...LEGEND} />
         {bars.map(b => (
-          <Bar key={b.key} dataKey={b.key} fill={b.color} radius={[4, 4, 0, 0]} name={b.name} />
+          <Bar key={b.key} dataKey={b.key} fill={b.color} name={b.name}
+            stackId={stacked ? 'stack' : undefined}
+          />
         ))}
       </BarChart>
     </ResponsiveContainer>
@@ -376,13 +393,13 @@ interface SimpleAreaChartProps {
 }
 
 export function SimpleAreaChart({
-  data, xKey, yKey, color = C[4], height = 180, xInterval, yWidth = 28, valueLabel = '',
+  data, xKey, yKey, color = diagramColors[4], height = 180, xInterval, yWidth = 28, valueLabel = '',
 }: SimpleAreaChartProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <AreaChart data={data}>
-        <CartesianGrid vertical={false} />
-        <XAxis dataKey={xKey} {...AXIS} interval={xInterval} />
+        <CartesianGrid {...GRID_V} />
+        <XAxis dataKey={xKey} {...AXIS_SM} interval={xInterval} />
         <YAxis {...AXIS} width={yWidth} />
         <Tooltip contentStyle={TT_STYLE} formatter={((v: number) => [v, valueLabel]) as never} />
         <Area type="monotone" dataKey={yKey} stroke={color} fill={color} fillOpacity={0.3} name={valueLabel} />
@@ -407,7 +424,7 @@ export function TreemapChart({ data, height = 280 }: TreemapChartProps) {
           const groupIdx = data.findIndex(g => g.children?.some(c => c.name === name))
           return (
             <g>
-              <rect x={x} y={y} width={width} height={h} fill={C[groupIdx % C.length] ?? C[0]} fillOpacity={0.8} stroke="var(--color-surface)" strokeWidth={2} />
+              <rect x={x} y={y} width={width} height={h} fill={diagramColors[groupIdx % diagramColors.length] ?? diagramColors[0]} fillOpacity={0.8} stroke="var(--color-surface)" strokeWidth={2} />
               {width > 45 && h > 24 && (
                 <text x={(x ?? 0) + 6} y={(y ?? 0) + 16} fill="#fff" fontSize={11} fontWeight={500}>{String(name ?? '').slice(0, 18)}</text>
               )}
@@ -433,13 +450,13 @@ export function RadarMultiChart({ data, keys, height = 280 }: RadarMultiChartPro
   return (
     <ResponsiveContainer width="100%" height={height}>
       <RadarChart data={data} cx="50%" cy="50%" outerRadius={100}>
-        <PolarGrid />
-        <PolarAngleAxis dataKey="subject" />
+        <PolarGrid stroke="var(--color-border)" />
+        <PolarAngleAxis dataKey="subject" tick={TICK} />
         {keys.map((key, i) => (
-          <Radar key={key} name={key} dataKey={key} stroke={C[i % C.length]} fill={C[i % C.length]} fillOpacity={0.15} />
+          <Radar key={key} name={key} dataKey={key} stroke={diagramColors[i % diagramColors.length]} fill={diagramColors[i % diagramColors.length]} fillOpacity={0.15} />
         ))}
         <Tooltip contentStyle={TT_STYLE} />
-        <Legend iconSize={8} />
+        <Legend {...LEGEND_SM} />
       </RadarChart>
     </ResponsiveContainer>
   )

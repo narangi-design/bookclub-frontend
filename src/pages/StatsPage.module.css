@@ -21,15 +21,15 @@
 
 /* ── Grids ───────────────────────────────────────────────── */
 
-.grid3 {
+.chartsGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.25rem;
   align-items: start;
   margin-bottom: 0.5rem;
 }
 
-.grid2 {
+.pairsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.25rem;

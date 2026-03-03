@@ -1,5 +1,5 @@
 import {
-  topBooksByVotes, countryDistribution, booksByUser,
+  topBooksByVotes, countryDistribution, booksByUser, memberActivityData,
   booksAddedByMonth, booksAddedByYearStatus, avgDaysToElect,
   pollParticipationTimeline, mostNominatedUnelected, winRateScatterData,
   pollCompetitivenessData, stageDepthDistribution,
@@ -8,7 +8,7 @@ import {
 } from '@/utils'
 import { useBooks, usePollVotes, useUsers, usePolls, usePollRunoffs } from '@/hooks'
 import {
-  C,
+  diagramColors,
   HBarChart, SimpleLineChart, DonutChart, StackedAreaChart, SimpleBarChart,
   WinRateScatter, PollPieChart, CompetitivenessChart, StageDepthFunnel,
   NominationSankey, GroupedBarChart, SunburstUserChart, SimpleAreaChart,
@@ -47,9 +47,9 @@ export default function StatsPage() {
     count: books.filter(b => b.status === 'read' && b.elected_at?.startsWith(yr)).length,
   }))
   const statusCounts  = [
-    { name: 'Прочитаны',    value: books.filter(b => b.status === 'read').length,    color: C[0] },
-    { name: 'Будем читать', value: books.filter(b => b.status === 'to_read').length, color: C[4] },
-    { name: 'Выбыли',       value: books.filter(b => b.status === 'removed').length, color: C[1] },
+    { name: 'Прочитаны',    value: books.filter(b => b.status === 'read').length,    color: diagramColors[0] },
+    { name: 'Будем читать', value: books.filter(b => b.status === 'to_read').length, color: diagramColors[4] },
+    { name: 'Выбыли',       value: books.filter(b => b.status === 'removed').length, color: diagramColors[1] },
   ]
 
   // ── Section: Голосования ─────────────────────────────────────────────────
@@ -59,14 +59,10 @@ export default function StatsPage() {
   const scatterData    = winRateScatterData(books, pollVotes)
   const competitiveness = pollCompetitivenessData(polls, pollVotes)
   const stageDepth     = stageDepthDistribution(polls, runoffs)
-  const sankey         = sankeyNominationData(books, pollVotes, runoffs)
-  const predictability = pollPredictabilityData(polls, pollVotes, bookById)
-    .slice(-20)
-    .map(d => ({ date: d.date.slice(0, 7), winner: d.winnerVotes, max: d.maxVotes }))
-
   // ── Section: Участники ───────────────────────────────────────────────────
-  const contributors = booksByUser(books, users)
-  const sunburst     = sunburstUserData(books, users)
+  const contributors   = booksByUser(books, users)
+  const memberActivity = memberActivityData(books, users)
+  const sunburst       = sunburstUserData(books, users)
 
   // ── Section: Разное ──────────────────────────────────────────────────────
   const gaps      = pollGapTimeline(polls)
@@ -80,7 +76,7 @@ export default function StatsPage() {
       <h1 className={styles.pageTitle}>Всякая стата</h1>
 
       <SectionTitle>Книги</SectionTitle>
-      <div className={styles.grid3}>
+      <div className={styles.chartsGrid}>
 
         <ChartCard title="Добавлено книг по месяцам" wide>
           <SimpleLineChart data={addedByMonth} xKey="month" yKey="count" xInterval={3} name="Книг" />
@@ -92,9 +88,9 @@ export default function StatsPage() {
 
         <ChartCard title="Добавленные vs выбывшие по годам">
           <StackedAreaChart data={byYearStatus} xKey="year" series={[
-            { key: 'read',    name: 'Прочитаны',    color: C[0] },
-            { key: 'to_read', name: 'К прочтению',  color: C[4] },
-            { key: 'removed', name: 'Выбыли',        color: C[1] },
+            { key: 'read',    name: 'Прочитаны',    color: diagramColors[0] },
+            { key: 'to_read', name: 'К прочтению',  color: diagramColors[4] },
+            { key: 'removed', name: 'Выбыли',        color: diagramColors[1] },
           ]} />
         </ChartCard>
 
@@ -113,11 +109,11 @@ export default function StatsPage() {
       </div>
 
       <SectionTitle>Голосования</SectionTitle>
-      <div className={styles.grid3}>
+      <div className={styles.chartsGrid}>
 
         <ChartCard title="Участие в голосованиях (по голосам)" wide>
           <SimpleLineChart
-            data={participation} xKey="date" yKey="totalVotes"
+            data={participation} xKey="date" yKey="totalVoters"
             xInterval={9} yWidth={28} name="Голосов"
             tooltipLabelFormatter={l => `Голосование ${String(l)}`}
             tooltipFormatter={(v: number) => [v, 'Голосов']}
@@ -134,16 +130,12 @@ export default function StatsPage() {
         <ChartCard title="Самые обойдённые (номинаций без победы)">
           <HBarChart
             data={unelected.map(x => ({ name: x.book.title.slice(0, 22), n: x.nominations }))}
-            dataKey="n" color={C[4]} barSize={12} valueLabel="Номинаций"
+            dataKey="n" color={diagramColors[4]} barSize={12} valueLabel="Номинаций"
           />
         </ChartCard>
 
         <ChartCard title="Голоса vs Номинации (победители выделены)">
           <WinRateScatter data={scatterData} />
-        </ChartCard>
-
-        <ChartCard title="Голосование в деталях">
-          <PollPieChart polls={polls} votes={pollVotes} bookById={bookById} />
         </ChartCard>
 
         <ChartCard title="Конкурентность голосований (2-е место / 1-е место)">
@@ -154,55 +146,30 @@ export default function StatsPage() {
           <StageDepthFunnel data={stageDepth} />
         </ChartCard>
 
-        <ChartCard title="Путь книги к победе (Sankey)" wide>
-          <NominationSankey data={sankey} />
-        </ChartCard>
-
-        <ChartCard title="Предсказуемость результата (победитель vs лидер)" wide>
-          <GroupedBarChart
-            data={predictability} xKey="date"
-            bars={[
-              { key: 'max',    name: 'Макс. голосов',       color: `${C[4]}99` },
-              { key: 'winner', name: 'Голосов победителя',  color: C[0] },
-            ]}
-            xInterval={3}
-          />
-        </ChartCard>
-
       </div>
 
       <SectionTitle>Участники</SectionTitle>
-      <div className={styles.grid2}>
+      <div className={styles.pairsGrid}>
 
-        <ChartCard title="Книг добавлено участником">
-          <HBarChart
-            data={contributors.map(x => ({ name: x.username, count: x.count }))}
-            dataKey="count" height={300} yWidth={110} valueLabel="Книг"
+        <ChartCard title="Активность участников (предложено vs выбрано)" wide>
+          <GroupedBarChart
+            data={memberActivity.slice(0, 10).map(d => ({ ...d, other: d.nominated - d.elected }))}
+            xKey="name"
+            bars={[
+              { key: 'elected', name: 'Выбрано',    color: diagramColors[0] },
+              { key: 'other',   name: 'Не выбрано', color: diagramColors[4] },
+            ]}
+            height={300} stacked
           />
-        </ChartCard>
-
-        <ChartCard title="Книги участников (Sunburst)">
-          <SunburstUserChart data={sunburst} height={300} />
         </ChartCard>
 
       </div>
 
       <SectionTitle>Разное</SectionTitle>
-      <div className={styles.grid3}>
+      <div className={styles.chartsGrid}>
 
         <ChartCard title="Интервалы между голосованиями (дни)" wide>
           <SimpleAreaChart data={gaps} xKey="date" yKey="gap" xInterval={9} valueLabel="Дней" />
-        </ChartCard>
-
-        <ChartCard title="Популярность книг по размеру (Treemap)" wide>
-          <TreemapChart data={treemap} />
-        </ChartCard>
-
-        <ChartCard title="Страны книг">
-          <HBarChart
-            data={countries.slice(0, 12).map(c => ({ name: c.country, count: c.count }))}
-            dataKey="count" color={C[5]} height={280} barSize={13} yWidth={80} valueLabel="Книг"
-          />
         </ChartCard>
 
         <ChartCard title="Профиль топ-6 книг (Radar)">
