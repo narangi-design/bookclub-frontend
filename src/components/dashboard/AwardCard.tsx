@@ -47,7 +47,7 @@ export default function AwardCard({ year, votes, books }: Props) {
                 </span>
                 <div className={styles.barTrack}>
                   <div
-                    className={`${styles.bar} ${v.is_winner ? styles.barWinner : ''}`}
+                    className={styles.bar}
                     style={{ width: `${pct}%` }}
                   />
                 </div>
@@ -79,7 +79,7 @@ export default function AwardCard({ year, votes, books }: Props) {
                     </span>
                     <div className={styles.barTrack}>
                       <div
-                        className={`${styles.bar} ${v.is_winner ? styles.barWinner : ''}`}
+                        className={styles.bar}
                         style={{ width: `${pct}%` }}
                       />
                     </div>

@@ -54,7 +54,7 @@ export default function StatsPage() {
 
   // ── Section: Голосования ─────────────────────────────────────────────────
   const topVoted       = topBooksByVotes(books, pollVotes, 10)
-  const participation  = pollParticipationTimeline(polls, pollVotes)
+  const participation  = pollParticipationTimeline(polls)
   const unelected      = mostNominatedUnelected(books, pollVotes, 12)
   const scatterData    = winRateScatterData(books, pollVotes)
   const competitiveness = pollCompetitivenessData(polls, pollVotes)
@@ -111,26 +111,26 @@ export default function StatsPage() {
       <SectionTitle>Голосования</SectionTitle>
       <div className={styles.chartsGrid}>
 
-        <ChartCard title="Участие в голосованиях (по голосам)" wide>
+        <ChartCard title="Участие в голосованиях (по людям)" wide>
           <SimpleLineChart
             data={participation} xKey="date" yKey="totalVoters"
-            xInterval={9} yWidth={28} name="Голосов"
+            xInterval={9} yWidth={28} name="Человек"
             tooltipLabelFormatter={l => `Голосование ${String(l)}`}
-            tooltipFormatter={(v: number) => [v, 'Голосов']}
+            tooltipFormatter={(v: number) => [v, 'Человек']}
           />
         </ChartCard>
 
         <ChartCard title="Самые популярные книги (все голосования)" wide>
           <HBarChart
-            data={topVoted.map(x => ({ name: x.book.title.slice(0, 24), votes: x.totalVotes }))}
-            dataKey="votes" yWidth={160} valueLabel="Голосов"
+            data={topVoted.map(x => ({ name: x.book.title, votes: x.totalVotes }))}
+            dataKey="votes" valueLabel="Голосов"
           />
         </ChartCard>
 
         <ChartCard title="Самые обойдённые (номинаций без победы)">
           <HBarChart
-            data={unelected.map(x => ({ name: x.book.title.slice(0, 22), n: x.nominations }))}
-            dataKey="n" color={diagramColors[4]} barSize={12} valueLabel="Номинаций"
+            data={unelected.map(x => ({ name: x.book.title, n: x.nominations }))}
+            dataKey="n" color={diagramColors[4]} valueLabel="Номинаций"
           />
         </ChartCard>
 

@@ -3,10 +3,15 @@ export interface User {
   username: string
 }
 
+export interface Author {
+  id: number
+  value: string
+}
+
 export interface Book {
   id: number
   title: string
-  author: string | null
+  author_id: number | null
   country: string | null
   added_by_user_id: number | null
   added_at: string | null        // ISO date string

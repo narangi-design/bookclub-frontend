@@ -1,7 +1,5 @@
 .card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
+  composes: card from '../../styles/shared.module.css';
   padding: 1.5rem;
   display: flex;
   gap: 1.75rem;
@@ -158,23 +156,8 @@
   font-weight: 600;
 }
 
-.barTrack {
-  height: 3px;
-  background: var(--color-border);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.bar {
-  height: 100%;
-  background: var(--color-accent);
-  border-radius: 2px;
-  transition: width 0.4s ease;
-}
-
-.barWinner {
-  background: var(--color-accent);
-}
+.barTrack { composes: barTrack from '../../styles/shared.module.css'; }
+.bar      { composes: bar      from '../../styles/shared.module.css'; }
 
 .voteCount {
   font-size: 0.75rem;

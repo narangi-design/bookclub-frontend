@@ -46,6 +46,7 @@ const LEGEND_SM = { iconSize: 8,  wrapperStyle: { fontSize: 11 } }
 
 // ── Horizontal Bar Chart ──────────────────────────────────────────────────────
 
+
 interface HBarChartProps {
   data: Record<string, unknown>[]
   dataKey: string
@@ -57,16 +58,38 @@ interface HBarChartProps {
 }
 
 export function HBarChart({
-  data, dataKey, color = diagramColors[0], height = 220, barSize = 14, yWidth = 150, valueLabel = '',
+  data, dataKey, color = diagramColors[0], height, barSize, yWidth = 200, valueLabel = '',
 }: HBarChartProps) {
+  const bs = barSize ?? 12
+  const h  = height  ?? (data.length * 24 + 12)
+
   return (
-    <ResponsiveContainer width="100%" height={height}>
-      <BarChart data={data} layout="vertical" barSize={barSize}>
+    <ResponsiveContainer width="100%" height={h}>
+      <BarChart data={data} layout="vertical" barSize={bs}>
         <CartesianGrid {...GRID_H} />
         <XAxis type="number" {...AXIS_SM} />
-        <YAxis type="category" dataKey="name" {...AXIS} width={yWidth} interval={0} />
+        <YAxis
+          type="category"
+          dataKey="name"
+          {...AXIS}
+          width={yWidth}
+          interval={0}
+          tick={({ x, y, payload }: { x: string | number; y: string | number; payload: { value: string } }) => {
+            const sx = Number(x) - yWidth + 4
+            const sy = Number(y)
+            const label = String(payload.value)
+            // truncate to fit yWidth (~7px per char at font-size 11)
+            const maxChars = Math.floor(yWidth / 7)
+            const truncated = label.length > maxChars ? label.slice(0, maxChars - 1) + '…' : label
+            return (
+              <text x={sx} y={sy} dy={4} textAnchor="start" fill={TICK.fill} fontSize={TICK.fontSize} fontWeight={TICK.fontWeight}>
+                {truncated}
+              </text>
+            )
+          }}
+        />
         <Tooltip contentStyle={TT_STYLE} formatter={((v: number) => [v, valueLabel]) as never} />
-        <Bar dataKey={dataKey} fill={color} radius={[0, 4, 4, 0]} name={valueLabel} />
+        <Bar dataKey={dataKey} fill={color} name={valueLabel} />
       </BarChart>
     </ResponsiveContainer>
   )

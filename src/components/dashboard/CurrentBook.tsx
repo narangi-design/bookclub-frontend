@@ -4,6 +4,7 @@ import styles from './CurrentBook.module.css'
 
 interface Props {
   book: Book
+  authorName?: string
   addedByUser?: User
   poll?: Poll
   pollVotes: PollVote[]
@@ -69,7 +70,7 @@ function VoteList({
               </span>
               <div className={styles.barTrack}>
                 <div
-                  className={`${styles.bar} ${isWinner ? styles.barWinner : ''}`}
+                  className={styles.bar}
                   style={{ width: `${pct}%` }}
                 />
               </div>
@@ -84,7 +85,7 @@ function VoteList({
 
 const TOP_VOTES = 6
 
-export default function CurrentBook({ book, addedByUser, poll, pollVotes, runoff, allBooks }: Props) {
+export default function CurrentBook({ book, authorName, addedByUser, poll, pollVotes, runoff, allBooks }: Props) {
   const bookById = Object.fromEntries(allBooks.map(b => [b.id, b]))
 
   const stage1AllVotes = pollVotes.filter(v => v.poll_id === poll?.id)
@@ -111,8 +112,8 @@ export default function CurrentBook({ book, addedByUser, poll, pollVotes, runoff
         <h2 className={styles.title}>{book.title}</h2>
 
         <div className={styles.meta}>
-          {book.author && <span>{book.author}</span>}
-          {book.author && book.country && <span className={styles.dot}>·</span>}
+          {authorName && <span>{authorName}</span>}
+          {authorName && book.country && <span className={styles.dot}>·</span>}
           {book.country && <span>{book.country}</span>}
         </div>
 

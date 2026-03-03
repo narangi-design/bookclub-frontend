@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { usePolls, usePollVotes, useBooks } from '@/hooks'
+import { usePolls, usePollVotes, useBooks, useAuthors } from '@/hooks'
 import type { Book, Poll } from '@/types'
 import styles from './PollsPage.module.css'
 
@@ -18,13 +18,15 @@ interface Session {
 }
 
 export default function PollsPage() {
-  const { data: polls = [] } = usePolls()
-  const { data: votes = [] } = usePollVotes()
-  const { data: books = [] } = useBooks()
+  const { data: polls   = [] } = usePolls()
+  const { data: votes   = [] } = usePollVotes()
+  const { data: books   = [] } = useBooks()
+  const { data: authors = [] } = useAuthors()
   const [expandedId, setExpandedId] = useState<number | null>(null)
   const [filter, setFilter] = useState<Filter>('all')
 
-  const bookById: Record<number, Book> = Object.fromEntries(books.map(b => [b.id, b]))
+  const bookById:   Record<number, Book>   = Object.fromEntries(books.map(b => [b.id, b]))
+  const authorById: Record<number, string> = Object.fromEntries(authors.map(a => [a.id, a.value]))
 
   // Group into sessions: one stage-1 poll + optional stage-2 runoff
   const stage2ByParent: Record<number, Poll> = {}
@@ -57,23 +59,6 @@ export default function PollsPage() {
   return (
     <div className={styles.page}>
       <h1 className={styles.pageTitle}>Голосования</h1>
-
-      <div className={styles.filterRow}>
-        {([
-          ['all',  'Все'],
-          ['won',  'С победителем'],
-          ['open', 'Без победителя'],
-        ] as [Filter, string][]).map(([f, label]) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`${styles.filterBtn} ${filter === f ? styles.filterBtnActive : ''}`}
-          >
-            {label}
-            <span className={styles.filterCount}>{counts[f]}</span>
-          </button>
-        ))}
-      </div>
 
       <div className={styles.list}>
         {filtered.map(({ stage1, stage2, winner_book_id }) => {
@@ -126,6 +111,7 @@ export default function PollsPage() {
                     maxVotes={s1Max}
                     winner_book_id={stage2 ? null : winner_book_id}
                     bookById={bookById}
+                    authorById={authorById}
                   />
                   {stage2 && (
                     <VoteSection
@@ -134,6 +120,7 @@ export default function PollsPage() {
                       maxVotes={s2Max}
                       winner_book_id={winner_book_id}
                       bookById={bookById}
+                      authorById={authorById}
                       accent
                     />
                   )}
@@ -153,6 +140,7 @@ function VoteSection({
   maxVotes,
   winner_book_id,
   bookById,
+  authorById,
   accent = false,
 }: {
   label: string | null
@@ -160,6 +148,7 @@ function VoteSection({
   maxVotes: number
   winner_book_id: number | null
   bookById: Record<number, Book>
+  authorById: Record<number, string>
   accent?: boolean
 }) {
   return (
@@ -177,7 +166,7 @@ function VoteSection({
             <div className={styles.voteTitle}>
               {isWinner && <span className={styles.trophy}>★</span>}
               {book?.title ?? `Book #${vote.book_id}`}
-              {book?.author && <span className={styles.voteAuthor}>{book.author}</span>}
+              {book?.author_id != null && <span className={styles.voteAuthor}>{authorById[book.author_id]}</span>}
             </div>
             <div className={styles.voteBarWrap}>
               <div

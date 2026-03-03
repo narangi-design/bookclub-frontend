@@ -10,8 +10,8 @@
   --color-text-muted: #7a6870;
   --color-accent: #c0394f;
   --color-accent-subtle: rgba(192, 57, 79, 0.08);
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: system-ui, -apple-system, sans-serif;
+  --font-display: 'Zen Antique', Georgia, serif;
+  --font-body: 'Nunito Sans', system-ui, -apple-system, sans-serif;
 }
 
 body {

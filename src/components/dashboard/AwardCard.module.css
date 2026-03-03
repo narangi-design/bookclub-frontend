@@ -1,7 +1,5 @@
 .card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
+  composes: card from '../../styles/shared.module.css';
   padding: 1.5rem;
 }
 
@@ -39,28 +37,11 @@
   gap: 0.6rem;
 }
 
-.row {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.rowMain {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  min-width: 0;
-}
-
-.rowTitle {
-  font-size: 0.83rem;
-  color: var(--color-text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.2;
-}
+.row      { composes: row      from '../../styles/shared.module.css'; }
+.rowMain  { composes: rowMain  from '../../styles/shared.module.css'; }
+.rowTitle { composes: rowTitle from '../../styles/shared.module.css'; }
+.barTrack { composes: barTrack from '../../styles/shared.module.css'; }
+.bar      { composes: bar      from '../../styles/shared.module.css'; }
 
 .winner {
   color: var(--color-accent);
@@ -69,24 +50,6 @@
 
 .star {
   color: var(--color-accent);
-}
-
-.barTrack {
-  height: 3px;
-  background: var(--color-border);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.bar {
-  height: 100%;
-  background: var(--color-accent);
-  border-radius: 2px;
-  transition: width 0.4s ease;
-}
-
-.barWinner {
-  background: var(--color-accent);
 }
 
 .count {

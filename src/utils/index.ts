@@ -146,15 +146,14 @@ export function avgDaysToElect(books: Book[]): number {
   return Math.round(diffs.reduce((s, d) => s + d, 0) / diffs.length)
 }
 
-/** Total votes per poll sorted chronologically — proxy for poll participation */
+/** Unique voters per poll sorted chronologically, using poll.total_voters */
 export function pollParticipationTimeline(
   polls: Poll[],
-  votes: PollVote[],
-): Array<{ date: string; totalVotes: number; pollId: number }> {
+): Array<{ date: string; totalVoters: number; pollId: number }> {
   return sortedPolls(polls).map(p => ({
     pollId: p.id,
     date: p.date,
-    totalVotes: votes.filter(v => v.poll_id === p.id).reduce((s, v) => s + v.votes_count, 0),
+    totalVoters: p.total_voters ?? 0,
   }))
 }
 

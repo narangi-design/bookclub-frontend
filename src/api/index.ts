@@ -1,6 +1,7 @@
-import type { User, Book, Poll, PollVote, AwardVote, PollRunoff } from '@/types'
+import type { User, Book, Poll, PollVote, AwardVote, PollRunoff, Author } from '@/types'
 import { mockUsers } from '@/mocks/mockUsers'
 import { mockBooks } from '@/mocks/mockBooks'
+import { mockAuthors } from '@/mocks/mockAuthors'
 import { mockPolls } from '@/mocks/mockPolls'
 import { mockPollVotes } from '@/mocks/mockPollVotes'
 import { mockAwardVotes } from '@/mocks/mockAwardVotes'
@@ -36,4 +37,9 @@ export async function fetchAwardVotes(): Promise<AwardVote[]> {
 export async function fetchPollRunoffs(): Promise<PollRunoff[]> {
   await delay()
   return mockPollRunoffs
+}
+
+export async function fetchAuthors(): Promise<Author[]> {
+  await delay()
+  return mockAuthors
 }

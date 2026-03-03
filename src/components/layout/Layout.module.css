@@ -31,7 +31,6 @@
 .navLink {
   display: block;
   padding: 0.5rem 0.75rem;
-  border-radius: 6px;
   color: var(--color-text-muted);
   font-size: 0.9rem;
   transition: color 0.15s, background-color 0.15s;

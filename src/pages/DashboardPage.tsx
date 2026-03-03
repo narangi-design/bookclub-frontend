@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
-import { useBooks, usePolls, useUsers, useAwardVotes, usePollVotes, usePollRunoffs } from '@/hooks'
+import { useBooks, usePolls, useUsers, useAwardVotes, usePollVotes, usePollRunoffs, useAuthors } from '@/hooks'
 import AwardCard from '@/components/dashboard/AwardCard'
 import CurrentBook from '@/components/dashboard/CurrentBook'
 import styles from './DashboardPage.module.css'
@@ -49,14 +49,17 @@ export default function DashboardPage() {
   const { data: awardVotes = [] } = useAwardVotes()
   const { data: pollVotes   = [] } = usePollVotes()
   const { data: pollRunoffs = [] } = usePollRunoffs()
+  const { data: authors    = [] } = useAuthors()
+
+  const authorById = Object.fromEntries(authors.map(a => [a.id, a.value]))
 
   const readBooks   = books.filter(b => b.status === 'read')
   const toReadBooks = books.filter(b => b.status === 'to_read')
 
-  // Current book = last elected (highest elected_poll_id)
+  // Current book = most recently elected by date
   const currentBook    = readBooks
-    .filter(b => b.elected_poll_id !== null)
-    .sort((a, b) => (b.elected_poll_id ?? 0) - (a.elected_poll_id ?? 0))[0]
+    .filter(b => b.elected_at !== null)
+    .sort((a, b) => (b.elected_at ?? '').localeCompare(a.elected_at ?? ''))[0]
   const electedPoll    = polls.find(p => p.id === currentBook?.elected_poll_id)
   // If elected via runoff (stage 2), resolve to parent stage-1 poll for stage1Votes
   const currentPoll    = electedPoll?.stage === 2
@@ -92,6 +95,7 @@ export default function DashboardPage() {
           <h2 className={styles.sectionTitle}>Сейчас читаем</h2>
           <CurrentBook
             book={currentBook}
+            authorName={currentBook.author_id != null ? authorById[currentBook.author_id] : undefined}
             addedByUser={currentAddedBy}
             poll={currentPoll}
             pollVotes={pollVotes}
@@ -107,14 +111,15 @@ export default function DashboardPage() {
           <div className={styles.recentList}>
             {recentBooks.map(book => {
               const addedBy = users.find(u => u.id === book.added_by_user_id)
+              const authorName = book.author_id != null ? authorById[book.author_id] : null
               return (
                 <div key={book.id} className={styles.recentItem}>
                   <SmallCover bookId={book.id} title={book.title} />
                   <div className={styles.recentInfo}>
                     <div className={styles.recentTitle}>{book.title}</div>
-                    {(book.author || book.country) && (
+                    {(authorName || book.country) && (
                       <div className={styles.recentMeta}>
-                        {[book.author, book.country].filter(Boolean).join(' · ')}
+                        {[authorName, book.country].filter(Boolean).join(' · ')}
                       </div>
                     )}
                     <div className={styles.recentFooter}>

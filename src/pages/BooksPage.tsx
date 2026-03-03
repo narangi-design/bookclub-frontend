@@ -1,18 +1,28 @@
 import { useState } from 'react'
 import type { User } from '@/types'
-import { useBooks, useUsers } from '@/hooks'
+import { useBooks, useUsers, useAuthors } from '@/hooks'
 import styles from './BooksPage.module.css'
+
+function formatDate(iso: string) {
+  const d = new Date(iso)
+  const dd = String(d.getDate()).padStart(2, '0')
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  const yy = String(d.getFullYear()).slice(-2)
+  return `${dd}.${mm}.${yy}`
+}
 
 type Filter = 'all' | 'read' | 'to_read' | 'removed'
 
 const STATUS_ORDER: Record<string, number> = { read: 0, to_read: 1, removed: 2 }
 
 export default function BooksPage() {
-  const { data: books = [] } = useBooks()
-  const { data: users = [] } = useUsers()
+  const { data: books   = [] } = useBooks()
+  const { data: users   = [] } = useUsers()
+  const { data: authors = [] } = useAuthors()
   const [filter, setFilter] = useState<Filter>('all')
 
-  const userById = Object.fromEntries(users.map((u: User) => [u.id, u])) as Record<number, User>
+  const userById   = Object.fromEntries(users.map((u: User) => [u.id, u])) as Record<number, User>
+  const authorById = Object.fromEntries(authors.map(a => [a.id, a.value])) as Record<number, string>
 
   const counts = {
     all: books.length,
@@ -62,9 +72,9 @@ export default function BooksPage() {
             <tr>
               <th className={styles.th}>Название</th>
               <th className={styles.th}>Автор</th>
-              <th className={styles.th}>Страна</th>
               <th className={styles.th}>Инициатор</th>
-              <th className={`${styles.th} ${styles.thRight}`}>Дата встречи</th>
+              <th className={`${styles.th} ${styles.thRight}`}>Добавлена в список</th>
+              <th className={`${styles.th} ${styles.thRight}`}>Когда выбрана</th>
             </tr>
           </thead>
           <tbody>
@@ -76,17 +86,17 @@ export default function BooksPage() {
                     <span className={styles.badge}>removed</span>
                   )}
                 </td>
-                <td className={`${styles.td} ${styles.muted}`}>{book.author ?? '—'}</td>
-                <td className={`${styles.td} ${styles.muted}`}>{book.country ?? '—'}</td>
+                <td className={`${styles.td} ${styles.muted}`}>{book.author_id != null ? authorById[book.author_id] : '—'}</td>
                 <td className={`${styles.td} ${styles.muted}`}>
                   {book.added_by_user_id != null
                     ? (userById[book.added_by_user_id]?.username ?? '—')
                     : '—'}
                 </td>
                 <td className={`${styles.td} ${styles.muted} ${styles.tdRight}`}>
-                  {book.status === 'read' && book.elected_at
-                    ? book.elected_at.slice(0, 4)
-                    : '—'}
+                  {book.added_at ? formatDate(book.added_at) : '—'}
+                </td>
+                <td className={`${styles.td} ${styles.muted} ${styles.tdRight}`}>
+                  {book.elected_at ? formatDate(book.elected_at) : '—'}
                 </td>
               </tr>
             ))}
