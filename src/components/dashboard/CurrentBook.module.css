@@ -1,0 +1,185 @@
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1.75rem;
+}
+
+/* ── Cover ─────────────────────────────────────── */
+
+.coverWrap {
+  flex-shrink: 0;
+  width: 130px;
+}
+
+.cover {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  display: block;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.coverPlaceholder {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  background: linear-gradient(135deg, var(--color-border) 0%, var(--color-surface) 100%);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.coverInitials {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+/* ── Info ──────────────────────────────────────── */
+
+.info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+  margin-bottom: 0.2rem;
+}
+
+.title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.meta {
+  display: flex;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  flex-wrap: wrap;
+}
+
+.dot {
+  color: var(--color-border);
+}
+
+.addedBy {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 0.1rem;
+}
+
+.username {
+  color: var(--color-text);
+}
+
+/* ── Poll result ───────────────────────────────── */
+
+.poll {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.stageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.stageHeaderRunoff {
+  margin-top: 0.9rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.stageLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.stageDate {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+.voteList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.voteRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.voteMain {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.voteTitle {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.voteWinner {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.barTrack {
+  height: 3px;
+  background: var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.barWinner {
+  background: var(--color-accent);
+}
+
+.voteCount {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  width: 5rem;
+  text-align: right;
+  flex-shrink: 0;
+}

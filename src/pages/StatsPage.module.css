@@ -1,0 +1,151 @@
+.page {
+  max-width: 1100px;
+}
+
+.pageTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 2rem;
+}
+
+/* ── Section title ───────────────────────────────────────── */
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 2.5rem 0 1rem;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.5rem;
+}
+
+/* ── Grids ───────────────────────────────────────────────── */
+
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+  margin-bottom: 0.5rem;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+  margin-bottom: 0.5rem;
+}
+
+/* ── Card ───────────────────────────────────────────────── */
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cardWide {
+  grid-column: 1 / -1;
+}
+
+.cardLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* ── Big stat ────────────────────────────────────────────── */
+
+.bigStat {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin: 0.5rem 0 0;
+}
+
+.bigStatNumber {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  line-height: 1;
+}
+
+.bigStatLabel {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+}
+
+.bigStatSub {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+
+/* ── Bar rows (kept for reuse) ───────────────────────────── */
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.rowRanked {
+  grid-template-columns: auto 1fr auto;
+}
+
+.rank {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  width: 1.1rem;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.rowMain {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.rowTitle {
+  font-size: 0.83rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.barTrack {
+  height: 3px;
+  background: var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.rowCount {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  width: 2rem;
+  text-align: right;
+  flex-shrink: 0;
+}

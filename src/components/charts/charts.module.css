@@ -1,0 +1,60 @@
+/* ── Recharts base styles ─────────────────────────────────────────────────── */
+/* SVG presentation attributes have 0 specificity — CSS class selectors win.  */
+/* These rules replace the repetitive stroke/fill/fontSize inline props.       */
+
+:global(.recharts-cartesian-grid-horizontal) line,
+:global(.recharts-cartesian-grid-vertical) line {
+  stroke: var(--color-border);
+}
+
+:global(.recharts-polar-grid-concentric-polygon),
+:global(.recharts-polar-grid-angle) line {
+  stroke: var(--color-border);
+}
+
+:global(.recharts-text.recharts-cartesian-axis-tick-value),
+:global(.recharts-text.recharts-polar-angle-axis-tick-value) {
+  fill: var(--color-text-muted);
+  font-size: 11px;
+}
+
+:global(.recharts-legend-item-text) {
+  font-size: 12px;
+}
+
+/* ── Poll tabs ────────────────────────────────────────────────────────────── */
+
+.pollTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.pollTab {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.pollTab:hover {
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.pollTabActive {
+  background: var(--color-accent);
+  color: #fff;
+  border-color: var(--color-accent);
+}
+
+.pollTabActive:hover {
+  background: var(--color-accent);
+  color: #fff;
+}
