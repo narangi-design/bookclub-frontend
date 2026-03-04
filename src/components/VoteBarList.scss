@@ -1,0 +1,74 @@
+.vote-bar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.vbl-entry {
+  display: grid;
+  grid-template-columns: 1fr minmax(60px, 120px) 4.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.3rem 0;
+
+  &--accent {
+    background: var(--color-accent-subtle);
+    margin: 0 -1.25rem;
+    padding: 0.3rem 1.25rem;
+  }
+}
+
+.vbl-title {
+  font-size: 0.82rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+
+  &--winner {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+}
+
+.vbl-trophy {
+  margin-right: 0.25rem;
+  font-size: 0.7rem;
+}
+
+.vbl-subtitle {
+  margin-left: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.vbl-bar-wrap {
+  height: 4px;
+  background: var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.vbl-bar {
+  height: 100%;
+  background: var(--color-text-muted);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+
+  &--winner {
+    background: var(--color-accent);
+  }
+}
+
+.vbl-count {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+
+  &--winner {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+}

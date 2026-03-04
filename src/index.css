@@ -10,7 +10,7 @@
   --color-text-muted: #7a6870;
   --color-accent: #c0394f;
   --color-accent-subtle: rgba(192, 57, 79, 0.08);
-  --font-display: 'Zen Antique', Georgia, serif;
+  --font-display: 'Brygada 1918', Georgia, serif;
   --font-body: 'Nunito Sans', system-ui, -apple-system, sans-serif;
 }
 
@@ -24,6 +24,8 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
+  font-weight: 400;
+  font-style: normal;
 }
 
 a {

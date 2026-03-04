@@ -1,18 +1,16 @@
 import {
-  topBooksByVotes, countryDistribution, booksByUser, memberActivityData,
+  topBooksByVotes, memberActivityData,
   booksAddedByMonth, booksAddedByYearStatus, avgDaysToElect,
   pollParticipationTimeline, mostNominatedUnelected, winRateScatterData,
   pollCompetitivenessData, stageDepthDistribution,
-  sankeyNominationData, pollPredictabilityData, pollGapTimeline,
-  treemapBookData, sunburstUserData, radarTopBooksData,
+  pollGapTimeline, radarTopBooksData,
 } from '@/utils'
 import { useBooks, usePollVotes, useUsers, usePolls, usePollRunoffs } from '@/hooks'
 import {
   diagramColors,
   HBarChart, SimpleLineChart, DonutChart, StackedAreaChart, SimpleBarChart,
-  WinRateScatter, PollPieChart, CompetitivenessChart, StageDepthFunnel,
-  NominationSankey, GroupedBarChart, SunburstUserChart, SimpleAreaChart,
-  TreemapChart, RadarMultiChart,
+  WinRateScatter, CompetitivenessChart, StageDepthFunnel,
+  GroupedBarChart, SimpleAreaChart, RadarMultiChart,
 } from '@/components/charts'
 import './StatsPage.scss'
 
@@ -36,8 +34,6 @@ export default function StatsPage() {
   const { data: polls     = [] } = usePolls()
   const { data: runoffs   = [] } = usePollRunoffs()
 
-  const bookById = Object.fromEntries(books.map(b => [b.id, b]))
-
   // ── Section: Книги ───────────────────────────────────────────────────────
   const addedByMonth  = booksAddedByMonth(books)
   const byYearStatus  = booksAddedByYearStatus(books)
@@ -60,16 +56,12 @@ export default function StatsPage() {
   const competitiveness = pollCompetitivenessData(polls, pollVotes)
   const stageDepth     = stageDepthDistribution(polls, runoffs)
   // ── Section: Участники ───────────────────────────────────────────────────
-  const contributors   = booksByUser(books, users)
   const memberActivity = memberActivityData(books, users)
-  const sunburst       = sunburstUserData(books, users)
 
   // ── Section: Разное ──────────────────────────────────────────────────────
   const gaps      = pollGapTimeline(polls)
-  const treemap   = treemapBookData(books, pollVotes)
   const radarData = radarTopBooksData(books, pollVotes, 6)
   const radarKeys = radarData.length > 0 ? Object.keys(radarData[0]).filter(k => k !== 'subject') : []
-  const countries = countryDistribution(books)
 
   return (
     <div className="page">
@@ -84,14 +76,6 @@ export default function StatsPage() {
 
         <ChartCard title="Статусы книг">
           <DonutChart data={statusCounts} />
-        </ChartCard>
-
-        <ChartCard title="Добавленные vs выбывшие по годам">
-          <StackedAreaChart data={byYearStatus} xKey="year" series={[
-            { key: 'read',    name: 'Прочитаны',    color: diagramColors[0] },
-            { key: 'to_read', name: 'К прочтению',  color: diagramColors[4] },
-            { key: 'removed', name: 'Выбыли',        color: diagramColors[1] },
-          ]} />
         </ChartCard>
 
         <ChartCard title="Прочитано по годам">

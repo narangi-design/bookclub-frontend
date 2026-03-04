@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Book, User, Poll, PollVote, PollRunoff } from '@/types'
+import VoteBarList, { type VoteEntry } from '@/components/VoteBarList'
 import './CurrentBook.scss'
 
 interface Props {
@@ -41,64 +42,31 @@ function formatDate(iso: string) {
   }).format(new Date(iso))
 }
 
-function VoteList({
-  votes,
-  maxVotes,
-  winnerId,
-  bookById,
-  countLabel,
-}: {
-  votes: Array<{ book_id: number; votes_count: number }>
-  maxVotes: number
-  winnerId: number
-  bookById: Record<number, Book>
-  countLabel: (n: number, total: number) => string
-}) {
-  const total = votes.reduce((s, v) => s + v.votes_count, 0)
-  return (
-    <div className="vote-list">
-      {votes.map((v, i) => {
-        const vBook = bookById[v.book_id]
-        if (!vBook) return null
-        const isWinner = v.book_id === winnerId
-        const pct = (v.votes_count / maxVotes) * 100
-        return (
-          <div key={i} className="vote-row">
-            <div className="vote-main">
-              <span className={`vote-title${isWinner ? ' vote-winner' : ''}`}>
-                {isWinner && '★ '}{vBook.title}
-              </span>
-              <div className="bar-track">
-                <div
-                  className="bar"
-                  style={{ width: `${pct}%` }}
-                />
-              </div>
-            </div>
-            <span className={`vote-count${isWinner ? ' vote-winner' : ''}`}>{countLabel(v.votes_count, total)}</span>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
 const TOP_VOTES = 6
 
 export default function CurrentBook({ book, authorName, addedByUser, poll, pollVotes, runoff, allBooks }: Props) {
   const bookById = Object.fromEntries(allBooks.map(b => [b.id, b]))
 
-  const stage1AllVotes = pollVotes.filter(v => v.poll_id === poll?.id)
-  const stage1Votes = stage1AllVotes
+  const stage1Votes = pollVotes
+    .filter(v => v.poll_id === poll?.id)
     .sort((a, b) => b.votes_count - a.votes_count)
     .slice(0, TOP_VOTES)
 
-  const stage1Max = stage1Votes[0]?.votes_count ?? 1
+  const stage1Entries: VoteEntry[] = stage1Votes.map(v => ({
+    key: v.book_id,
+    title: bookById[v.book_id]?.title ?? `#${v.book_id}`,
+    value: v.votes_count,
+  }))
 
   const stage2Votes = runoff
     ? [...runoff.votes].sort((a, b) => b.votes_count - a.votes_count)
     : []
-  const stage2Max = stage2Votes[0]?.votes_count ?? 1
+
+  const stage2Entries: VoteEntry[] = stage2Votes.map(v => ({
+    key: v.book_id,
+    title: bookById[v.book_id]?.title ?? `#${v.book_id}`,
+    value: v.votes_count,
+  }))
 
   return (
     <div className="card">
@@ -124,36 +92,23 @@ export default function CurrentBook({ book, authorName, addedByUser, poll, pollV
           </div>
         )}
 
-        {poll && stage1Votes.length > 0 && (
+        {poll && stage1Entries.length > 0 && (
           <div className="poll">
-
             <div className="stage-header">
               <span className="stage-label">
-                {runoff ? 'Голосование · Этап I' : `Голосование`}
+                {runoff ? 'Голосование · Этап I' : 'Голосование'}
               </span>
               <span className="stage-date">{formatDate(poll.date)}</span>
             </div>
-            <VoteList
-              votes={stage1Votes}
-              maxVotes={stage1Max}
-              winnerId={book.id}
-              bookById={bookById}
-              countLabel={(n, total) => `${n} · ${Math.round((n / total) * 100)}%`}
-            />
+            <VoteBarList entries={stage1Entries} winnerKey={book.id} />
 
-            {runoff && stage2Votes.length > 0 && (
+            {runoff && stage2Entries.length > 0 && (
               <>
                 <div className="stage-header stage-header--runoff">
                   <span className="stage-label">Голосование · Итог</span>
                   <span className="stage-date">{formatDate(runoff.date)}</span>
                 </div>
-                <VoteList
-                  votes={stage2Votes}
-                  maxVotes={stage2Max}
-                  winnerId={book.id}
-                  bookById={bookById}
-                  countLabel={(n, total) => `${n} · ${Math.round((n / total) * 100)}%`}
-                />
+                <VoteBarList entries={stage2Entries} winnerKey={book.id} />
               </>
             )}
           </div>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { usePolls, usePollVotes, useBooks, useAuthors } from '@/hooks'
 import type { Book, Poll } from '@/types'
+import VoteBarList, { type VoteEntry } from '@/components/VoteBarList'
 import './PollsPage.scss'
 
 const MONTHS = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек']
@@ -84,9 +85,17 @@ export default function PollsPage() {
             ? votes.filter(v => v.poll_id === stage2.id).sort((a, b) => b.votes_count - a.votes_count)
             : []
 
-          const s1Max = s1Votes[0]?.votes_count ?? 1
-          const s2Max = s2Votes[0]?.votes_count ?? 1
           const totalCandidates = new Set([...s1Votes, ...s2Votes].map(v => v.book_id)).size
+
+          const toEntries = (vs: typeof s1Votes): VoteEntry[] => vs.map(v => {
+            const book = bookById[v.book_id]
+            return {
+              key: v.id,
+              title: book?.title ?? `#${v.book_id}`,
+              subtitle: book?.author_id != null ? authorById[book.author_id] : undefined,
+              value: v.votes_count,
+            }
+          })
 
           return (
             <div key={stage1.id} className={`card${isOpen ? ' card--open' : ''}`}>
@@ -118,24 +127,23 @@ export default function PollsPage() {
 
               {isOpen && (
                 <div className="body">
-                  <VoteSection
-                    label={stage2 ? '1 тур' : null}
-                    pollVotes={s1Votes}
-                    maxVotes={s1Max}
-                    winner_book_id={stage2 ? null : winner_book_id}
-                    bookById={bookById}
-                    authorById={authorById}
-                  />
-                  {stage2 && (
-                    <VoteSection
-                      label="Финал"
-                      pollVotes={s2Votes}
-                      maxVotes={s2Max}
-                      winner_book_id={winner_book_id}
-                      bookById={bookById}
-                      authorById={authorById}
-                      accent
+                  <div className="section">
+                    {stage2 && <div className="section-label">1 тур</div>}
+                    <VoteBarList
+                      entries={toEntries(s1Votes)}
+                      winnerKey={stage2 ? undefined : winner_book_id ?? undefined}
+                      accentWinner
                     />
+                  </div>
+                  {stage2 && s2Votes.length > 0 && (
+                    <div className="section section--accent">
+                      <div className="section-label">Финал</div>
+                      <VoteBarList
+                        entries={toEntries(s2Votes)}
+                        winnerKey={winner_book_id ?? undefined}
+                        accentWinner
+                      />
+                    </div>
                   )}
                 </div>
               )}
@@ -143,54 +151,6 @@ export default function PollsPage() {
           )
         })}
       </div>
-    </div>
-  )
-}
-
-function VoteSection({
-  label,
-  pollVotes,
-  maxVotes,
-  winner_book_id,
-  bookById,
-  authorById,
-  accent = false,
-}: {
-  label: string | null
-  pollVotes: { id: number; book_id: number; votes_count: number }[]
-  maxVotes: number
-  winner_book_id: number | null
-  bookById: Record<number, Book>
-  authorById: Record<number, string>
-  accent?: boolean
-}) {
-  return (
-    <div className={`section${accent ? ' section--accent' : ''}`}>
-      {label && <div className="section-label">{label}</div>}
-      {pollVotes.map(vote => {
-        const book = bookById[vote.book_id]
-        const isWinner = vote.book_id === winner_book_id
-        const pct = Math.round((vote.votes_count / maxVotes) * 100)
-        return (
-          <div
-            key={vote.id}
-            className={`vote-row${isWinner ? ' vote-row--win' : ''}`}
-          >
-            <div className="vote-title">
-              {isWinner && <span className="trophy">★</span>}
-              {book?.title ?? `Book #${vote.book_id}`}
-              {book?.author_id != null && <span className="vote-author">{authorById[book.author_id]}</span>}
-            </div>
-            <div className="vote-bar-wrap">
-              <div
-                className={`vote-bar${isWinner ? ' vote-bar--accent' : ''}`}
-                style={{ width: `${pct}%` }}
-              />
-            </div>
-            <div className="vote-count">{vote.votes_count}</div>
-          </div>
-        )
-      })}
     </div>
   )
 }
