@@ -1,5 +1,5 @@
 import type { AwardVote, Book } from '@/types'
-import styles from './AwardCard.module.css'
+import './AwardCard.scss'
 
 interface Props {
   year: number
@@ -25,34 +25,34 @@ export default function AwardCard({ year, votes, books }: Props) {
   const maxTelegram = telegramNominees[0]?.telegram_votes ?? 1
 
   return (
-    <div className={styles.card}>
-      <div className={styles.header}>
-        <span className={styles.label}>Книга года</span>
-        <span className={styles.year}>{year}</span>
+    <div className="card">
+      <div className="header">
+        <span className="label">Книга года</span>
+        <span className="year">{year}</span>
       </div>
 
-      <p className={styles.subtitle}>Результаты опроса · топ {TOP_N}</p>
+      <p className="subtitle">Результаты опроса · топ {TOP_N}</p>
 
-      <div className={styles.list}>
+      <div className="list">
         {sorted.map(v => {
           const book = bookById[v.book_id]
           if (!book) return null
           const pct = (v.liked_votes / maxLiked) * 100
           return (
-            <div key={v.id} className={styles.row}>
-              <div className={styles.rowMain}>
-                <span className={`${styles.rowTitle} ${v.is_winner ? styles.winner : ''}`}>
-                  {v.is_winner && <span className={styles.star}>★ </span>}
+            <div key={v.id} className="row">
+              <div className="row-main">
+                <span className={`row-title${v.is_winner ? ' winner' : ''}`}>
+                  {v.is_winner && <span className="star">★ </span>}
                   {book.title}
                 </span>
-                <div className={styles.barTrack}>
+                <div className="bar-track">
                   <div
-                    className={styles.bar}
+                    className="bar"
                     style={{ width: `${pct}%` }}
                   />
                 </div>
               </div>
-              <span className={`${styles.count} ${v.is_winner ? styles.winner : ''}`}>{v.liked_votes} · {Math.round((v.liked_votes / totalLiked) * 100)}%</span>
+              <span className={`count${v.is_winner ? ' winner' : ''}`}>{v.liked_votes} · {Math.round((v.liked_votes / totalLiked) * 100)}%</span>
             </div>
           )
         })}
@@ -60,9 +60,9 @@ export default function AwardCard({ year, votes, books }: Props) {
 
       {telegramNominees.length > 0 && (
         <>
-          <hr className={styles.divider} />
-          <p className={styles.telegramLabel}>Финал</p>
-          <div className={styles.list}>
+          <hr className="divider" />
+          <p className="telegram-label">Финал</p>
+          <div className="list">
             {telegramNominees.map(v => {
               const book = bookById[v.book_id]
               if (!book) return null
@@ -72,19 +72,19 @@ export default function AwardCard({ year, votes, books }: Props) {
                 ? Math.round(((v.telegram_votes ?? 0) / totalVotes) * 100)
                 : 0
               return (
-                <div key={v.id} className={styles.row}>
-                  <div className={styles.rowMain}>
-                    <span className={`${styles.rowTitle} ${v.is_winner ? styles.winner : ''}`}>
+                <div key={v.id} className="row">
+                  <div className="row-main">
+                    <span className={`row-title${v.is_winner ? ' winner' : ''}`}>
                       {v.is_winner ? '✓ ' : '  '}{book.title}
                     </span>
-                    <div className={styles.barTrack}>
+                    <div className="bar-track">
                       <div
-                        className={styles.bar}
+                        className="bar"
                         style={{ width: `${pct}%` }}
                       />
                     </div>
                   </div>
-                  <span className={`${styles.count} ${v.is_winner ? styles.winner : ''}`}>{v.telegram_votes} · {percent}%</span>
+                  <span className={`count${v.is_winner ? ' winner' : ''}`}>{v.telegram_votes} · {percent}%</span>
                 </div>
               )
             })}

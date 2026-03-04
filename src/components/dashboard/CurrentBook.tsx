@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { Book, User, Poll, PollVote, PollRunoff } from '@/types'
-import styles from './CurrentBook.module.css'
+import './CurrentBook.scss'
 
 interface Props {
   book: Book
@@ -19,8 +19,8 @@ function CoverImage({ bookId, title }: { bookId: number; title: string }) {
 
   if (attempt >= COVER_FORMATS.length) {
     return (
-      <div className={styles.coverPlaceholder}>
-        <span className={styles.coverInitials}>{title.slice(0, 2)}</span>
+      <div className="cover-placeholder">
+        <span className="cover-initials">{title.slice(0, 2)}</span>
       </div>
     )
   }
@@ -29,7 +29,7 @@ function CoverImage({ bookId, title }: { bookId: number; title: string }) {
       key={attempt}
       src={`/covers/${bookId}.${COVER_FORMATS[attempt]}`}
       alt={title}
-      className={styles.cover}
+      className="cover"
       onError={() => setAttempt(a => a + 1)}
     />
   )
@@ -56,26 +56,26 @@ function VoteList({
 }) {
   const total = votes.reduce((s, v) => s + v.votes_count, 0)
   return (
-    <div className={styles.voteList}>
+    <div className="vote-list">
       {votes.map((v, i) => {
         const vBook = bookById[v.book_id]
         if (!vBook) return null
         const isWinner = v.book_id === winnerId
         const pct = (v.votes_count / maxVotes) * 100
         return (
-          <div key={i} className={styles.voteRow}>
-            <div className={styles.voteMain}>
-              <span className={`${styles.voteTitle} ${isWinner ? styles.voteWinner : ''}`}>
+          <div key={i} className="vote-row">
+            <div className="vote-main">
+              <span className={`vote-title${isWinner ? ' vote-winner' : ''}`}>
                 {isWinner && '★ '}{vBook.title}
               </span>
-              <div className={styles.barTrack}>
+              <div className="bar-track">
                 <div
-                  className={styles.bar}
+                  className="bar"
                   style={{ width: `${pct}%` }}
                 />
               </div>
             </div>
-            <span className={`${styles.voteCount} ${isWinner ? styles.voteWinner : ''}`}>{countLabel(v.votes_count, total)}</span>
+            <span className={`vote-count${isWinner ? ' vote-winner' : ''}`}>{countLabel(v.votes_count, total)}</span>
           </div>
         )
       })}
@@ -101,37 +101,37 @@ export default function CurrentBook({ book, authorName, addedByUser, poll, pollV
   const stage2Max = stage2Votes[0]?.votes_count ?? 1
 
   return (
-    <div className={styles.card}>
-      <div className={styles.coverWrap}>
+    <div className="card">
+      <div className="cover-wrap">
         <CoverImage bookId={book.id} title={book.title} />
       </div>
 
-      <div className={styles.info}>
-        <div className={styles.badge}>Сейчас читаем</div>
+      <div className="info">
+        <div className="badge">Сейчас читаем</div>
 
-        <h2 className={styles.title}>{book.title}</h2>
+        <h2 className="title">{book.title}</h2>
 
-        <div className={styles.meta}>
+        <div className="meta">
           {authorName && <span>{authorName}</span>}
-          {authorName && book.country && <span className={styles.dot}>·</span>}
+          {authorName && book.country && <span className="dot">·</span>}
           {book.country && <span>{book.country}</span>}
         </div>
 
         {addedByUser && book.added_at && (
-          <div className={styles.addedBy}>
-            Ведёт книгу <span className={styles.username}>{addedByUser.username}</span>
+          <div className="added-by">
+            Ведёт книгу <span className="username">{addedByUser.username}</span>
             {' · '}{formatDate(book.added_at)}
           </div>
         )}
 
         {poll && stage1Votes.length > 0 && (
-          <div className={styles.poll}>
+          <div className="poll">
 
-            <div className={styles.stageHeader}>
-              <span className={styles.stageLabel}>
+            <div className="stage-header">
+              <span className="stage-label">
                 {runoff ? 'Голосование · Этап I' : `Голосование`}
               </span>
-              <span className={styles.stageDate}>{formatDate(poll.date)}</span>
+              <span className="stage-date">{formatDate(poll.date)}</span>
             </div>
             <VoteList
               votes={stage1Votes}
@@ -143,9 +143,9 @@ export default function CurrentBook({ book, authorName, addedByUser, poll, pollV
 
             {runoff && stage2Votes.length > 0 && (
               <>
-                <div className={`${styles.stageHeader} ${styles.stageHeaderRunoff}`}>
-                  <span className={styles.stageLabel}>Голосование · Итог</span>
-                  <span className={styles.stageDate}>{formatDate(runoff.date)}</span>
+                <div className="stage-header stage-header--runoff">
+                  <span className="stage-label">Голосование · Итог</span>
+                  <span className="stage-date">{formatDate(runoff.date)}</span>
                 </div>
                 <VoteList
                   votes={stage2Votes}

@@ -14,16 +14,16 @@ import {
   NominationSankey, GroupedBarChart, SunburstUserChart, SimpleAreaChart,
   TreemapChart, RadarMultiChart,
 } from '@/components/charts'
-import styles from './StatsPage.module.css'
+import './StatsPage.scss'
 
 function SectionTitle({ children }: { children: string }) {
-  return <h2 className={styles.sectionTitle}>{children}</h2>
+  return <h2 className="section-title">{children}</h2>
 }
 
 function ChartCard({ title, children, wide }: { title: string; children: React.ReactNode; wide?: boolean }) {
   return (
-    <div className={`${styles.card} ${wide ? styles.cardWide : ''}`}>
-      <p className={styles.cardLabel}>{title}</p>
+    <div className={`card${wide ? ' card--wide' : ''}`}>
+      <p className="card-label">{title}</p>
       {children}
     </div>
   )
@@ -72,11 +72,11 @@ export default function StatsPage() {
   const countries = countryDistribution(books)
 
   return (
-    <div className={styles.page}>
-      <h1 className={styles.pageTitle}>Всякая стата</h1>
+    <div className="page">
+      <h1 className="page-title">Всякая стата</h1>
 
       <SectionTitle>Книги</SectionTitle>
-      <div className={styles.chartsGrid}>
+      <div className="charts-grid">
 
         <ChartCard title="Добавлено книг по месяцам" wide>
           <SimpleLineChart data={addedByMonth} xKey="month" yKey="count" xInterval={3} name="Книг" />
@@ -99,17 +99,17 @@ export default function StatsPage() {
         </ChartCard>
 
         <ChartCard title="Среднее время от добавления до выбора">
-          <div className={styles.bigStat}>
-            <span className={styles.bigStatNumber}>{avgDays}</span>
-            <span className={styles.bigStatLabel}>дней</span>
+          <div className="big-stat">
+            <span className="big-stat-number">{avgDays}</span>
+            <span className="big-stat-label">дней</span>
           </div>
-          <p className={styles.bigStatSub}>среднее для прочитанных книг</p>
+          <p className="big-stat-sub">среднее для прочитанных книг</p>
         </ChartCard>
 
       </div>
 
       <SectionTitle>Голосования</SectionTitle>
-      <div className={styles.chartsGrid}>
+      <div className="charts-grid">
 
         <ChartCard title="Участие в голосованиях (по людям)" wide>
           <SimpleLineChart
@@ -149,7 +149,7 @@ export default function StatsPage() {
       </div>
 
       <SectionTitle>Участники</SectionTitle>
-      <div className={styles.pairsGrid}>
+      <div className="pairs-grid">
 
         <ChartCard title="Активность участников (предложено vs выбрано)" wide>
           <GroupedBarChart
@@ -166,7 +166,7 @@ export default function StatsPage() {
       </div>
 
       <SectionTitle>Разное</SectionTitle>
-      <div className={styles.chartsGrid}>
+      <div className="charts-grid">
 
         <ChartCard title="Интервалы между голосованиями (дни)" wide>
           <SimpleAreaChart data={gaps} xKey="date" yKey="gap" xInterval={9} valueLabel="Дней" />

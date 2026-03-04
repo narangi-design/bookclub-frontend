@@ -28,22 +28,22 @@
   gap: 0.125rem;
 }
 
-.navLink {
+.nav-link {
   display: block;
   padding: 0.5rem 0.75rem;
   color: var(--color-text-muted);
   font-size: 0.9rem;
   transition: color 0.15s, background-color 0.15s;
-}
 
-.navLink:hover {
-  color: var(--color-text);
-  background-color: var(--color-border);
-}
+  &:hover {
+    color: var(--color-text);
+    background-color: var(--color-border);
+  }
 
-.navLinkActive {
-  color: var(--color-accent);
-  background-color: var(--color-accent-subtle);
+  &--active {
+    color: var(--color-accent);
+    background-color: var(--color-accent-subtle);
+  }
 }
 
 .main {

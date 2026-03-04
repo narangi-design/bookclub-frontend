@@ -1,13 +1,14 @@
 .card {
-  composes: card from '../../styles/shared.module.css';
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   padding: 1.5rem;
   display: flex;
   gap: 1.75rem;
 }
 
-/* ── Cover ─────────────────────────────────────── */
+// ── Cover ─────────────────────────────────────────────────
 
-.coverWrap {
+.cover-wrap {
   flex-shrink: 0;
   width: 130px;
 }
@@ -20,7 +21,7 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
-.coverPlaceholder {
+.cover-placeholder {
   width: 100%;
   aspect-ratio: 2 / 3;
   background: linear-gradient(135deg, var(--color-border) 0%, var(--color-surface) 100%);
@@ -30,14 +31,14 @@
   justify-content: center;
 }
 
-.coverInitials {
+.cover-initials {
   font-size: 2rem;
   font-weight: 700;
   color: var(--color-text-muted);
   text-transform: uppercase;
 }
 
-/* ── Info ──────────────────────────────────────── */
+// ── Info ───────────────────────────────────────────────────
 
 .info {
   flex: 1;
@@ -75,7 +76,7 @@
   color: var(--color-border);
 }
 
-.addedBy {
+.added-by {
   font-size: 0.8rem;
   color: var(--color-text-muted);
   margin-top: 0.1rem;
@@ -85,7 +86,7 @@
   color: var(--color-text);
 }
 
-/* ── Poll result ───────────────────────────────── */
+// ── Poll result ────────────────────────────────────────────
 
 .poll {
   margin-top: 0.75rem;
@@ -97,20 +98,20 @@
   gap: 0.6rem;
 }
 
-.stageHeader {
+.stage-header {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 0.5rem;
+
+  &--runoff {
+    margin-top: 0.9rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-border);
+  }
 }
 
-.stageHeaderRunoff {
-  margin-top: 0.9rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border);
-}
-
-.stageLabel {
+.stage-label {
   font-size: 0.72rem;
   font-weight: 600;
   color: var(--color-text-muted);
@@ -118,32 +119,32 @@
   letter-spacing: 0.06em;
 }
 
-.stageDate {
+.stage-date {
   font-size: 0.72rem;
   color: var(--color-text-muted);
 }
 
-.voteList {
+.vote-list {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.voteRow {
+.vote-row {
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
   gap: 0.75rem;
 }
 
-.voteMain {
+.vote-main {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
   min-width: 0;
 }
 
-.voteTitle {
+.vote-title {
   font-size: 0.82rem;
   color: var(--color-text-muted);
   white-space: nowrap;
@@ -151,15 +152,12 @@
   text-overflow: ellipsis;
 }
 
-.voteWinner {
+.vote-winner {
   color: var(--color-accent);
   font-weight: 600;
 }
 
-.barTrack { composes: barTrack from '../../styles/shared.module.css'; }
-.bar      { composes: bar      from '../../styles/shared.module.css'; }
-
-.voteCount {
+.vote-count {
   font-size: 0.75rem;
   color: var(--color-text-muted);
   width: 5rem;

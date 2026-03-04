@@ -1,23 +1,22 @@
 import { useState } from 'react'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { useBooks, usePolls, useUsers, useAwardVotes, usePollVotes, usePollRunoffs, useAuthors } from '@/hooks'
 import AwardCard from '@/components/dashboard/AwardCard'
 import CurrentBook from '@/components/dashboard/CurrentBook'
-import styles from './DashboardPage.module.css'
+import './DashboardPage.scss'
 
 const COVER_FORMATS = ['jpg', 'jpeg', 'png', 'webp']
 
 function SmallCover({ bookId, title }: { bookId: number; title: string }) {
   const [attempt, setAttempt] = useState(0)
   if (attempt >= COVER_FORMATS.length) {
-    return <div className={styles.recentCoverPlaceholder}>{title.slice(0, 2)}</div>
+    return <div className="recent-cover-placeholder">{title.slice(0, 2)}</div>
   }
   return (
     <img
       key={attempt}
       src={`/covers/${bookId}.${COVER_FORMATS[attempt]}`}
       alt={title}
-      className={styles.recentCover}
+      className="recent-cover"
       onError={() => setAttempt(a => a + 1)}
     />
   )
@@ -35,9 +34,9 @@ interface StatCardProps {
 }
 function StatCard({ value, label }: StatCardProps) {
   return (
-    <div className={styles.statCard}>
-      <div className={styles.statValue}>{value}</div>
-      <div className={styles.statLabel}>{label}</div>
+    <div className="stat-card">
+      <div className="stat-value">{value}</div>
+      <div className="stat-label">{label}</div>
     </div>
   )
 }
@@ -80,10 +79,10 @@ export default function DashboardPage() {
   const votes2024 = awardVotes.filter(v => v.year === 2024)
 
   return (
-    <div className={styles.page}>
-      <h1 className={styles.pageTitle}>Привет, мы книжный клуб!</h1>
+    <div className="page">
+      <h1 className="page-title">Привет, мы книжный клуб!</h1>
 
-      <div className={styles.statsRow}>
+      <div className="stats-row">
         <StatCard value={books.length}       label="Книг в списке"      />
         <StatCard value={readBooks.length}   label="Прочитано"          />
         <StatCard value={toReadBooks.length} label="Предстоит прочитать"/>
@@ -91,8 +90,8 @@ export default function DashboardPage() {
       </div>
 
       {currentBook && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Сейчас читаем</h2>
+        <section className="section">
+          <h2 className="section-title">Сейчас читаем</h2>
           <CurrentBook
             book={currentBook}
             authorName={currentBook.author_id != null ? authorById[currentBook.author_id] : undefined}
@@ -106,27 +105,27 @@ export default function DashboardPage() {
       )}
 
       {recentBooks.length > 0 && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Последние прочитанные</h2>
-          <div className={styles.recentList}>
+        <section className="section">
+          <h2 className="section-title">Последние прочитанные</h2>
+          <div className="recent-list">
             {recentBooks.map(book => {
               const addedBy = users.find(u => u.id === book.added_by_user_id)
               const authorName = book.author_id != null ? authorById[book.author_id] : null
               return (
-                <div key={book.id} className={styles.recentItem}>
+                <div key={book.id} className="recent-item">
                   <SmallCover bookId={book.id} title={book.title} />
-                  <div className={styles.recentInfo}>
-                    <div className={styles.recentTitle}>{book.title}</div>
+                  <div className="recent-info">
+                    <div className="recent-title">{book.title}</div>
                     {(authorName || book.country) && (
-                      <div className={styles.recentMeta}>
+                      <div className="recent-meta">
                         {[authorName, book.country].filter(Boolean).join(' · ')}
                       </div>
                     )}
-                    <div className={styles.recentFooter}>
+                    <div className="recent-footer">
                       {book.elected_at && <span>{formatDate(book.elected_at)}</span>}
                       {addedBy && (
                         <>
-                          <span className={styles.recentDot}>·</span>
+                          <span className="recent-dot">·</span>
                           <span>от {addedBy.username}</span>
                         </>
                       )}
@@ -139,9 +138,9 @@ export default function DashboardPage() {
         </section>
       )}
 
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Премии книжного клуба</h2>
-        <div className={styles.awardsGrid}>
+      <section className="section">
+        <h2 className="section-title">Премии книжного клуба</h2>
+        <div className="awards-grid">
           <AwardCard year={2023} votes={votes2023} books={books} />
           <AwardCard year={2024} votes={votes2024} books={books} />
         </div>

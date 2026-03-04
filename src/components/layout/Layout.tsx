@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import styles from './Layout.module.css'
+import './Layout.scss'
 
 const navItems = [
   { to: '/dashboard', label: 'Общее' },
@@ -10,16 +10,16 @@ const navItems = [
 
 export default function Layout() {
   return (
-    <div className={styles.shell}>
-      <aside className={styles.sidebar}>
-        <div className={styles.brand}>Книжный клуб</div>
-        <nav className={styles.nav}>
+    <div className="shell">
+      <aside className="sidebar">
+        <div className="brand">Книжный клуб</div>
+        <nav className="nav">
           {navItems.map(({ to, label }) => (
             <NavLink
               key={to}
               to={to}
               className={({ isActive }) =>
-                `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
+                `nav-link${isActive ? ' nav-link--active' : ''}`
               }
             >
               {label}
@@ -27,7 +27,7 @@ export default function Layout() {
           ))}
         </nav>
       </aside>
-      <main className={styles.main}>
+      <main className="main">
         <Outlet />
       </main>
     </div>

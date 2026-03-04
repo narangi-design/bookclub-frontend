@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { User } from '@/types'
 import { useBooks, useUsers, useAuthors } from '@/hooks'
-import styles from './BooksPage.module.css'
+import './BooksPage.scss'
 
 function formatDate(iso: string) {
   const d = new Date(iso)
@@ -50,52 +50,52 @@ export default function BooksPage() {
   }
 
   return (
-    <div className={styles.page}>
-      <h1 className={styles.pageTitle}>Books</h1>
+    <div className="page">
+      <h1 className="page-title">Books</h1>
 
-      <div className={styles.filterRow}>
+      <div className="filter-row">
         {(['all', 'read', 'to_read', 'removed'] as Filter[]).map(f => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`${styles.filterBtn} ${filter === f ? styles.filterBtnActive : ''}`}
+            className={`filter-btn${filter === f ? ' filter-btn--active' : ''}`}
           >
             {filterLabels[f]}
-            <span className={styles.filterCount}>{counts[f]}</span>
+            <span className="filter-count">{counts[f]}</span>
           </button>
         ))}
       </div>
 
-      <div className={styles.tableWrap}>
-        <table className={styles.table}>
+      <div className="table-wrap">
+        <table className="table">
           <thead>
             <tr>
-              <th className={styles.th}>Название</th>
-              <th className={styles.th}>Автор</th>
-              <th className={styles.th}>Инициатор</th>
-              <th className={`${styles.th} ${styles.thRight}`}>Добавлена в список</th>
-              <th className={`${styles.th} ${styles.thRight}`}>Когда выбрана</th>
+              <th className="th">Название</th>
+              <th className="th">Автор</th>
+              <th className="th">Инициатор</th>
+              <th className="th th--right">Добавлена в список</th>
+              <th className="th th--right">Когда выбрана</th>
             </tr>
           </thead>
           <tbody>
             {visible.map(book => (
-              <tr key={book.id} className={styles.tr}>
-                <td className={styles.td}>
-                  <span className={styles.bookTitle}>{book.title}</span>
+              <tr key={book.id} className="tr">
+                <td className="td">
+                  <span className="book-title">{book.title}</span>
                   {book.status === 'removed' && (
-                    <span className={styles.badge}>removed</span>
+                    <span className="badge">removed</span>
                   )}
                 </td>
-                <td className={`${styles.td} ${styles.muted}`}>{book.author_id != null ? authorById[book.author_id] : '—'}</td>
-                <td className={`${styles.td} ${styles.muted}`}>
+                <td className="td muted">{book.author_id != null ? authorById[book.author_id] : '—'}</td>
+                <td className="td muted">
                   {book.added_by_user_id != null
                     ? (userById[book.added_by_user_id]?.username ?? '—')
                     : '—'}
                 </td>
-                <td className={`${styles.td} ${styles.muted} ${styles.tdRight}`}>
+                <td className="td muted td--right">
                   {book.added_at ? formatDate(book.added_at) : '—'}
                 </td>
-                <td className={`${styles.td} ${styles.muted} ${styles.tdRight}`}>
+                <td className="td muted td--right">
                   {book.elected_at ? formatDate(book.elected_at) : '—'}
                 </td>
               </tr>

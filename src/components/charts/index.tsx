@@ -16,7 +16,7 @@ import {
 } from 'recharts'
 import type { Book, Poll, PollVote } from '@/types'
 import { votesForPoll, sortedPolls } from '@/utils'
-import styles from './charts.module.css'
+import './charts.scss'
 
 // ── Visual constants ─────────────────────────────────────────────────────────
 // All chart styling lives here. To change the look of all charts — change here.
@@ -268,12 +268,12 @@ export function PollPieChart({ polls, votes, bookById, height = 180 }: PollPieCh
 
   return (
     <>
-      <div className={styles.pollTabs}>
+      <div className="poll-tabs">
         {recentPolls.map(p => (
           <button
             key={p.id}
             onClick={() => setSelectedPollId(p.id)}
-            className={`${styles.pollTab} ${selectedPollId === p.id ? styles.pollTabActive : ''}`}
+            className={`poll-tab${selectedPollId === p.id ? ' poll-tab--active' : ''}`}
           >
             {p.date.slice(0, 7)}
           </button>

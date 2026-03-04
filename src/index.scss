@@ -1,0 +1,34 @@
+@use 'styles/shared';
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --color-bg: #f5eff0;
+  --color-surface: #ffffff;
+  --color-border: #e3d0d4;
+  --color-text: #1c1215;
+  --color-text-muted: #7a6870;
+  --color-accent: #c0394f;
+  --color-accent-subtle: rgba(192, 57, 79, 0.08);
+  --font-display: 'Zen Antique', Georgia, serif;
+  --font-body: 'Nunito Sans', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  line-height: 1.5;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}

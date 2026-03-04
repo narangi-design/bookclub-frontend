@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { usePolls, usePollVotes, useBooks, useAuthors } from '@/hooks'
 import type { Book, Poll } from '@/types'
-import styles from './PollsPage.module.css'
+import './PollsPage.scss'
 
 const MONTHS = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек']
 function fmtDate(d: string): string {
@@ -57,10 +57,23 @@ export default function PollsPage() {
     sessions
 
   return (
-    <div className={styles.page}>
-      <h1 className={styles.pageTitle}>Голосования</h1>
+    <div className="page">
+      <h1 className="page-title">Голосования</h1>
 
-      <div className={styles.list}>
+      <div className="filter-row">
+        {(['all', 'won', 'open'] as Filter[]).map(f => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`filter-btn${filter === f ? ' filter-btn--active' : ''}`}
+          >
+            {f === 'all' ? 'Все' : f === 'won' ? 'С победителем' : 'Без победителя'}
+            <span className="filter-count">{counts[f]}</span>
+          </button>
+        ))}
+      </div>
+
+      <div className="list">
         {filtered.map(({ stage1, stage2, winner_book_id }) => {
           const winner = winner_book_id != null ? bookById[winner_book_id] : null
           const isOpen = expandedId === stage1.id
@@ -76,35 +89,35 @@ export default function PollsPage() {
           const totalCandidates = new Set([...s1Votes, ...s2Votes].map(v => v.book_id)).size
 
           return (
-            <div key={stage1.id} className={`${styles.card} ${isOpen ? styles.cardOpen : ''}`}>
+            <div key={stage1.id} className={`card${isOpen ? ' card--open' : ''}`}>
               <button
-                className={styles.cardHeader}
+                className="card-header"
                 onClick={() => setExpandedId(prev => prev === stage1.id ? null : stage1.id)}
               >
-                <div className={styles.headerLeft}>
-                  <span className={styles.date}>{fmtDate(stage1.date)}</span>
-                  <span className={styles.pollId}>#{stage1.id}</span>
-                  {stage2 && <span className={styles.stageBadge}>2 тура</span>}
+                <div className="header-left">
+                  <span className="date">{fmtDate(stage1.date)}</span>
+                  <span className="poll-id">#{stage1.id}</span>
+                  {stage2 && <span className="stage-badge">2 тура</span>}
                 </div>
 
-                <div className={styles.headerCenter}>
+                <div className="header-center">
                   {winner
-                    ? <span className={styles.winnerName}>{winner.title}</span>
-                    : <span className={styles.noWinner}>без победителя</span>
+                    ? <span className="winner-name">{winner.title}</span>
+                    : <span className="no-winner">без победителя</span>
                   }
                 </div>
 
-                <div className={styles.headerRight}>
+                <div className="header-right">
                   {stage1.total_voters != null && (
-                    <span className={styles.meta}>{stage1.total_voters} уч.</span>
+                    <span className="meta">{stage1.total_voters} уч.</span>
                   )}
-                  <span className={styles.meta}>{totalCandidates} кн.</span>
-                  <span className={`${styles.chevron} ${isOpen ? styles.chevronUp : ''}`}>▾</span>
+                  <span className="meta">{totalCandidates} кн.</span>
+                  <span className={`chevron${isOpen ? ' chevron--up' : ''}`}>▾</span>
                 </div>
               </button>
 
               {isOpen && (
-                <div className={styles.body}>
+                <div className="body">
                   <VoteSection
                     label={stage2 ? '1 тур' : null}
                     pollVotes={s1Votes}
@@ -152,8 +165,8 @@ function VoteSection({
   accent?: boolean
 }) {
   return (
-    <div className={`${styles.section} ${accent ? styles.sectionAccent : ''}`}>
-      {label && <div className={styles.sectionLabel}>{label}</div>}
+    <div className={`section${accent ? ' section--accent' : ''}`}>
+      {label && <div className="section-label">{label}</div>}
       {pollVotes.map(vote => {
         const book = bookById[vote.book_id]
         const isWinner = vote.book_id === winner_book_id
@@ -161,20 +174,20 @@ function VoteSection({
         return (
           <div
             key={vote.id}
-            className={`${styles.voteRow} ${isWinner ? styles.voteRowWin : ''}`}
+            className={`vote-row${isWinner ? ' vote-row--win' : ''}`}
           >
-            <div className={styles.voteTitle}>
-              {isWinner && <span className={styles.trophy}>★</span>}
+            <div className="vote-title">
+              {isWinner && <span className="trophy">★</span>}
               {book?.title ?? `Book #${vote.book_id}`}
-              {book?.author_id != null && <span className={styles.voteAuthor}>{authorById[book.author_id]}</span>}
+              {book?.author_id != null && <span className="vote-author">{authorById[book.author_id]}</span>}
             </div>
-            <div className={styles.voteBarWrap}>
+            <div className="vote-bar-wrap">
               <div
-                className={`${styles.voteBar} ${isWinner ? styles.voteBarAccent : ''}`}
+                className={`vote-bar${isWinner ? ' vote-bar--accent' : ''}`}
                 style={{ width: `${pct}%` }}
               />
             </div>
-            <div className={styles.voteCount}>{vote.votes_count}</div>
+            <div className="vote-count">{vote.votes_count}</div>
           </div>
         )
       })}

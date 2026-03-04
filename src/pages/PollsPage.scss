@@ -2,19 +2,13 @@
   max-width: 900px;
 }
 
-.pageTitle {
-  composes: pageTitle from '../styles/shared.module.css';
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
   margin: 0 0 1.5rem;
 }
 
-/* ── Filter row ─────────────────────────────────────────── */
-
-.filterRow       { composes: filterRow       from '../styles/shared.module.css'; }
-.filterBtn       { composes: filterBtn       from '../styles/shared.module.css'; }
-.filterBtnActive { composes: filterBtnActive from '../styles/shared.module.css'; }
-.filterCount     { composes: filterCount     from '../styles/shared.module.css'; }
-
-/* ── Poll list ──────────────────────────────────────────── */
+// ── Poll list ────────────────────────────────────────────────
 
 .list {
   display: flex;
@@ -23,18 +17,19 @@
 }
 
 .card {
-  composes: card from '../styles/shared.module.css';
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   overflow: hidden;
   transition: border-color 0.15s;
+
+  &--open {
+    border-color: var(--color-accent);
+  }
 }
 
-.cardOpen {
-  border-color: var(--color-accent);
-}
+// ── Card header (clickable) ──────────────────────────────────
 
-/* ── Card header (clickable) ────────────────────────────── */
-
-.cardHeader {
+.card-header {
   display: flex;
   align-items: center;
   width: 100%;
@@ -47,13 +42,13 @@
   font-family: var(--font-body);
   color: var(--color-text);
   transition: background-color 0.1s;
+
+  &:hover {
+    background: var(--color-bg);
+  }
 }
 
-.cardHeader:hover {
-  background: var(--color-bg);
-}
-
-.headerLeft {
+.header-left {
   display: flex;
   align-items: baseline;
   gap: 0.5rem;
@@ -67,17 +62,17 @@
   white-space: nowrap;
 }
 
-.pollId {
+.poll-id {
   font-size: 0.7rem;
   color: var(--color-text-muted);
 }
 
-.headerCenter {
+.header-center {
   flex: 1;
   min-width: 0;
 }
 
-.winnerName {
+.winner-name {
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
@@ -86,13 +81,13 @@
   text-overflow: ellipsis;
 }
 
-.noWinner {
+.no-winner {
   font-size: 0.825rem;
   color: var(--color-text-muted);
   font-style: italic;
 }
 
-.headerRight {
+.header-right {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -112,13 +107,13 @@
   display: inline-block;
   line-height: 1;
   user-select: none;
+
+  &--up {
+    transform: rotate(180deg);
+  }
 }
 
-.chevronUp {
-  transform: rotate(180deg);
-}
-
-.stageBadge {
+.stage-badge {
   font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -129,7 +124,7 @@
   padding: 0.1em 0.4em;
 }
 
-/* ── Expanded body ──────────────────────────────────────── */
+// ── Expanded body ────────────────────────────────────────────
 
 .body {
   border-top: 1px solid var(--color-border);
@@ -137,17 +132,17 @@
 
 .section {
   padding: 0.375rem 0;
+
+  & + .section {
+    border-top: 1px solid var(--color-border);
+  }
+
+  &--accent {
+    background: var(--color-bg);
+  }
 }
 
-.section + .section {
-  border-top: 1px solid var(--color-border);
-}
-
-.sectionAccent {
-  background: var(--color-bg);
-}
-
-.sectionLabel {
+.section-label {
   font-size: 0.68rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -156,26 +151,26 @@
   padding: 0.3rem 1.25rem 0.1rem;
 }
 
-.voteRow {
+.vote-row {
   display: grid;
   grid-template-columns: 1fr 140px 28px;
   align-items: center;
   gap: 0.75rem;
   padding: 0.3rem 1.25rem;
+
+  &--win {
+    background: var(--color-accent-subtle);
+  }
 }
 
-.voteRowWin {
-  background: var(--color-accent-subtle);
-}
-
-.voteTitle {
+.vote-title {
   font-size: 0.825rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.voteAuthor {
+.vote-author {
   margin-left: 0.4rem;
   font-size: 0.75rem;
   color: var(--color-text-muted);
@@ -187,22 +182,22 @@
   font-size: 0.7rem;
 }
 
-.voteBarWrap {
+.vote-bar-wrap {
   height: 5px;
   background: var(--color-border);
   overflow: hidden;
 }
 
-.voteBar {
+.vote-bar {
   height: 100%;
   background: var(--color-text-muted);
+
+  &--accent {
+    background: var(--color-accent);
+  }
 }
 
-.voteBarAccent {
-  background: var(--color-accent);
-}
-
-.voteCount {
+.vote-count {
   font-size: 0.75rem;
   color: var(--color-text-muted);
   text-align: right;

@@ -1,5 +1,6 @@
 .card {
-  composes: card from '../../styles/shared.module.css';
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   padding: 1.5rem;
 }
 
@@ -37,12 +38,6 @@
   gap: 0.6rem;
 }
 
-.row      { composes: row      from '../../styles/shared.module.css'; }
-.rowMain  { composes: rowMain  from '../../styles/shared.module.css'; }
-.rowTitle { composes: rowTitle from '../../styles/shared.module.css'; }
-.barTrack { composes: barTrack from '../../styles/shared.module.css'; }
-.bar      { composes: bar      from '../../styles/shared.module.css'; }
-
 .winner {
   color: var(--color-accent);
   font-weight: 600;
@@ -66,7 +61,7 @@
   margin: 1.25rem 0 0.75rem;
 }
 
-.telegramLabel {
+.telegram-label {
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--color-text-muted);
