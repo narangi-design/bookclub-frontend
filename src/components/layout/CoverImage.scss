@@ -1,5 +1,6 @@
 .cover-placeholder {
   aspect-ratio: 2 / 3;
+  width: 100%;
   background: linear-gradient(150deg, var(--color-border-subtle) 0%, var(--color-border) 100%);
   display: flex;
   align-items: center;
@@ -15,13 +16,19 @@
 }
 
 .default-book-cover {
-  width: 100%;
-  height: auto;
+  aspect-ratio: 2 / 3;
+  width: 6rem;
   display: block;
+  object-fit: cover;
 }
 
 .small-book-cover {
-  width: 100%;
-  height: auto;
+  aspect-ratio: 2 / 3;
+  width: 3rem;
   display: block;
+  object-fit: cover;
+}
+
+.cover-placeholder--small {
+  width: 48px;
 }

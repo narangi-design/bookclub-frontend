@@ -170,12 +170,19 @@ button {
 .badge {
   display: inline-block;
   font-size: var(--text-2xs);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
   color: var(--color-text-muted);
   border: 1px solid var(--color-border);
   padding: 0.1em 0.45em;
-  margin-left: var(--sp-2);
   vertical-align: middle;
+}
+
+.user-link {
+  color: var(--color-text);
+  transition: color var(--transition-base);
+
+  &:hover {
+    color: var(--color-accent);
+  }
 }

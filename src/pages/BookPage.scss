@@ -21,6 +21,7 @@
 
 .bp-cover {
   flex-shrink: 0;
+  width: 180px;
 }
 
 .bp-info {
@@ -117,15 +118,6 @@
   dd {
     margin: 0;
     font-size: var(--text-sm);
-  }
-}
-
-.bp-user-link {
-  color: var(--color-text);
-  transition: color var(--transition-base);
-
-  &:hover {
-    color: var(--color-accent);
   }
 }
 

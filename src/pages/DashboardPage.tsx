@@ -3,13 +3,7 @@ import { useBooks, usePolls, useUsers, useAwardVotes, usePollVotes, usePollRunof
 import AwardCard from '@/components/dashboard/AwardCard'
 import CurrentBook from '@/components/dashboard/CurrentBook'
 import StatNumberCard from '@/components/layout/StatNumberCard'
-import CoverImage from '@/components/layout/CoverImage'
-
-function formatDate(iso: string) {
-  return new Intl.DateTimeFormat('ru-RU', {
-    day: 'numeric', month: 'short', year: 'numeric',
-  }).format(new Date(iso))
-}
+import BookCard from '@/components/layout/BookCard'
 
 
 export default function DashboardPage() {
@@ -81,28 +75,18 @@ export default function DashboardPage() {
           <div className="recent-list">
             {recentBooks.map(book => {
               const addedBy = users.find(u => u.id === book.added_by_user_id)
-              const authorName = book.author_id != null ? authorById[book.author_id] : null
+              const authorName = [
+                book.author_id != null ? authorById[book.author_id] : null,
+                book.country,
+              ].filter(Boolean).join(' · ') || undefined
               return (
-                <div key={book.id} className="recent-item">
-                  <CoverImage coverSize="small" bookId={book.id} title={book.title} />
-                  <div className="recent-info">
-                    <div className="recent-title">{book.title}</div>
-                    {(authorName || book.country) && (
-                      <div className="recent-meta">
-                        {[authorName, book.country].filter(Boolean).join(' · ')}
-                      </div>
-                    )}
-                    <div className="recent-footer">
-                      {book.elected_at && <span>{formatDate(book.elected_at)}</span>}
-                      {addedBy && (
-                        <>
-                          <span className="recent-dot">·</span>
-                          <span>от {addedBy.username}</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                <BookCard
+                  key={book.id}
+                  book={book}
+                  authorName={authorName}
+                  showUser
+                  userName={addedBy?.username}
+                />
               )
             })}
           </div>

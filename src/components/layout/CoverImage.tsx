@@ -14,7 +14,7 @@ export default function CoverImage({ coverSize, bookId, title }: Props) {
 
   if (attempt >= COVER_FORMATS.length) {
     return (
-      <div className="cover-placeholder">
+      <div className={`cover-placeholder cover-placeholder--${coverSize}`}>
         <span className="cover-initials">{title.slice(0, 2)}</span>
       </div>
     )

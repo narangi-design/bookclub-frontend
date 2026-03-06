@@ -169,6 +169,17 @@ export function avgDaysToElect(books: Book[]): number {
   return Math.round(diffs.reduce((s, d) => s + d, 0) / diffs.length)
 }
 
+/** Median days between added_at and elected_at for read books */
+export function medianDaysToElect(books: Book[]): number {
+  const diffs = books
+    .filter(b => b.status === 'read' && b.added_at && b.elected_at)
+    .map(b => (new Date(b.elected_at!).getTime() - new Date(b.added_at!).getTime()) / 86_400_000)
+    .sort((a, b) => a - b)
+  if (!diffs.length) return 0
+  const mid = Math.floor(diffs.length / 2)
+  return Math.round(diffs.length % 2 === 0 ? (diffs[mid - 1] + diffs[mid]) / 2 : diffs[mid])
+}
+
 /** Unique voters per poll sorted chronologically, using poll.total_voters */
 export function pollParticipationTimeline(
   polls: Poll[],

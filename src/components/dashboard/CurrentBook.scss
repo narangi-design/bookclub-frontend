@@ -9,6 +9,11 @@
   width: 120px;
 }
 
+.card-header {
+  display: flex;
+  gap: var(--sp-3);
+}
+
 .info {
   flex: 1;
   min-width: 0;
@@ -19,10 +24,8 @@
 
 .badge {
   font-size: var(--text-2xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
   color: var(--color-accent);
+  width: fit-content;
 }
 
 .title {

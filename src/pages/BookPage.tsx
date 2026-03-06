@@ -68,7 +68,7 @@ export default function BookPage() {
               <>
                 <dt>Предложил</dt>
                 <dd>
-                  <Link to={`/authors`} className="bp-user-link">{addedBy.username}</Link>
+                  <Link to={`/authors`} className="user-link">{addedBy.username}</Link>
                 </dd>
               </>
             )}

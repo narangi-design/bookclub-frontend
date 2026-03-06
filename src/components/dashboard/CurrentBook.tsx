@@ -3,6 +3,7 @@ import type { Book, User, Poll, PollVote, PollRunoff } from '@/types'
 import { formatDate } from '@/utils'
 import VoteBarList, { type VoteEntry } from '@/components/layout/VoteBarList'
 import CoverImage from '@/components/layout/CoverImage'
+import { Link } from 'react-router-dom'
 
 interface Props {
   book: Book
@@ -42,50 +43,50 @@ export default function CurrentBook({ book, authorName, addedByUser, poll, pollV
 
   return (
     <div className="card">
-      <div className="cover-wrap">
+      <div className="card-header">
         <CoverImage coverSize="default" bookId={book.id} title={book.title} />
-      </div>
-
-      <div className="info">
-        <div className="badge">Сейчас читаем</div>
-
-        <h2 className="title">{book.title}</h2>
-
-        <div className="meta">
-          {authorName && <span>{authorName}</span>}
-          {authorName && book.country && <span className="dot">·</span>}
-          {book.country && <span>{book.country}</span>}
-        </div>
-
-        {addedByUser && book.added_at && (
-          <div className="added-by">
-            Ведёт книгу <span className="username">{addedByUser.username}</span>
-            {' · '}{formatDate(book.added_at)}
+        <div className="info">
+          <div className="badge">Сейчас читаем</div>
+          <h2 className="title">{book.title}</h2>
+          <div className="meta">
+            {authorName && <span>{authorName}</span>}
+            {authorName && book.country && <span className="dot">·</span>}
+            {book.country && <span>{book.country}</span>}
           </div>
-        )}
-
-        {poll && stage1Entries.length > 0 && (
-          <div className="poll">
-            <div className="stage-header">
-              <span className="stage-label">
-                {runoff ? 'Голосование · Этап I' : 'Голосование'}
-              </span>
-              <span className="date">{formatDate(poll.date)}</span>
+          {addedByUser && book.added_at && (
+            <div className="added-by">
+              В списке с {formatDate(book.added_at)}
+              {' · '}
+              Ведёт книгу {addedByUser && (
+                <Link to={`/users/${addedByUser.id}`} className="user-link">
+                  {addedByUser.username}
+                </Link>
+              )}
             </div>
-            <VoteBarList entries={stage1Entries} winnerKey={book.id} />
-
-            {runoff && stage2Entries.length > 0 && (
-              <>
-                <div className="stage-header stage-header--runoff">
-                  <span className="stage-label">Голосование · Итог</span>
-                  <span className="date">{formatDate(runoff.date)}</span>
-                </div>
-                <VoteBarList entries={stage2Entries} winnerKey={book.id} />
-              </>
-            )}
-          </div>
-        )}
+          )}
+        </div>
       </div>
+      {poll && stage1Entries.length > 0 && (
+        <div className="poll">
+          <div className="stage-header">
+            <span className="stage-label">
+              {runoff ? 'Голосование · Этап I' : 'Голосование'}
+            </span>
+            <span className="date">{formatDate(poll.date)}</span>
+          </div>
+          <VoteBarList entries={stage1Entries} winnerKey={book.id} />
+
+          {runoff && stage2Entries.length > 0 && (
+            <>
+              <div className="stage-header stage-header--runoff">
+                <span className="stage-label">Голосование · Итог</span>
+                <span className="date">{formatDate(runoff.date)}</span>
+              </div>
+              <VoteBarList entries={stage2Entries} winnerKey={book.id} />
+            </>
+          )}
+        </div>
+      )}
     </div>
   )
 }

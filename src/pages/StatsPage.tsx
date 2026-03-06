@@ -1,7 +1,7 @@
 import './StatsPage.scss'
 import {
   topBooksByVotes, memberActivityData,
-  booksAddedByMonth, avgDaysToElect,
+  booksAddedByMonth, avgDaysToElect, medianDaysToElect,
   pollParticipationTimeline, mostNominatedUnelected, winRateScatterData,
   pollCompetitivenessData, stageDepthDistribution,
   pollGapTimeline, radarTopBooksData,
@@ -37,6 +37,7 @@ export default function StatsPage() {
   // ── Section: Книги ───────────────────────────────────────────────────────
   const addedByMonth  = booksAddedByMonth(books)
   const avgDays       = avgDaysToElect(books)
+  const medianDays    = medianDaysToElect(books)
   const readByYear    = ['2022', '2023', '2024'].map(yr => ({
     year: yr,
     count: books.filter(b => b.status === 'read' && b.elected_at?.startsWith(yr)).length,
@@ -87,6 +88,14 @@ export default function StatsPage() {
             <span className="big-stat-label">дней</span>
           </div>
           <p className="big-stat-sub">среднее для прочитанных книг</p>
+        </ChartCard>
+
+        <ChartCard title="Медианное время от добавления до выбора">
+          <div className="big-stat">
+            <span className="big-stat-number">{medianDays}</span>
+            <span className="big-stat-label">дней</span>
+          </div>
+          <p className="big-stat-sub">медиана для прочитанных книг</p>
         </ChartCard>
 
       </div>

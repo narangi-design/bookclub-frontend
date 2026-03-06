@@ -1,14 +1,7 @@
 import './AuthorPage.scss'
 import { useParams, Link } from 'react-router-dom'
-import { useBooks, useAuthors, usePollVotes, useAwardVotes } from '@/hooks'
-import { formatDate } from '@/utils'
-import CoverImage from '@/components/layout/CoverImage'
-
-const STATUS_LABEL: Record<string, string> = {
-  read: 'Прочитана',
-  to_read: 'В списке',
-  removed: 'Выбыла',
-}
+import { useBooks, useAuthors, useUsers, usePollVotes, useAwardVotes } from '@/hooks'
+import BookCard from '@/components/layout/BookCard'
 
 export default function AuthorPage() {
   const { id } = useParams<{ id: string }>()
@@ -16,8 +9,11 @@ export default function AuthorPage() {
 
   const { data: books = [] } = useBooks()
   const { data: authors = [] } = useAuthors()
+  const { data: users = [] } = useUsers()
   const { data: pollVotes = [] } = usePollVotes()
   const { data: awardVotes = [] } = useAwardVotes()
+
+  const userById = Object.fromEntries(users.map(u => [u.id, u.username]))
 
   const author = authors.find(a => a.id === authorId)
   if (!author) return <div className="page"><p className="ap-not-found">Автор не найден</p></div>
@@ -77,33 +73,15 @@ export default function AuthorPage() {
       <div className="ap-books">
         {sorted.map(book => {
           const award = awardVotes.find(v => v.book_id === book.id && v.is_winner)
-          const votes = pollVotes.filter(v => v.book_id === book.id).reduce((s, v) => s + v.votes_count, 0)
           return (
-            <Link key={book.id} to={`/books/${book.id}`} className={`ap-book ap-book--${book.status}`}>
-              <div className="ap-book-cover">
-                <CoverImage coverSize="small" bookId={book.id} title={book.title} />
-              </div>
-              <div className="ap-book-info">
-                <div className="ap-book-title-row">
-                  <span className="ap-book-title">{book.title}</span>
-                  {award && <span className="ap-book-award">★ {award.year}</span>}
-                </div>
-                <div className="ap-book-meta">
-                  <span className={`ap-book-status ap-book-status--${book.status}`}>
-                    {STATUS_LABEL[book.status]}
-                  </span>
-                  {book.elected_at && (
-                    <span className="ap-book-date">{formatDate(book.elected_at)}</span>
-                  )}
-                  {!book.elected_at && book.added_at && (
-                    <span className="ap-book-date">добавлена {formatDate(book.added_at)}</span>
-                  )}
-                  {votes > 0 && (
-                    <span className="ap-book-votes">{votes} голосов</span>
-                  )}
-                </div>
-              </div>
-            </Link>
+            <BookCard
+              key={book.id}
+              book={book}
+              showAuthor={false}
+              showUser
+              userName={book.added_by_user_id != null ? userById[book.added_by_user_id] : undefined}
+              titleBadge={award && <span className="ap-book-award">★ {award.year}</span>}
+            />
           )
         })}
       </div>
