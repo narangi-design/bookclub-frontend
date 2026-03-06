@@ -1,8 +1,10 @@
+import './BooksPage.scss'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import type { User } from '@/types'
 import { useBooks, useUsers, useAuthors } from '@/hooks'
-import './BooksPage.scss'
-
+import FilterBar from '@/components/layout/FilterBar'
+import SearchBar from '@/components/layout/SearchBar'
 function formatDate(iso: string) {
   const d = new Date(iso)
   const dd = String(d.getDate()).padStart(2, '0')
@@ -20,6 +22,7 @@ export default function BooksPage() {
   const { data: users   = [] } = useUsers()
   const { data: authors = [] } = useAuthors()
   const [filter, setFilter] = useState<Filter>('all')
+  const [search, setSearch] = useState('')
 
   const userById   = Object.fromEntries(users.map((u: User) => [u.id, u])) as Record<number, User>
   const authorById = Object.fromEntries(authors.map(a => [a.id, a.value])) as Record<number, string>
@@ -31,7 +34,13 @@ export default function BooksPage() {
     removed: books.filter(b => b.status === 'removed').length,
   }
 
+  const q = search.trim().toLowerCase()
+
   const visible = [...(filter === 'all' ? books : books.filter(b => b.status === filter))]
+    .filter(b => !q
+      || b.title.toLowerCase().includes(q)
+      || (b.author_id != null && authorById[b.author_id]?.toLowerCase().includes(q))
+    )
     .sort((a, b) => {
       if (filter === 'all') {
         const so = STATUS_ORDER[a.status] - STATUS_ORDER[b.status]
@@ -53,18 +62,22 @@ export default function BooksPage() {
     <div className="page">
       <h1 className="page-title">Books</h1>
 
-      <div className="filter-row">
-        {(['all', 'read', 'to_read', 'removed'] as Filter[]).map(f => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`filter-btn${filter === f ? ' filter-btn--active' : ''}`}
-          >
-            {filterLabels[f]}
-            <span className="filter-count">{counts[f]}</span>
-          </button>
-        ))}
-      </div>
+      <SearchBar
+        value={search}
+        onChange={setSearch}
+        placeholder="Поиск по названию или автору…"
+        count={visible.length}
+      />
+
+      <FilterBar
+        value={filter}
+        onChange={f => setFilter(f as Filter)}
+        options={(['all', 'read', 'to_read', 'removed'] as Filter[]).map(f => ({
+          key: f,
+          label: filterLabels[f],
+          count: counts[f],
+        }))}
+      />
 
       <div className="table-wrap">
         <table className="table">
@@ -81,12 +94,16 @@ export default function BooksPage() {
             {visible.map(book => (
               <tr key={book.id} className="tr">
                 <td className="td">
-                  <span className="book-title">{book.title}</span>
+                  <Link to={`/books/${book.id}`} className="book-title">{book.title}</Link>
                   {book.status === 'removed' && (
                     <span className="badge">removed</span>
                   )}
                 </td>
-                <td className="td muted">{book.author_id != null ? authorById[book.author_id] : '—'}</td>
+                <td className="td muted">
+                  {book.author_id != null
+                    ? <Link to={`/authors/${book.author_id}`} className="author-link">{authorById[book.author_id]}</Link>
+                    : '—'}
+                </td>
                 <td className="td muted">
                   {book.added_by_user_id != null
                     ? (userById[book.added_by_user_id]?.username ?? '—')

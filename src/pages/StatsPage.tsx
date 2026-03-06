@@ -1,6 +1,7 @@
+import './StatsPage.scss'
 import {
   topBooksByVotes, memberActivityData,
-  booksAddedByMonth, booksAddedByYearStatus, avgDaysToElect,
+  booksAddedByMonth, avgDaysToElect,
   pollParticipationTimeline, mostNominatedUnelected, winRateScatterData,
   pollCompetitivenessData, stageDepthDistribution,
   pollGapTimeline, radarTopBooksData,
@@ -8,11 +9,10 @@ import {
 import { useBooks, usePollVotes, useUsers, usePolls, usePollRunoffs } from '@/hooks'
 import {
   diagramColors,
-  HBarChart, SimpleLineChart, DonutChart, StackedAreaChart, SimpleBarChart,
+  HBarChart, SimpleLineChart, DonutChart, SimpleBarChart,
   WinRateScatter, CompetitivenessChart, StageDepthFunnel,
   GroupedBarChart, SimpleAreaChart, RadarMultiChart,
 } from '@/components/charts'
-import './StatsPage.scss'
 
 function SectionTitle({ children }: { children: string }) {
   return <h2 className="section-title">{children}</h2>
@@ -36,7 +36,6 @@ export default function StatsPage() {
 
   // ── Section: Книги ───────────────────────────────────────────────────────
   const addedByMonth  = booksAddedByMonth(books)
-  const byYearStatus  = booksAddedByYearStatus(books)
   const avgDays       = avgDaysToElect(books)
   const readByYear    = ['2022', '2023', '2024'].map(yr => ({
     year: yr,

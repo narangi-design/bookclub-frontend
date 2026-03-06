@@ -16,7 +16,6 @@ import {
 } from 'recharts'
 import type { Book, Poll, PollVote } from '@/types'
 import { votesForPoll, sortedPolls } from '@/utils'
-import './charts.scss'
 
 // ── Visual constants ─────────────────────────────────────────────────────────
 // All chart styling lives here. To change the look of all charts — change here.

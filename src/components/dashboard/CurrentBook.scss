@@ -1,71 +1,40 @@
 .card {
-  padding: 1.5rem;
+  padding: var(--sp-6);
   display: flex;
-  gap: 1.75rem;
+  gap: var(--sp-7);
 }
-
-// ── Cover ─────────────────────────────────────────────────
 
 .cover-wrap {
   flex-shrink: 0;
-  width: 130px;
+  width: 120px;
 }
-
-.cover {
-  width: 100%;
-  height: auto;
-  border-radius: 4px;
-  display: block;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-}
-
-.cover-placeholder {
-  width: 100%;
-  aspect-ratio: 2 / 3;
-  background: linear-gradient(135deg, var(--color-border) 0%, var(--color-surface) 100%);
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.cover-initials {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-}
-
-// ── Info ───────────────────────────────────────────────────
 
 .info {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: var(--sp-2);
 }
 
 .badge {
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: var(--text-2xs);
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--color-accent);
-  margin-bottom: 0.2rem;
 }
 
 .title {
-  font-size: 1.35rem;
+  font-size: var(--text-xl);
   font-weight: 700;
-  line-height: 1.25;
-  margin: 0;
+  line-height: 1.2;
 }
 
 .meta {
   display: flex;
-  gap: 0.4rem;
-  font-size: 0.85rem;
+  gap: var(--sp-2);
+  font-size: var(--text-sm);
   color: var(--color-text-muted);
   flex-wrap: wrap;
 }
@@ -75,9 +44,8 @@
 }
 
 .added-by {
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   color: var(--color-text-muted);
-  margin-top: 0.1rem;
 }
 
 .username {
@@ -87,37 +55,31 @@
 // ── Poll result ────────────────────────────────────────────
 
 .poll {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border);
-  flex: 1;
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--color-border-subtle);
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: var(--sp-3);
 }
 
 .stage-header {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 0.5rem;
+  gap: var(--sp-2);
 
   &--runoff {
-    margin-top: 0.9rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--color-border);
+    margin-top: var(--sp-3);
+    padding-top: var(--sp-3);
+    border-top: 1px solid var(--color-border-subtle);
   }
 }
 
 .stage-label {
-  font-size: 0.72rem;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-}
-
-.stage-date {
-  font-size: 0.72rem;
-  color: var(--color-text-muted);
 }

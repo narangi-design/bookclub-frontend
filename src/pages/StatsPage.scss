@@ -1,49 +1,16 @@
-.page {
-  max-width: 1100px;
-}
-
-.page-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0 0 2rem;
-}
-
-// ── Section title ─────────────────────────────────────────────
-
-.section-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin: 2.5rem 0 1rem;
-  color: var(--color-text);
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: 0.5rem;
-}
-
-// ── Grids ─────────────────────────────────────────────────────
-
 .charts-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
+  gap: var(--sp-4);
   align-items: start;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--sp-6);
 }
-
-.pairs-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
-  align-items: start;
-  margin-bottom: 0.5rem;
-}
-
-// ── Card ──────────────────────────────────────────────────────
 
 .card {
-  padding: 1.25rem 1.5rem;
+  padding: var(--sp-5) var(--sp-6);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--sp-4);
 
   &--wide {
     grid-column: 1 / -1;
@@ -51,60 +18,35 @@
 }
 
 .card-label {
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: var(--text-xs);
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.07em;
   color: var(--color-text-muted);
   margin: 0;
 }
 
-// ── Big stat ──────────────────────────────────────────────────
-
 .big-stat {
   display: flex;
   align-items: baseline;
-  gap: 0.4rem;
-  margin: 0.5rem 0 0;
+  gap: var(--sp-2);
 }
 
 .big-stat-number {
   font-family: var(--font-display);
-  font-size: 3rem;
+  font-size: var(--text-4xl);
   font-weight: 700;
   color: var(--color-accent);
   line-height: 1;
 }
 
 .big-stat-label {
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   color: var(--color-text-muted);
 }
 
 .big-stat-sub {
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   color: var(--color-text-muted);
   margin: 0;
-}
-
-// ── Bar rows ──────────────────────────────────────────────────
-
-.row--ranked {
-  grid-template-columns: auto 1fr auto;
-}
-
-.rank {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  width: 1.1rem;
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.row-count {
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  width: 2rem;
-  text-align: right;
-  flex-shrink: 0;
 }

@@ -18,6 +18,8 @@ export interface Book {
   status: 'to_read' | 'read' | 'removed'
   elected_poll_id: number | null
   elected_at: string | null      // ISO date string
+  annotation?: string | null
+  discussion_url?: string | null
 }
 
 export interface Poll {

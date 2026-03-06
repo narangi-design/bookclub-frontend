@@ -25,60 +25,8 @@ export const mockUsers = [
     "username": "fomarusia"
   },
   {
-    "id": 7,
-    "username": "Ваня"
-  },
-  {
-    "id": 8,
-    "username": "Саша"
-  },
-  {
-    "id": 9,
-    "username": "Гегам"
-  },
-  {
-    "id": 10,
-    "username": "Николай"
-  },
-  {
-    "id": 11,
-    "username": "Даша"
-  },
-  {
-    "id": 12,
-    "username": "Лена"
-  },
-  {
-    "id": 13,
-    "username": "Мила"
-  },
-  {
-    "id": 14,
-    "username": "Кирилл"
-  },
-  {
-    "id": 15,
-    "username": "Таня"
-  },
-  {
-    "id": 16,
-    "username": "Кирилл С."
-  },
-  {
-    "id": 17,
-    "username": "Рома"
-  },
-  {
-    "id": 18,
-    "username": "Юля"
-  },
-  {
     "id": 19,
     "username": "pylypp"
-  },
-  {
-    "id": 20,
-    "username": "Андрей"
   },
   {
     "id": 21,

@@ -9,6 +9,13 @@ export function groupBy<T>(items: T[], key: (item: T) => string): Record<string,
   }, {})
 }
 
+
+export function formatDate(iso: string) {
+  return new Intl.DateTimeFormat('ru-RU', {
+    day: 'numeric', month: 'short', year: 'numeric',
+  }).format(new Date(iso))
+}
+
 /** Extract year from an ISO date string */
 export function year(date: string): string {
   return date.slice(0, 4)
@@ -29,9 +36,25 @@ export function totalVotesForPoll(pollId: number, votes: PollVote[]): number {
   return votes.filter(v => v.poll_id === pollId).reduce((s, v) => s + v.votes_count, 0)
 }
 
-/** How many polls a book appeared in */
+/** How many polls a book appeared in (raw poll count, may include both stages) */
 export function pollAppearances(bookId: number, votes: PollVote[]): number {
   return new Set(votes.filter(v => v.book_id === bookId).map(v => v.poll_id)).size
+}
+
+/**
+ * How many distinct voting events a book participated in.
+ * A 2-round poll counts as one event (stage-2 maps back to its parent stage-1 id).
+ */
+export function pollRootAppearances(bookId: number, votes: PollVote[], polls: Poll[]): number {
+  const pollById = Object.fromEntries(polls.map(p => [p.id, p]))
+  const rootIds = new Set<number>()
+  for (const v of votes) {
+    if (v.book_id !== bookId) continue
+    const poll = pollById[v.poll_id]
+    if (!poll) continue
+    rootIds.add(poll.parent_poll_id ?? poll.id)
+  }
+  return rootIds.size
 }
 
 /** Average votes a book received across all polls it appeared in */

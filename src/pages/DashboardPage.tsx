@@ -1,26 +1,9 @@
-import { useState } from 'react'
+import './DashboardPage.scss'
 import { useBooks, usePolls, useUsers, useAwardVotes, usePollVotes, usePollRunoffs, useAuthors } from '@/hooks'
 import AwardCard from '@/components/dashboard/AwardCard'
 import CurrentBook from '@/components/dashboard/CurrentBook'
-import './DashboardPage.scss'
-
-const COVER_FORMATS = ['jpg', 'jpeg', 'png', 'webp']
-
-function SmallCover({ bookId, title }: { bookId: number; title: string }) {
-  const [attempt, setAttempt] = useState(0)
-  if (attempt >= COVER_FORMATS.length) {
-    return <div className="recent-cover-placeholder">{title.slice(0, 2)}</div>
-  }
-  return (
-    <img
-      key={attempt}
-      src={`/covers/${bookId}.${COVER_FORMATS[attempt]}`}
-      alt={title}
-      className="recent-cover"
-      onError={() => setAttempt(a => a + 1)}
-    />
-  )
-}
+import StatNumberCard from '@/components/layout/StatNumberCard'
+import CoverImage from '@/components/layout/CoverImage'
 
 function formatDate(iso: string) {
   return new Intl.DateTimeFormat('ru-RU', {
@@ -28,27 +11,15 @@ function formatDate(iso: string) {
   }).format(new Date(iso))
 }
 
-interface StatCardProps {
-  value: number
-  label: string
-}
-function StatCard({ value, label }: StatCardProps) {
-  return (
-    <div className="stat-card">
-      <div className="stat-value">{value}</div>
-      <div className="stat-label">{label}</div>
-    </div>
-  )
-}
 
 export default function DashboardPage() {
-  const { data: books      = [] } = useBooks()
-  const { data: polls      = [] } = usePolls()
-  const { data: users      = [] } = useUsers()
-  const { data: awardVotes = [] } = useAwardVotes()
+  const { data: books       = [] } = useBooks()
+  const { data: polls       = [] } = usePolls()
+  const { data: users       = [] } = useUsers()
+  const { data: awardVotes  = [] } = useAwardVotes()
   const { data: pollVotes   = [] } = usePollVotes()
   const { data: pollRunoffs = [] } = usePollRunoffs()
-  const { data: authors    = [] } = useAuthors()
+  const { data: authors     = [] } = useAuthors()
 
   const authorById = Object.fromEntries(authors.map(a => [a.id, a.value]))
 
@@ -83,10 +54,10 @@ export default function DashboardPage() {
       <h1 className="page-title">Привет, мы книжный клуб!</h1>
 
       <div className="stats-row">
-        <StatCard value={books.length}       label="Книг в списке"      />
-        <StatCard value={readBooks.length}   label="Прочитано"          />
-        <StatCard value={toReadBooks.length} label="Предстоит прочитать"/>
-        <StatCard value={users.length}       label="Активных участников"/>
+        <StatNumberCard value={books.length}       label="Книг в списке"      />
+        <StatNumberCard value={readBooks.length}   label="Прочитано"          />
+        <StatNumberCard value={toReadBooks.length} label="Предстоит прочитать"/>
+        <StatNumberCard value={users.length}       label="Активных участников"/>
       </div>
 
       {currentBook && (
@@ -113,7 +84,7 @@ export default function DashboardPage() {
               const authorName = book.author_id != null ? authorById[book.author_id] : null
               return (
                 <div key={book.id} className="recent-item">
-                  <SmallCover bookId={book.id} title={book.title} />
+                  <CoverImage coverSize="small" bookId={book.id} title={book.title} />
                   <div className="recent-info">
                     <div className="recent-title">{book.title}</div>
                     {(authorName || book.country) && (

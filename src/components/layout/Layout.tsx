@@ -4,6 +4,8 @@ import './Layout.scss'
 const navItems = [
   { to: '/dashboard', label: 'Общее' },
   { to: '/books', label: 'Книги' },
+  { to: '/authors', label: 'Авторы' },
+  { to: '/users', label: 'Участники' },
   { to: '/stats', label: 'Всякая стата' },
   { to: '/polls', label: 'Голосования' },
 ]

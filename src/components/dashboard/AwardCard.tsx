@@ -1,6 +1,6 @@
-import type { AwardVote, Book } from '@/types'
-import VoteBarList, { type VoteEntry } from '@/components/VoteBarList'
 import './AwardCard.scss'
+import type { AwardVote, Book } from '@/types'
+import VoteBarList, { type VoteEntry } from '@/components/layout/VoteBarList'
 
 interface Props {
   year: number

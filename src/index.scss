@@ -1,24 +1,74 @@
-@use 'styles/shared';
+// ─── Reset ───────────────────────────────────────────────────────────────────
 
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
+// ─── Design tokens ───────────────────────────────────────────────────────────
+
 :root {
-  --color-bg: #f5eff0;
-  --color-surface: #ffffff;
-  --color-border: #e3d0d4;
-  --color-text: #1c1215;
-  --color-text-muted: #7a6870;
-  --color-accent: #c0394f;
-  --color-accent-subtle: rgba(192, 57, 79, 0.08);
-  --font-display: 'Zen Antique', Georgia, serif;
-  --font-body: 'Nunito Sans', system-ui, -apple-system, sans-serif;
+
+  // Colors
+  --color-bg:             #f5eff0;
+  --color-surface:        #ffffff;
+  --color-border:         #e3d0d4;
+  --color-border-subtle:  #ede5e7;
+  --color-text:           #1c1215;
+  --color-text-muted:     #7a6870;
+  --color-text-subtle:    #b09aa0;
+  --color-accent:         #c0394f;
+  --color-accent-hover:   #a82f43;
+  --color-accent-subtle:  rgba(192, 57, 79, 0.08);
+
+  // Fonts
+  --font-display: 'Brygada 1918', Georgia, serif;
+  --font-body:    'Nunito Sans', system-ui, -apple-system, sans-serif;
+
+  // Font sizes (rem, 16px base)
+  --text-2xs:  0.625rem;  //  10px
+  --text-xs:   0.75rem;   //  12px
+  --text-sm:   0.875rem;  //  14px
+  --text-base: 1rem;      //  16px
+  --text-lg:   1.125rem;  //  18px
+  --text-xl:   1.375rem;  //  22px
+  --text-2xl:  1.5rem;    //  24px
+  --text-3xl:  2rem;      //  32px
+  --text-4xl:  3rem;      //  48px
+
+  // Spacing scale (1 unit = 0.25rem = 4px)
+  --sp-1:  0.25rem;   //  4px
+  --sp-2:  0.5rem;    //  8px
+  --sp-3:  0.75rem;   //  12px
+  --sp-4:  1rem;      //  16px
+  --sp-5:  1.25rem;   //  20px
+  --sp-6:  1.5rem;    //  24px
+  --sp-7:  1.75rem;   //  28px
+  --sp-8:  2rem;      //  32px
+  --sp-10: 2.5rem;    //  40px
+  --sp-12: 3rem;      //  48px
+  --sp-16: 4rem;      //  64px
+
+  // Shadows
+  --shadow-sm:  0 1px 3px rgba(28, 18, 21, 0.08);
+  --shadow-md:  0 4px 12px rgba(28, 18, 21, 0.10);
+  --shadow-lg:  0 8px 24px rgba(28, 18, 21, 0.14);
+
+  // Transitions
+  --transition-fast: 0.1s ease;
+  --transition-base: 0.15s ease;
+  --transition-slow: 0.3s ease;
+
+  // Layout
+  --page-width:    1100px;
+  --sidebar-width: 200px;
 }
+
+// ─── Base ─────────────────────────────────────────────────────────────────────
 
 body {
   margin: 0;
   font-family: var(--font-body);
+  font-size: var(--text-base);
   line-height: 1.5;
   background-color: var(--color-bg);
   color: var(--color-text);
@@ -26,9 +76,106 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
+  margin: 0;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+button {
+  font-family: var(--font-body);
+}
+
+// ─── Shared layout ────────────────────────────────────────────────────────────
+
+.page {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: var(--sp-8);
+}
+
+.page-title {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  margin: 0 0 var(--sp-6);
+}
+
+.section {
+  margin-bottom: var(--sp-8);
+}
+
+.section-title {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  margin: 0 0 var(--sp-4);
+}
+
+// ─── Card surface ─────────────────────────────────────────────────────────────
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+// ─── Filter buttons ───────────────────────────────────────────────────────────
+
+.filter-row {
+  display: flex;
+  gap: var(--sp-1);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-5);
+}
+
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0.375rem var(--sp-3);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition:
+    color var(--transition-base),
+    border-color var(--transition-base),
+    background var(--transition-base);
+
+  &:hover {
+    color: var(--color-text);
+    border-color: var(--color-text-muted);
+  }
+
+  &--active {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background: var(--color-accent-subtle);
+  }
+}
+
+.filter-count {
+  font-size: var(--text-xs);
+  opacity: 0.65;
+}
+
+// ─── Misc shared ─────────────────────────────────────────────────────────────
+
+.date {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.badge {
+  display: inline-block;
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  padding: 0.1em 0.45em;
+  margin-left: var(--sp-2);
+  vertical-align: middle;
 }

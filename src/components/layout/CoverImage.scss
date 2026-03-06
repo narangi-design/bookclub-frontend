@@ -1,0 +1,27 @@
+.cover-placeholder {
+  aspect-ratio: 2 / 3;
+  background: linear-gradient(150deg, var(--color-border-subtle) 0%, var(--color-border) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cover-initials {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-family: var(--font-display);
+}
+
+.default-book-cover {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.small-book-cover {
+  width: 100%;
+  height: auto;
+  display: block;
+}

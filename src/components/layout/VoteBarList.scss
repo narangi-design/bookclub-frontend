@@ -1,29 +1,29 @@
 .vote-bar-list {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
 }
 
 .vbl-entry {
   display: grid;
   grid-template-columns: 1fr minmax(60px, 120px) 4.5rem;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--sp-3);
   padding: 0.3rem 0;
 
   &--accent {
     background: var(--color-accent-subtle);
-    margin: 0 -1.25rem;
-    padding: 0.3rem 1.25rem;
+    margin: 0 calc(-1 * var(--sp-5));
+    padding: 0.3rem var(--sp-5);
   }
 }
 
 .vbl-title {
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
+  color: var(--color-text-muted);
 
   &--winner {
     color: var(--color-accent);
@@ -32,19 +32,19 @@
 }
 
 .vbl-trophy {
-  margin-right: 0.25rem;
-  font-size: 0.7rem;
+  margin-right: var(--sp-1);
+  font-size: var(--text-xs);
 }
 
 .vbl-subtitle {
-  margin-left: 0.4rem;
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
+  margin-left: var(--sp-2);
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
   font-weight: 400;
 }
 
 .vbl-bar-wrap {
-  height: 4px;
+  height: 3px;
   background: var(--color-border);
   border-radius: 2px;
   overflow: hidden;
@@ -52,9 +52,9 @@
 
 .vbl-bar {
   height: 100%;
-  background: var(--color-text-muted);
+  background: var(--color-border);
   border-radius: 2px;
-  transition: width 0.4s ease;
+  transition: width var(--transition-slow);
 
   &--winner {
     background: var(--color-accent);
@@ -62,7 +62,7 @@
 }
 
 .vbl-count {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--color-text-muted);
   text-align: right;
   font-variant-numeric: tabular-nums;
