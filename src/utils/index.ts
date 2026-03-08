@@ -1,4 +1,4 @@
-import type { Book, Poll, PollVote, PollRunoff, User } from '@/types'
+import type { Book, Poll, PollVote, User } from '@/types'
 
 /** Group an array by a string key */
 export function groupBy<T>(items: T[], key: (item: T) => string): Record<string, T[]> {
@@ -251,11 +251,9 @@ export function pollCompetitivenessData(
 /** How many polls reached each stage depth */
 export function stageDepthDistribution(
   polls: Poll[],
-  runoffs: PollRunoff[],
 ): Array<{ label: string; value: number }> {
-  const runoffPollIds = new Set(runoffs.map(r => r.poll_id))
-  const stage1 = polls.filter(p => !runoffPollIds.has(p.id)).length
-  const stage2 = runoffs.length
+  const stage2 = polls.filter(p => p.stage === 2).length
+  const stage1 = polls.filter(p => p.stage === 1).length - stage2
   return [
     { label: '1 этап', value: stage1 },
     { label: '2 этапа', value: stage2 },
@@ -266,10 +264,10 @@ export function stageDepthDistribution(
 export function sankeyNominationData(
   books: Book[],
   votes: PollVote[],
-  runoffs: PollRunoff[],
+  polls: Poll[],
 ): { nodes: Array<{ name: string }>; links: Array<{ source: number; target: number; value: number }> } {
-  const runoffPollIds = new Set(runoffs.map(r => r.poll_id))
-  const runoffBookIds = new Set(runoffs.flatMap(r => r.votes.map(v => v.book_id)))
+  const runoffPollIds = new Set(polls.filter(p => p.stage === 2).map(p => p.id))
+  const runoffBookIds = new Set(votes.filter(v => runoffPollIds.has(v.poll_id)).map(v => v.book_id))
 
   let nominated = 0, wonStage1 = 0, reachedRunoff = 0, wonRunoff = 0, neverWon = 0
 

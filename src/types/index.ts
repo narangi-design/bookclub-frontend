@@ -38,18 +38,6 @@ export interface PollVote {
   votes_count: number
 }
 
-export interface PollRunoffVote {
-  book_id: number
-  votes_count: number
-}
-
-export interface PollRunoff {
-  poll_id: number
-  date: string            // ISO date of the runoff stage
-  total_voters: number
-  votes: PollRunoffVote[]
-}
-
 export interface AwardVote {
   id: number
   year: number

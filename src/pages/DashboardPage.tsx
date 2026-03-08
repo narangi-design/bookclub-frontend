@@ -1,5 +1,5 @@
 import './DashboardPage.scss'
-import { useBooks, usePolls, useUsers, useAwardVotes, usePollVotes, usePollRunoffs, useAuthors } from '@/hooks'
+import { useBooks, usePolls, useUsers, useAwardVotes, usePollVotes, useAuthors } from '@/hooks'
 import AwardCard from '@/components/dashboard/AwardCard'
 import CurrentBook from '@/components/dashboard/CurrentBook'
 import StatNumberCard from '@/components/layout/StatNumberCard'
@@ -12,7 +12,6 @@ export default function DashboardPage() {
   const { data: users       = [] } = useUsers()
   const { data: awardVotes  = [] } = useAwardVotes()
   const { data: pollVotes   = [] } = usePollVotes()
-  const { data: pollRunoffs = [] } = usePollRunoffs()
   const { data: authors     = [] } = useAuthors()
 
   const authorById = Object.fromEntries(authors.map(a => [a.id, a.value]))
@@ -21,18 +20,16 @@ export default function DashboardPage() {
   const toReadBooks = books.filter(b => b.status === 'to_read')
 
   // Current book = most recently elected by date
-  const currentBook    = readBooks
+  const currentBook      = readBooks
     .filter(b => b.elected_at !== null)
     .sort((a, b) => (b.elected_at ?? '').localeCompare(a.elected_at ?? ''))[0]
-  const electedPoll    = polls.find(p => p.id === currentBook?.elected_poll_id)
+  const electedPoll      = polls.find(p => p.id === currentBook?.elected_poll_id)
   // If elected via runoff (stage 2), resolve to parent stage-1 poll for stage1Votes
-  const currentPoll    = electedPoll?.stage === 2
+  const currentPoll      = electedPoll?.stage === 2
     ? polls.find(p => p.id === electedPoll.parent_poll_id) ?? electedPoll
     : electedPoll
-  const currentAddedBy = users.find(u => u.id === currentBook?.added_by_user_id)
-  const currentRunoff  = electedPoll?.stage === 2
-    ? pollRunoffs.find(r => r.poll_id === electedPoll.id)
-    : undefined
+  const currentAddedBy   = users.find(u => u.id === currentBook?.added_by_user_id)
+  const currentRunoffPoll = electedPoll?.stage === 2 ? electedPoll : undefined
 
   // Last 5 read books excluding the current one
   const recentBooks = readBooks
@@ -63,7 +60,7 @@ export default function DashboardPage() {
             addedByUser={currentAddedBy}
             poll={currentPoll}
             pollVotes={pollVotes}
-            runoff={currentRunoff}
+            runoffPoll={currentRunoffPoll}
             allBooks={books}
           />
         </section>

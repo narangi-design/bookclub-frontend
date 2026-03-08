@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { fetchUsers, fetchBooks, fetchPolls, fetchPollVotes, fetchAwardVotes, fetchPollRunoffs, fetchAuthors } from '@/api'
+import { fetchUsers, fetchBooks, fetchPolls, fetchPollVotes, fetchAwardVotes, fetchAuthors } from '@/api'
 
 export function useUsers() {
   return useQuery({ queryKey: ['users'], queryFn: fetchUsers })
@@ -19,10 +19,6 @@ export function usePollVotes() {
 
 export function useAwardVotes() {
   return useQuery({ queryKey: ['awardVotes'], queryFn: fetchAwardVotes })
-}
-
-export function usePollRunoffs() {
-  return useQuery({ queryKey: ['pollRunoffs'], queryFn: fetchPollRunoffs })
 }
 
 export function useAuthors() {

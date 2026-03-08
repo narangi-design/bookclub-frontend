@@ -17,7 +17,7 @@ import {
   booksByUser,
   pollPredictabilityData,
 } from './index'
-import type { Book, Poll, PollVote, PollRunoff } from '@/types'
+import type { Book, Poll, PollVote } from '@/types'
 
 // ─── Fixtures ────────────────────────────────────────────────────────────────
 
@@ -250,16 +250,14 @@ describe('pollCompetitivenessData', () => {
 
 describe('stageDepthDistribution', () => {
   const polls = [
-    makePoll({ id: 1, date: '2023-01-01' }),
-    makePoll({ id: 2, date: '2023-02-01' }),
-    makePoll({ id: 3, date: '2023-03-01' }),
-  ]
-  const runoffs: PollRunoff[] = [
-    { poll_id: 2, date: '2023-02-08', total_voters: 10, votes: [] },
+    makePoll({ id: 1, date: '2023-01-01', stage: 1 }),
+    makePoll({ id: 2, date: '2023-02-01', stage: 1 }),
+    makePoll({ id: 3, date: '2023-03-01', stage: 1 }),
+    makePoll({ id: 4, date: '2023-02-08', stage: 2, parent_poll_id: 2 }),
   ]
 
   it('separates polls with and without runoffs', () => {
-    const result = stageDepthDistribution(polls, runoffs)
+    const result = stageDepthDistribution(polls)
     expect(result).toEqual([
       { label: '1 этап', value: 2 },
       { label: '2 этапа', value: 1 },

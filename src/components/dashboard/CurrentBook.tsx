@@ -1,5 +1,5 @@
 import './CurrentBook.scss'
-import type { Book, User, Poll, PollVote, PollRunoff } from '@/types'
+import type { Book, User, Poll, PollVote } from '@/types'
 import { formatDate } from '@/utils'
 import VoteBarList, { type VoteEntry } from '@/components/layout/VoteBarList'
 import CoverImage from '@/components/layout/CoverImage'
@@ -11,13 +11,13 @@ interface Props {
   addedByUser?: User
   poll?: Poll
   pollVotes: PollVote[]
-  runoff?: PollRunoff
+  runoffPoll?: Poll
   allBooks: Book[]
 }
 
 const TOP_VOTES = 6
 
-export default function CurrentBook({ book, authorName, addedByUser, poll, pollVotes, runoff, allBooks }: Props) {
+export default function CurrentBook({ book, authorName, addedByUser, poll, pollVotes, runoffPoll, allBooks }: Props) {
   const bookById = Object.fromEntries(allBooks.map(b => [b.id, b]))
 
   const stage1Votes = pollVotes
@@ -31,15 +31,16 @@ export default function CurrentBook({ book, authorName, addedByUser, poll, pollV
     value: v.votes_count,
   }))
 
-  const stage2Votes = runoff
-    ? [...runoff.votes].sort((a, b) => b.votes_count - a.votes_count)
+  const stage2Entries: VoteEntry[] = runoffPoll
+    ? pollVotes
+        .filter(v => v.poll_id === runoffPoll.id)
+        .sort((a, b) => b.votes_count - a.votes_count)
+        .map(v => ({
+          key: v.book_id,
+          title: bookById[v.book_id]?.title ?? `#${v.book_id}`,
+          value: v.votes_count,
+        }))
     : []
-
-  const stage2Entries: VoteEntry[] = stage2Votes.map(v => ({
-    key: v.book_id,
-    title: bookById[v.book_id]?.title ?? `#${v.book_id}`,
-    value: v.votes_count,
-  }))
 
   return (
     <div className="card">
@@ -70,17 +71,17 @@ export default function CurrentBook({ book, authorName, addedByUser, poll, pollV
         <div className="poll">
           <div className="stage-header">
             <span className="stage-label">
-              {runoff ? 'Голосование · Этап I' : 'Голосование'}
+              {runoffPoll ? 'Голосование · Этап I' : 'Голосование'}
             </span>
             <span className="date">{formatDate(poll.date)}</span>
           </div>
           <VoteBarList entries={stage1Entries} winnerKey={book.id} />
 
-          {runoff && stage2Entries.length > 0 && (
+          {runoffPoll && stage2Entries.length > 0 && (
             <>
               <div className="stage-header stage-header--runoff">
                 <span className="stage-label">Голосование · Итог</span>
-                <span className="date">{formatDate(runoff.date)}</span>
+                <span className="date">{formatDate(runoffPoll.date)}</span>
               </div>
               <VoteBarList entries={stage2Entries} winnerKey={book.id} />
             </>

@@ -6,7 +6,7 @@ import {
   pollCompetitivenessData, stageDepthDistribution,
   pollGapTimeline, radarTopBooksData,
 } from '@/utils'
-import { useBooks, usePollVotes, useUsers, usePolls, usePollRunoffs } from '@/hooks'
+import { useBooks, usePollVotes, useUsers, usePolls } from '@/hooks'
 import {
   diagramColors,
   HBarChart, SimpleLineChart, DonutChart, SimpleBarChart,
@@ -32,7 +32,7 @@ export default function StatsPage() {
   const { data: pollVotes = [] } = usePollVotes()
   const { data: users     = [] } = useUsers()
   const { data: polls     = [] } = usePolls()
-  const { data: runoffs   = [] } = usePollRunoffs()
+
 
   // ── Section: Книги ───────────────────────────────────────────────────────
   const addedByMonth  = booksAddedByMonth(books)
@@ -54,7 +54,7 @@ export default function StatsPage() {
   const unelected      = mostNominatedUnelected(books, pollVotes, 12)
   const scatterData    = winRateScatterData(books, pollVotes)
   const competitiveness = pollCompetitivenessData(polls, pollVotes)
-  const stageDepth     = stageDepthDistribution(polls, runoffs)
+  const stageDepth     = stageDepthDistribution(polls)
   // ── Section: Участники ───────────────────────────────────────────────────
   const memberActivity = memberActivityData(books, users)
 
