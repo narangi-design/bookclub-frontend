@@ -1,7 +1,7 @@
 import './UserPage.scss'
 import { useParams, Link } from 'react-router-dom'
 import { useBooks, useUsers, useAuthors } from '@/hooks'
-import BookCard from '@/components/layout/BookCard'
+import BookCardList from '@/components/layout/BookCardList'
 
 export default function UserPage() {
   const { id } = useParams<{ id: string }>()
@@ -64,30 +64,14 @@ export default function UserPage() {
       {readBooks.length > 0 && (
         <section className="section">
           <h2 className="section-title">Прочитанные книги</h2>
-          <div className="up-books">
-            {readBooks.map(book => (
-              <BookCard
-                key={book.id}
-                book={book}
-                authorName={book.author_id != null ? authorById[book.author_id] : undefined}
-              />
-            ))}
-          </div>
+          <BookCardList books={readBooks} authorById={authorById} />
         </section>
       )}
 
       {proposedBooks.length > 0 && (
         <section className="section">
           <h2 className="section-title">Предложенные книги</h2>
-          <div className="up-books">
-            {proposedBooks.map(book => (
-              <BookCard
-                key={book.id}
-                book={book}
-                authorName={book.author_id != null ? authorById[book.author_id] : undefined}
-              />
-            ))}
-          </div>
+          <BookCardList books={proposedBooks} authorById={authorById} />
         </section>
       )}
     </div>

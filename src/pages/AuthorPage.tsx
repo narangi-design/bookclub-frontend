@@ -1,7 +1,7 @@
 import './AuthorPage.scss'
 import { useParams, Link } from 'react-router-dom'
 import { useBooks, useAuthors, useUsers, usePollVotes, useAwardVotes } from '@/hooks'
-import BookCard from '@/components/layout/BookCard'
+import BookCardList from '@/components/layout/BookCardList'
 
 export default function AuthorPage() {
   const { id } = useParams<{ id: string }>()
@@ -70,21 +70,16 @@ export default function AuthorPage() {
         </div>
       </div>
 
-      <div className="ap-books">
-        {sorted.map(book => {
+      <BookCardList
+        books={sorted}
+        showAuthor={false}
+        userById={userById}
+        showUser
+        getBadge={book => {
           const award = awardVotes.find(v => v.book_id === book.id && v.is_winner)
-          return (
-            <BookCard
-              key={book.id}
-              book={book}
-              showAuthor={false}
-              showUser
-              userName={book.added_by_user_id != null ? userById[book.added_by_user_id] : undefined}
-              titleBadge={award && <span className="ap-book-award">★ {award.year}</span>}
-            />
-          )
-        })}
-      </div>
+          return award ? <span className="ap-book-award">★ {award.year}</span> : undefined
+        }}
+      />
     </div>
   )
 }

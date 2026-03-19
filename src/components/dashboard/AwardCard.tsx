@@ -1,16 +1,20 @@
 import './AwardCard.scss'
 import type { AwardVote, Book } from '@/types'
 import VoteBarList, { type VoteEntry } from '@/components/layout/VoteBarList'
+import BookCard from '@/components/layout/BookCard'
 
 interface Props {
   year: number
   votes: AwardVote[]
   books: Book[]
+  authorById?: Record<number, string>
+  userById?: Record<number, string>
 }
 
-const TOP_N = 8
+const TOP_N = 10
+const MEDALS = ['🥇', '🥈', '🥉']
 
-export default function AwardCard({ year, votes, books }: Props) {
+export default function AwardCard({ year, votes, books, authorById, userById }: Props) {
   const bookById = Object.fromEntries(books.map(b => [b.id, b]))
 
   const sorted = [...votes]
@@ -22,12 +26,21 @@ export default function AwardCard({ year, votes, books }: Props) {
   const mainEntries: VoteEntry[] = sorted
     .map(v => ({ key: v.book_id, title: bookById[v.book_id]?.title ?? `#${v.book_id}`, value: v.liked_votes }))
 
-  const telegramNominees = votes
-    .filter(v => v.telegram_votes !== null)
-    .sort((a, b) => (b.telegram_votes ?? 0) - (a.telegram_votes ?? 0))
+  const round2Nominees = votes
+    .filter(v => v.round2_votes !== null)
+    .sort((a, b) => (b.round2_votes ?? 0) - (a.round2_votes ?? 0))
 
-  const telegramEntries: VoteEntry[] = telegramNominees
-    .map(v => ({ key: v.book_id, title: bookById[v.book_id]?.title ?? `#${v.book_id}`, value: v.telegram_votes! }))
+  const round2Entries: VoteEntry[] = round2Nominees
+    .map(v => ({ key: v.book_id, title: bookById[v.book_id]?.title ?? `#${v.book_id}`, value: v.round2_votes! }))
+
+  const winner = votes.find(v => v.is_winner)
+  const finalVotes = round2Nominees.length > 0 ? round2Nominees : sorted
+  const runners = finalVotes.filter(v => !v.is_winner)
+  const podiumSlots = [
+    { rank: 1, vote: winner },
+    { rank: 2, vote: runners[0] },
+    { rank: 3, vote: runners[1] },
+  ]
 
   return (
     <div className="card">
@@ -36,17 +49,39 @@ export default function AwardCard({ year, votes, books }: Props) {
         <span className="year">{year}</span>
       </div>
 
-      <p className="subtitle">Результаты опроса · топ {TOP_N}</p>
+      {(winner || runners.length > 0) && (
+        <div className="podium">
+          {podiumSlots.map(({ rank, vote }) => {
+            if (!vote) return null
+            const book = bookById[vote.book_id]
+            if (!book) return null
+            return (
+              <div key={rank} className={`podium-slot podium-slot--${rank}`}>
+                <BookCard
+                  book={book}
+                  showAuthor={true}
+                  authorName={book.author_id != null ? authorById?.[book.author_id] : undefined}
+                  showUser={true}
+                  userName={book.added_by_user_id != null ? userById?.[book.added_by_user_id] : undefined}
+                  titleBadge={<span className="podium-medal">{MEDALS[rank - 1]}</span>}
+                  showStatus={false}
+                />
+              </div>
+            )
+          })}
+        </div>
+      )}
 
-      <VoteBarList entries={mainEntries} winnerKey={winnerId} />
+      <p className="label">Итоги</p>
 
-      {telegramEntries.length > 0 && (
+      {round2Entries.length > 0 && (
         <>
+          <VoteBarList entries={round2Entries} winnerKey={winnerId} />
           <hr className="divider" />
-          <p className="telegram-label">Финал</p>
-          <VoteBarList entries={telegramEntries} winnerKey={winnerId} />
+          <p className="subtitle">Первые результаты · топ {TOP_N}</p>
         </>
       )}
+      <VoteBarList entries={mainEntries} winnerKey={round2Entries.length === 0 ? winnerId : null} />
     </div>
   )
 }

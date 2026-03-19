@@ -4,7 +4,7 @@ import { useState } from 'react'
 const COVER_FORMATS = ['jpg', 'jpeg', 'png', 'webp']
 
 interface Props {
-  coverSize: "small" | "default"
+  coverSize: "small" | "default" | "large"
   bookId: number
   title: string
 }

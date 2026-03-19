@@ -44,6 +44,6 @@ export interface AwardVote {
   book_id: number
   liked_votes: number
   disliked_votes: number | null  // null for 2023 (no disliked question that year)
-  telegram_votes: number | null  // null except 2024 Telegram final poll nominees
+  round2_votes: number | null    // null if award had only one round
   is_winner: boolean
 }

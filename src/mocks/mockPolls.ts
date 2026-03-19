@@ -1,4 +1,3 @@
-// Auto-generated — do not edit manually
 export const mockPolls = [
   {
     "id": 1,

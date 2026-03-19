@@ -47,9 +47,9 @@
   color: var(--color-text-muted);
 
   &--read {
-    color: #3a7d44;
-    border-color: #3a7d44;
-    background: rgba(58, 125, 68, 0.07);
+    color: var(--forest);
+    border-color: var(--forest);
+    background: var(--forest-subtle);
   }
 
   &--removed {
@@ -67,9 +67,9 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #b07d20;
-  border: 1px solid #d4a84b;
-  background: rgba(208, 164, 60, 0.08);
+  color: var(--amber);
+  border: 1px solid var(--amber-light);
+  background: var(--amber-subtle);
   padding: 0.2em 0.55em;
 
   &::before {

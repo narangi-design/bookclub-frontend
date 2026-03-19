@@ -3,7 +3,7 @@ import { useBooks, usePolls, useUsers, useAwardVotes, usePollVotes, useAuthors }
 import AwardCard from '@/components/dashboard/AwardCard'
 import CurrentBook from '@/components/dashboard/CurrentBook'
 import StatNumberCard from '@/components/layout/StatNumberCard'
-import BookCard from '@/components/layout/BookCard'
+import BookCardList from '@/components/layout/BookCardList'
 
 
 export default function DashboardPage() {
@@ -15,6 +15,7 @@ export default function DashboardPage() {
   const { data: authors     = [] } = useAuthors()
 
   const authorById = Object.fromEntries(authors.map(a => [a.id, a.value]))
+  const userById   = Object.fromEntries(users.map(u => [u.id, u.username]))
 
   const readBooks   = books.filter(b => b.status === 'read')
   const toReadBooks = books.filter(b => b.status === 'to_read')
@@ -35,10 +36,11 @@ export default function DashboardPage() {
   const recentBooks = readBooks
     .filter(b => b.elected_at !== null && b.id !== currentBook?.id)
     .sort((a, b) => (b.elected_at ?? '').localeCompare(a.elected_at ?? ''))
-    .slice(0, 5)
+    .slice(0, 6)
 
   const votes2023 = awardVotes.filter(v => v.year === 2023)
   const votes2024 = awardVotes.filter(v => v.year === 2024)
+  const votes2025 = awardVotes.filter(v => v.year === 2025)
 
   return (
     <div className="page">
@@ -69,32 +71,22 @@ export default function DashboardPage() {
       {recentBooks.length > 0 && (
         <section className="section">
           <h2 className="section-title">Последние прочитанные</h2>
-          <div className="recent-list">
-            {recentBooks.map(book => {
-              const addedBy = users.find(u => u.id === book.added_by_user_id)
-              const authorName = [
-                book.author_id != null ? authorById[book.author_id] : null,
-                book.country,
-              ].filter(Boolean).join(' · ') || undefined
-              return (
-                <BookCard
-                  key={book.id}
-                  book={book}
-                  authorName={authorName}
-                  showUser
-                  userName={addedBy?.username}
-                />
-              )
-            })}
-          </div>
+          <BookCardList
+            books={recentBooks}
+            authorById={authorById}
+            showCountry
+            userById={userById}
+            showUser
+          />
         </section>
       )}
 
       <section className="section">
         <h2 className="section-title">Премии книжного клуба</h2>
         <div className="awards-grid">
-          <AwardCard year={2023} votes={votes2023} books={books} />
-          <AwardCard year={2024} votes={votes2024} books={books} />
+          <AwardCard year={2025} votes={votes2025} books={books} authorById={authorById} userById={userById} />
+          <AwardCard year={2024} votes={votes2024} books={books} authorById={authorById} userById={userById} />
+          <AwardCard year={2023} votes={votes2023} books={books} authorById={authorById} userById={userById} />
         </div>
       </section>
     </div>

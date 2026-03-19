@@ -15,7 +15,7 @@ interface Props {
   allBooks: Book[]
 }
 
-const TOP_VOTES = 6
+const TOP_VOTES = 10
 
 export default function CurrentBook({ book, authorName, addedByUser, poll, pollVotes, runoffPoll, allBooks }: Props) {
   const bookById = Object.fromEntries(allBooks.map(b => [b.id, b]))

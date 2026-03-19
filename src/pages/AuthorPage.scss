@@ -35,7 +35,7 @@
 
   &--award {
     .ap-stat-value {
-      color: #b07d20;
+      color: var(--amber);
     }
   }
 }
@@ -55,17 +55,11 @@
   letter-spacing: 0.05em;
 }
 
-.ap-books {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-}
-
 .ap-book-award {
   flex-shrink: 0;
   font-size: var(--text-xs);
   font-weight: 700;
-  color: #b07d20;
+  color: var(--amber);
 }
 
 .ap-book-votes {

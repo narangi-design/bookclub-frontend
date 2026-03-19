@@ -16,10 +16,12 @@ interface Props {
   authorName?: string
   showUser?: boolean
   userName?: string
+  showBadge?: boolean
   titleBadge?: React.ReactNode
+  showStatus?: boolean
 }
 
-export default function BookCard({ book, showAuthor = true, authorName, showUser, userName, titleBadge }: Props) {
+export default function BookCard({ book, showAuthor = true, authorName, showUser, userName, showBadge = true, titleBadge, showStatus = true }: Props) {
   const date = book.elected_at
   const addedDate = book.added_at
 
@@ -29,13 +31,14 @@ export default function BookCard({ book, showAuthor = true, authorName, showUser
       <div className="book-card-info">
         <div className="book-card-title-row">
           <span className="book-card-title">{book.title}</span>
-          {titleBadge}
+          {showBadge && titleBadge}
         </div>
         {showAuthor && authorName && <div className="book-card-author">{authorName}</div>}
         <div className="book-card-meta">
-          <span className={`book-card-status book-card-status--${book.status}`}>
-            {STATUS_LABEL[book.status]}
-          </span>
+          {showStatus &&
+            <span className={`book-card-status book-card-status--${book.status}`}>
+              {STATUS_LABEL[book.status]}
+            </span>}
           {date
             ? <span className="book-card-date">{formatDate(date)}</span>
             : addedDate && <span className="book-card-date">добавлена {formatDate(addedDate)}</span>
