@@ -1,39 +1,32 @@
 import type { User, Book, Poll, PollVote, AwardVote, Author } from '@/types'
-import { mockUsers } from '@/mocks/mockUsers'
-import { mockBooks } from '@/mocks/mockBooks'
-import { mockAuthors } from '@/mocks/mockAuthors'
-import { mockPolls } from '@/mocks/mockPolls'
-import { mockPollVotes } from '@/mocks/mockPollVotes'
-import { mockAwardVotes } from '@/mocks/mockAwardVotes'
 
-const delay = (ms = 120) => new Promise(r => setTimeout(r, ms))
+const BASE_URL = 'http://localhost:8000'
 
-export async function fetchUsers(): Promise<User[]> {
-  await delay()
-  return mockUsers
+async function get<T>(path: string): Promise<T> {
+  const res = await fetch(`${BASE_URL}${path}`)
+  return res.json()
 }
 
-export async function fetchBooks(): Promise<Book[]> {
-  await delay()
-  return mockBooks as Book[]
+export function fetchUsers(): Promise<User[]> {
+  return get('/api/users')
 }
 
-export async function fetchPolls(): Promise<Poll[]> {
-  await delay()
-  return mockPolls as Poll[]
+export function fetchBooks(): Promise<Book[]> {
+  return get('/api/books')
 }
 
-export async function fetchPollVotes(): Promise<PollVote[]> {
-  await delay()
-  return mockPollVotes
+export function fetchPolls(): Promise<Poll[]> {
+  return get('/api/polls')
 }
 
-export async function fetchAwardVotes(): Promise<AwardVote[]> {
-  await delay()
-  return mockAwardVotes
+export function fetchPollVotes(): Promise<PollVote[]> {
+  return get('/api/poll-votes')
 }
 
-export async function fetchAuthors(): Promise<Author[]> {
-  await delay()
-  return mockAuthors
+export function fetchAwardVotes(): Promise<AwardVote[]> {
+  return get('/api/award-votes')
+}
+
+export function fetchAuthors(): Promise<Author[]> {
+  return get('/api/authors')
 }
