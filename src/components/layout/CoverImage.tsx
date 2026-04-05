@@ -1,7 +1,7 @@
 import './CoverImage.scss'
 import { useState } from 'react'
 
-const COVER_FORMATS = ['jpg', 'jpeg', 'png', 'webp']
+const SUPABASE_COVERS = 'https://ovigdecypjaknjmazawc.supabase.co/storage/v1/object/public/covers'
 
 interface Props {
   coverSize: "small" | "default" | "large"
@@ -10,9 +10,9 @@ interface Props {
 }
 
 export default function CoverImage({ coverSize, bookId, title }: Props) {
-  const [attempt, setAttempt] = useState(0)
+  const [error, setError] = useState(false)
 
-  if (attempt >= COVER_FORMATS.length) {
+  if (error) {
     return (
       <div className={`cover-placeholder cover-placeholder--${coverSize}`}>
         <span className="cover-initials">{title.slice(0, 2)}</span>
@@ -21,11 +21,10 @@ export default function CoverImage({ coverSize, bookId, title }: Props) {
   }
   return (
     <img
-      key={attempt}
-      src={`/covers/${bookId}.${COVER_FORMATS[attempt]}`}
+      src={`${SUPABASE_COVERS}/${bookId}.webp`}
       alt={title}
       className={`${coverSize}-book-cover`}
-      onError={() => setAttempt(a => a + 1)}
+      onError={() => setError(true)}
     />
   )
 }
