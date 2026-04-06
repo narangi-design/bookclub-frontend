@@ -3,8 +3,8 @@
   min-height: 100vh;
 }
 
-.sidebar {
-  width: var(--sidebar-width);
+.navigation {
+  width: var(--desktop-sidebar-width);
   flex-shrink: 0;
   background: var(--color-surface);
   border-right: 1px solid var(--color-border);
@@ -50,6 +50,47 @@
     color: var(--color-accent);
     background: var(--color-accent-subtle);
     font-weight: 600;
+  }
+}
+
+.account-bar {
+  margin-top: auto;
+  padding: var(--sp-4) var(--sp-3) 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  border-top: 1px solid var(--color-border);
+}
+
+.account-name {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.account-actions {
+  display: flex;
+  gap: var(--sp-1);
+  flex-shrink: 0;
+}
+
+.account-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: var(--text-base);
+  cursor: pointer;
+  padding: var(--sp-1);
+  line-height: 1;
+  transition: color var(--transition-fast), background var(--transition-fast);
+
+  &:hover {
+    color: var(--color-text);
+    background: var(--color-bg);
   }
 }
 

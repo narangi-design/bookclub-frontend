@@ -1,4 +1,7 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { useState } from 'react'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { useAuth } from '@/context/AuthContext'
+import AccountModal from './AccountModal'
 import './Layout.scss'
 
 const navItems = [
@@ -11,9 +14,18 @@ const navItems = [
 ]
 
 export default function Layout() {
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+  const [showAccount, setShowAccount] = useState(false)
+
+  function handleLogout() {
+    logout()
+    navigate('/login', { replace: true })
+  }
+
   return (
     <div className="shell">
-      <aside className="sidebar">
+      <aside className="navigation">
         <div className="brand">Книжный клуб</div>
         <nav className="nav">
           {navItems.map(({ to, label }) => (
@@ -28,10 +40,18 @@ export default function Layout() {
             </NavLink>
           ))}
         </nav>
+        <div className="account-bar">
+          <span className="account-name">{user?.name}</span>
+          <div className="account-actions">
+            <button className="account-btn" onClick={() => setShowAccount(true)} title="Настройки">⚙</button>
+            <button className="account-btn" onClick={handleLogout} title="Выйти">→</button>
+          </div>
+        </div>
       </aside>
       <main className="main">
         <Outlet />
       </main>
+      {showAccount && <AccountModal onClose={() => setShowAccount(false)} />}
     </div>
   )
 }
