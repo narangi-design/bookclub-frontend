@@ -45,7 +45,7 @@ export default function LoginPage() {
     script.setAttribute('data-telegram-login', 'EliteBookClubBot')
     script.setAttribute('data-size', 'large')
     script.setAttribute('data-auth-url', `${window.location.origin}/login`)
-    script.setAttribute('data-request-access', 'write')
+
     script.async = true
     widgetRef.current?.appendChild(script)
   }, [isAuthed, login, navigate])
