@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { fetchUsers, fetchBooks, fetchPolls, fetchPollVotes, fetchAwardVotes, fetchAuthors } from '@/api'
+import { fetchMembers, fetchBooks, fetchPolls, fetchPollVotes, fetchAwardVotes, fetchAuthors } from '@/api'
 
-export function useUsers() {
-  return useQuery({ queryKey: ['users'], queryFn: fetchUsers })
+export function useMembers() {
+  return useQuery({ queryKey: ['members'], queryFn: fetchMembers })
 }
 
 export function useBooks() {

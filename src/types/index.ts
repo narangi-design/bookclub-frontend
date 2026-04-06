@@ -1,11 +1,12 @@
-export interface User {
+export interface Member {
   id: number
-  username: string
+  telegram_username: string
+  telegram_fullname?: string | null
 }
 
 export interface Author {
   id: number
-  value: string
+  name: string
 }
 
 export interface Book {

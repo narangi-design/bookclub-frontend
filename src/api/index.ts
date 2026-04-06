@@ -1,4 +1,4 @@
-import type { User, Book, Poll, PollVote, AwardVote, Author } from '@/types'
+import type { Member, Book, Poll, PollVote, AwardVote, Author } from '@/types'
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
 
@@ -7,8 +7,8 @@ async function get<T>(path: string): Promise<T> {
   return res.json()
 }
 
-export function fetchUsers(): Promise<User[]> {
-  return get('/api/users')
+export function fetchMembers(): Promise<Member[]> {
+  return get('/api/members')
 }
 
 export function fetchBooks(): Promise<Book[]> {

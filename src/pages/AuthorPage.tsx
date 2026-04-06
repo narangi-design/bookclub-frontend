@@ -1,6 +1,6 @@
 import './AuthorPage.scss'
 import { useParams, Link } from 'react-router-dom'
-import { useBooks, useAuthors, useUsers, usePollVotes, useAwardVotes } from '@/hooks'
+import { useBooks, useAuthors, useMembers, usePollVotes, useAwardVotes } from '@/hooks'
 import BookCardList from '@/components/layout/BookCardList'
 import { useAuth } from '@/context/AuthContext'
 
@@ -11,11 +11,11 @@ export default function AuthorPage() {
 
   const { data: books = [] } = useBooks()
   const { data: authors = [] } = useAuthors()
-  const { data: users = [] } = useUsers()
+  const { data: members = [] } = useMembers()
   const { data: pollVotes = [] } = usePollVotes()
   const { data: awardVotes = [] } = useAwardVotes()
 
-  const userById = Object.fromEntries(users.map(u => [u.id, u.username]))
+  const userById = Object.fromEntries(members.map(u => [u.id, u.telegram_fullname ?? u.telegram_username]))
 
   const author = authors.find(a => a.id === authorId)
   if (!author) return <div className="page"><p className="ap-not-found">Автор не найден</p></div>
@@ -44,7 +44,7 @@ export default function AuthorPage() {
       </div>
 
       <div className="ap-header">
-        <h1 className="ap-name">{author.value}</h1>
+        <h1 className="ap-name">{author.name}</h1>
 
         <div className="ap-stats">
           <div className="ap-stat">

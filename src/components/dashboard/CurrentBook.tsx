@@ -1,5 +1,5 @@
 import './CurrentBook.scss'
-import type { Book, User, Poll, PollVote } from '@/types'
+import type { Book, Member, Poll, PollVote } from '@/types'
 import { formatDate } from '@/utils'
 import VoteBarList, { type VoteEntry } from '@/components/layout/VoteBarList'
 import CoverImage from '@/components/layout/CoverImage'
@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom'
 interface Props {
   book: Book
   authorName?: string
-  addedByUser?: User
+  addedByMember?: Member
   poll?: Poll
   pollVotes: PollVote[]
   runoffPoll?: Poll
@@ -17,7 +17,7 @@ interface Props {
 
 const TOP_VOTES = 10
 
-export default function CurrentBook({ book, authorName, addedByUser, poll, pollVotes, runoffPoll, allBooks }: Props) {
+export default function CurrentBook({ book, authorName, addedByMember, poll, pollVotes, runoffPoll, allBooks }: Props) {
   const bookById = Object.fromEntries(allBooks.map(b => [b.id, b]))
 
   const stage1Votes = pollVotes
@@ -54,13 +54,13 @@ export default function CurrentBook({ book, authorName, addedByUser, poll, pollV
             {authorName && book.country && <span className="dot">·</span>}
             {book.country && <span>{book.country}</span>}
           </div>
-          {addedByUser && book.added_at && (
+          {addedByMember && book.added_at && (
             <div className="added-by">
               В списке с {formatDate(book.added_at)}
               {' · '}
-              Ведёт книгу {addedByUser && (
-                <Link to={`/users/${addedByUser.id}`} className="user-link">
-                  {addedByUser.username}
+              Ведёт книгу {addedByMember && (
+                <Link to={`/users/${addedByMember.id}`} className="user-link">
+                  {addedByMember.telegram_fullname ?? addedByMember.telegram_username}
                 </Link>
               )}
             </div>

@@ -20,7 +20,7 @@ export default function PollsPage() {
   const [filter, setFilter] = useState<Filter>('all')
 
   const bookById   = Object.fromEntries(books.map(b => [b.id, b]))
-  const authorById = Object.fromEntries(authors.map(a => [a.id, a.value]))
+  const authorById = Object.fromEntries(authors.map(a => [a.id, a.name]))
 
   const stage2ByParent: Record<number, Poll> = {}
   for (const p of polls.filter(p => p.stage === 2)) {

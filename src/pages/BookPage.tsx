@@ -1,6 +1,6 @@
 import './BookPage.scss'
 import { useParams, Link } from 'react-router-dom'
-import { useBooks, useUsers, useAuthors, usePolls, usePollVotes, useAwardVotes } from '@/hooks'
+import { useBooks, useMembers, useAuthors, usePolls, usePollVotes, useAwardVotes } from '@/hooks'
 import { formatDate, pollRootAppearances } from '@/utils'
 import CoverImage from '@/components/layout/CoverImage'
 
@@ -15,7 +15,7 @@ export default function BookPage() {
   const bookId = Number(id)
 
   const { data: books = [] } = useBooks()
-  const { data: users = [] } = useUsers()
+  const { data: members = [] } = useMembers()
   const { data: authors = [] } = useAuthors()
   const { data: polls = [] } = usePolls()
   const { data: pollVotes = [] } = usePollVotes()
@@ -25,10 +25,10 @@ export default function BookPage() {
   if (!book) return <div className="page"><p className="bp-not-found">Книга не найдена</p></div>
 
   const authorById = Object.fromEntries(authors.map(a => [a.id, a]))
-  const userById = Object.fromEntries(users.map(u => [u.id, u]))
+  const memberById = Object.fromEntries(members.map(u => [u.id, u]))
 
   const author = book.author_id != null ? authorById[book.author_id] : null
-  const addedBy = book.added_by_user_id != null ? userById[book.added_by_user_id] : null
+  const addedBy = book.added_by_user_id != null ? memberById[book.added_by_user_id] : null
 
   const appearances = pollRootAppearances(bookId, pollVotes, polls)
 
@@ -57,7 +57,7 @@ export default function BookPage() {
 
           {author && (
             <Link to={`/authors/${author.id}`} className="bp-author">
-              {author.value}
+              {author.name}
             </Link>
           )}
 
@@ -68,7 +68,9 @@ export default function BookPage() {
               <>
                 <dt>Предложил</dt>
                 <dd>
-                  <Link to={`/authors`} className="user-link">{addedBy.username}</Link>
+                  <Link to={`/users/${addedBy.id}`} className="user-link">
+                    {addedBy.telegram_fullname ?? addedBy.telegram_username}
+                  </Link>
                 </dd>
               </>
             )}

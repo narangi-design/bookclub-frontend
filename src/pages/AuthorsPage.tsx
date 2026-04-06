@@ -31,10 +31,10 @@ export default function AuthorsPage() {
   })
 
   const filtered = search.trim()
-    ? byFilter.filter(s => s.author.value.toLowerCase().includes(search.trim().toLowerCase()))
+    ? byFilter.filter(s => s.author.name.toLowerCase().includes(search.trim().toLowerCase()))
     : byFilter
 
-  const sorted = [...filtered].sort((a, b) => b.total - a.total || a.author.value.localeCompare(b.author.value, 'ru'))
+  const sorted = [...filtered].sort((a, b) => b.total - a.total || a.author.name.localeCompare(b.author.name, 'ru'))
 
   const counts = {
     all: withBooks.length,
@@ -66,7 +66,7 @@ export default function AuthorsPage() {
       <div className="aup-list">
         {sorted.map(({ author, total, readCount, awardYears }) => (
           <Link key={author.id} to={`/authors/${author.id}`} className="aup-item">
-            <div className="aup-name">{author.value}</div>
+            <div className="aup-name">{author.name}</div>
             <div className="aup-meta">
               {awardYears.length > 0 && (
                 <span className="aup-award">★ {awardYears.join(', ')}</span>

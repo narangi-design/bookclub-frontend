@@ -1,5 +1,5 @@
 import './DashboardPage.scss'
-import { useBooks, usePolls, useUsers, useAwardVotes, usePollVotes, useAuthors } from '@/hooks'
+import { useBooks, usePolls, useMembers, useAwardVotes, usePollVotes, useAuthors } from '@/hooks'
 import { useAuth } from '@/context/AuthContext'
 import AwardCard from '@/components/dashboard/AwardCard'
 import CurrentBook from '@/components/dashboard/CurrentBook'
@@ -11,13 +11,13 @@ export default function DashboardPage() {
   const { isAuthed } = useAuth()
   const { data: books       = [] } = useBooks()
   const { data: polls       = [] } = usePolls()
-  const { data: users       = [] } = useUsers()
+  const { data: members     = [] } = useMembers()
   const { data: awardVotes  = [] } = useAwardVotes()
   const { data: pollVotes   = [] } = usePollVotes()
   const { data: authors     = [] } = useAuthors()
 
-  const authorById = Object.fromEntries(authors.map(a => [a.id, a.value]))
-  const userById   = Object.fromEntries(users.map(u => [u.id, u.username]))
+  const authorById = Object.fromEntries(authors.map(a => [a.id, a.name]))
+  const userById   = Object.fromEntries(members.map(u => [u.id, u.telegram_fullname ?? u.telegram_username]))
 
   const readBooks   = books.filter(b => b.status === 'read')
   const toReadBooks = books.filter(b => b.status === 'to_read')
@@ -31,7 +31,7 @@ export default function DashboardPage() {
   const currentPoll      = electedPoll?.stage === 2
     ? polls.find(p => p.id === electedPoll.parent_poll_id) ?? electedPoll
     : electedPoll
-  const currentAddedBy   = users.find(u => u.id === currentBook?.added_by_user_id)
+  const currentAddedBy   = members.find(u => u.id === currentBook?.added_by_user_id)
   const currentRunoffPoll = electedPoll?.stage === 2 ? electedPoll : undefined
 
   // Last 5 read books excluding the current one
@@ -52,7 +52,7 @@ export default function DashboardPage() {
         <StatNumberCard value={books.length}       label="Книг в списке"      />
         <StatNumberCard value={readBooks.length}   label="Прочитано"          />
         <StatNumberCard value={toReadBooks.length} label="Предстоит прочитать"/>
-        <StatNumberCard value={users.length}       label="Активных участников"/>
+        <StatNumberCard value={members.length}     label="Активных участников"/>
       </div>
 
       {currentBook && (
@@ -61,7 +61,7 @@ export default function DashboardPage() {
           <CurrentBook
             book={currentBook}
             authorName={currentBook.author_id != null ? authorById[currentBook.author_id] : undefined}
-            addedByUser={currentAddedBy}
+            addedByMember={currentAddedBy}
             poll={currentPoll}
             pollVotes={pollVotes}
             runoffPoll={currentRunoffPoll}

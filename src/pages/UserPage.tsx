@@ -1,20 +1,21 @@
 import './UserPage.scss'
 import { useParams, Link } from 'react-router-dom'
-import { useBooks, useUsers, useAuthors } from '@/hooks'
+import { useBooks, useMembers, useAuthors } from '@/hooks'
 import BookCardList from '@/components/layout/BookCardList'
 
 export default function UserPage() {
   const { id } = useParams<{ id: string }>()
   const userId = Number(id)
 
-  const { data: users   = [] } = useUsers()
+  const { data: members = [] } = useMembers()
   const { data: books   = [] } = useBooks()
   const { data: authors = [] } = useAuthors()
 
-  const user = users.find(u => u.id === userId)
-  if (!user) return <div className="page"><p className="up-not-found">Участник не найден</p></div>
+  const member = members.find(u => u.id === userId)
+  if (!member) return <div className="page"><p className="up-not-found">Участник не найден</p></div>
 
-  const authorById = Object.fromEntries(authors.map(a => [a.id, a.value]))
+  const displayName = member.telegram_fullname ?? member.telegram_username
+  const authorById = Object.fromEntries(authors.map(a => [a.id, a.name]))
 
   const allAdded = books.filter(b => b.added_by_user_id === userId)
 
@@ -37,9 +38,9 @@ export default function UserPage() {
       </div>
 
       <div className="up-header">
-        <div className="up-avatar">{user.username.slice(0, 2).toUpperCase()}</div>
+        <div className="up-avatar">{displayName.slice(0, 2).toUpperCase()}</div>
         <div className="up-header-info">
-          <h1 className="up-name">{user.username}</h1>
+          <h1 className="up-name">{displayName}</h1>
           <div className="up-stats">
             <div className="up-stat">
               <span className="up-stat-value">{allAdded.length}</span>

@@ -1,8 +1,8 @@
 import './BooksPage.scss'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import type { User } from '@/types'
-import { useBooks, useUsers, useAuthors } from '@/hooks'
+import type { Member } from '@/types'
+import { useBooks, useMembers, useAuthors } from '@/hooks'
 import FilterBar from '@/components/layout/FilterBar'
 import SearchBar from '@/components/layout/SearchBar'
 function formatDate(iso: string) {
@@ -19,13 +19,13 @@ const STATUS_ORDER: Record<string, number> = { read: 0, to_read: 1, removed: 2 }
 
 export default function BooksPage() {
   const { data: books   = [] } = useBooks()
-  const { data: users   = [] } = useUsers()
+  const { data: members = [] } = useMembers()
   const { data: authors = [] } = useAuthors()
   const [filter, setFilter] = useState<Filter>('all')
   const [search, setSearch] = useState('')
 
-  const userById   = Object.fromEntries(users.map((u: User) => [u.id, u])) as Record<number, User>
-  const authorById = Object.fromEntries(authors.map(a => [a.id, a.value])) as Record<number, string>
+  const memberById = Object.fromEntries(members.map((u: Member) => [u.id, u])) as Record<number, Member>
+  const authorById = Object.fromEntries(authors.map(a => [a.id, a.name])) as Record<number, string>
 
   const counts = {
     all: books.length,
@@ -91,32 +91,32 @@ export default function BooksPage() {
             </tr>
           </thead>
           <tbody>
-            {visible.map(book => (
-              <tr key={book.id} className="tr">
-                <td className="td">
-                  <Link to={`/books/${book.id}`} className="book-title">{book.title}</Link>
-                  {book.status === 'removed' && (
-                    <span className="badge">removed</span>
-                  )}
-                </td>
-                <td className="td muted">
-                  {book.author_id != null
-                    ? <Link to={`/authors/${book.author_id}`} className="author-link">{authorById[book.author_id]}</Link>
-                    : '—'}
-                </td>
-                <td className="td muted">
-                  {book.added_by_user_id != null
-                    ? (userById[book.added_by_user_id]?.username ?? '—')
-                    : '—'}
-                </td>
-                <td className="td muted td--right">
-                  {book.added_at ? formatDate(book.added_at) : '—'}
-                </td>
-                <td className="td muted td--right">
-                  {book.elected_at ? formatDate(book.elected_at) : '—'}
-                </td>
-              </tr>
-            ))}
+            {visible.map(book => {
+              const m = book.added_by_user_id != null ? memberById[book.added_by_user_id] : null
+              const memberName = m ? (m.telegram_fullname ?? m.telegram_username) : '—'
+              return (
+                <tr key={book.id} className="tr">
+                  <td className="td">
+                    <Link to={`/books/${book.id}`} className="book-title">{book.title}</Link>
+                    {book.status === 'removed' && (
+                      <span className="badge">removed</span>
+                    )}
+                  </td>
+                  <td className="td muted">
+                    {book.author_id != null
+                      ? <Link to={`/authors/${book.author_id}`} className="author-link">{authorById[book.author_id]}</Link>
+                      : '—'}
+                  </td>
+                  <td className="td muted">{memberName}</td>
+                  <td className="td muted td--right">
+                    {book.added_at ? formatDate(book.added_at) : '—'}
+                  </td>
+                  <td className="td muted td--right">
+                    {book.elected_at ? formatDate(book.elected_at) : '—'}
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

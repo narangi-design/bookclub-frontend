@@ -6,7 +6,7 @@ import {
   pollCompetitivenessData, stageDepthDistribution,
   pollGapTimeline, radarTopBooksData,
 } from '@/utils'
-import { useBooks, usePollVotes, useUsers, usePolls } from '@/hooks'
+import { useBooks, usePollVotes, useMembers, usePolls } from '@/hooks'
 import {
   diagramColors,
   HBarChart, SimpleLineChart, DonutChart, SimpleBarChart,
@@ -30,7 +30,7 @@ function ChartCard({ title, children, wide }: { title: string; children: React.R
 export default function StatsPage() {
   const { data: books     = [] } = useBooks()
   const { data: pollVotes = [] } = usePollVotes()
-  const { data: users     = [] } = useUsers()
+  const { data: members   = [] } = useMembers()
   const { data: polls     = [] } = usePolls()
 
 
@@ -56,7 +56,7 @@ export default function StatsPage() {
   const competitiveness = pollCompetitivenessData(polls, pollVotes)
   const stageDepth     = stageDepthDistribution(polls)
   // ── Section: Участники ───────────────────────────────────────────────────
-  const memberActivity = memberActivityData(books, users)
+  const memberActivity = memberActivityData(books, members)
 
   // ── Section: Разное ──────────────────────────────────────────────────────
   const gaps      = pollGapTimeline(polls)

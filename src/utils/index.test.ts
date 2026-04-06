@@ -324,9 +324,9 @@ describe('topBooksByVotes', () => {
 
 describe('booksByUser', () => {
   const users = [
-    { id: 1, username: 'alice' },
-    { id: 2, username: 'bob' },
-    { id: 3, username: 'carol' }, // no books
+    { id: 1, telegram_username: 'alice' },
+    { id: 2, telegram_username: 'bob' },
+    { id: 3, telegram_username: 'carol' }, // no books
   ]
   const books = [
     makeBook({ id: 1, title: 'A', added_by_user_id: 1 }),
@@ -337,10 +337,10 @@ describe('booksByUser', () => {
   it('counts books per user, sorted descending, excludes users with 0', () => {
     const result = booksByUser(books, users)
     expect(result).toEqual([
-      { username: 'alice', count: 2 },
-      { username: 'bob', count: 1 },
+      { name: 'alice', count: 2 },
+      { name: 'bob', count: 1 },
     ])
-    expect(result.find(u => u.username === 'carol')).toBeUndefined()
+    expect(result.find(u => u.name === 'carol')).toBeUndefined()
   })
 })
 

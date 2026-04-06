@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from 'react'
 
 interface AuthUser {
-  telegram_id: number
+  user_id: number
   name: string
 }
 
