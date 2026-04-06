@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { Member } from '@/types'
 import { useBooks, useMembers, useAuthors } from '@/hooks'
+import { memberName } from '@/utils'
 import FilterBar from '@/components/layout/FilterBar'
 import SearchBar from '@/components/layout/SearchBar'
 function formatDate(iso: string) {
@@ -92,8 +93,8 @@ export default function BooksPage() {
           </thead>
           <tbody>
             {visible.map(book => {
-              const m = book.added_by_user_id != null ? memberById[book.added_by_user_id] : null
-              const memberName = m ? (m.telegram_fullname ?? m.telegram_username) : '—'
+              const m = book.added_by_member_id != null ? memberById[book.added_by_member_id] : null
+              const addedByName = m ? memberName(m) : '—'
               return (
                 <tr key={book.id} className="tr">
                   <td className="td">
@@ -107,7 +108,7 @@ export default function BooksPage() {
                       ? <Link to={`/authors/${book.author_id}`} className="author-link">{authorById[book.author_id]}</Link>
                       : '—'}
                   </td>
-                  <td className="td muted">{memberName}</td>
+                  <td className="td muted">{addedByName}</td>
                   <td className="td muted td--right">
                     {book.added_at ? formatDate(book.added_at) : '—'}
                   </td>

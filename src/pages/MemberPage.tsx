@@ -1,23 +1,24 @@
-import './UserPage.scss'
+import './MemberPage.scss'
 import { useParams, Link } from 'react-router-dom'
 import { useBooks, useMembers, useAuthors } from '@/hooks'
+import { memberName } from '@/utils'
 import BookCardList from '@/components/layout/BookCardList'
 
-export default function UserPage() {
+export default function MemberPage() {
   const { id } = useParams<{ id: string }>()
-  const userId = Number(id)
+  const memberId = Number(id)
 
   const { data: members = [] } = useMembers()
   const { data: books   = [] } = useBooks()
   const { data: authors = [] } = useAuthors()
 
-  const member = members.find(u => u.id === userId)
+  const member = members.find(u => u.id === memberId)
   if (!member) return <div className="page"><p className="up-not-found">Участник не найден</p></div>
 
-  const displayName = member.telegram_fullname ?? member.telegram_username
+  const displayName = memberName(member)
   const authorById = Object.fromEntries(authors.map(a => [a.id, a.name]))
 
-  const allAdded = books.filter(b => b.added_by_user_id === userId)
+  const allAdded = books.filter(b => b.added_by_member_id === memberId)
 
   const readBooks = allAdded
     .filter(b => b.status === 'read')
@@ -34,7 +35,7 @@ export default function UserPage() {
   return (
     <div className="page">
       <div className="up-back">
-        <Link to="/users" className="up-back-link">← Все участники</Link>
+        <Link to="/members" className="up-back-link">← Все участники</Link>
       </div>
 
       <div className="up-header">

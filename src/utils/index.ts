@@ -1,5 +1,9 @@
 import type { Book, Poll, PollVote, Member } from '@/types'
 
+export function memberName(m: Pick<Member, 'telegram_username' | 'telegram_fullname'>): string {
+  return m.telegram_username ?? m.telegram_fullname
+}
+
 /** Group an array by a string key */
 export function groupBy<T>(items: T[], key: (item: T) => string): Record<string, T[]> {
   return items.reduce<Record<string, T[]>>((acc, item) => {
@@ -96,37 +100,37 @@ export function countryDistribution(books: Book[]): Array<{ country: string; cou
 }
 
 /** Per-member book counts */
-export function booksByUser(
+export function booksByMember(
   books: Book[],
-  users: Array<{ id: number; telegram_username: string; telegram_fullname?: string | null }>,
+  members: Array<{ id: number; telegram_username?: string | null; telegram_fullname: string }>,
 ): Array<{ name: string; count: number }> {
   const counts: Record<number, number> = {}
   for (const b of books) {
-    if (b.added_by_user_id != null)
-      counts[b.added_by_user_id] = (counts[b.added_by_user_id] ?? 0) + 1
+    if (b.added_by_member_id != null)
+      counts[b.added_by_member_id] = (counts[b.added_by_member_id] ?? 0) + 1
   }
-  return users
-    .map(u => ({ name: u.telegram_fullname ?? u.telegram_username, count: counts[u.id] ?? 0 }))
-    .filter(u => u.count > 0)
+  return members
+    .map(m => ({ name: memberName(m), count: counts[m.id] ?? 0 }))
+    .filter(m => m.count > 0)
     .sort((a, b) => b.count - a.count)
 }
 
 /** Per-member nominated vs elected counts, only members with ≥1 elected book */
 export function memberActivityData(
   books: Book[],
-  users: Array<{ id: number; telegram_username: string; telegram_fullname?: string | null }>,
+  members: Array<{ id: number; telegram_username?: string | null; telegram_fullname: string }>,
 ): Array<{ name: string; nominated: number; elected: number }> {
   const nominated: Record<number, number> = {}
   const elected: Record<number, number> = {}
   for (const b of books) {
-    if (b.added_by_user_id == null) continue
-    nominated[b.added_by_user_id] = (nominated[b.added_by_user_id] ?? 0) + 1
+    if (b.added_by_member_id == null) continue
+    nominated[b.added_by_member_id] = (nominated[b.added_by_member_id] ?? 0) + 1
     if (b.status === 'read')
-      elected[b.added_by_user_id] = (elected[b.added_by_user_id] ?? 0) + 1
+      elected[b.added_by_member_id] = (elected[b.added_by_member_id] ?? 0) + 1
   }
-  return users
-    .map(u => ({ name: u.telegram_fullname ?? u.telegram_username, nominated: nominated[u.id] ?? 0, elected: elected[u.id] ?? 0 }))
-    .filter(u => u.elected > 0)
+  return members
+    .map(m => ({ name: memberName(m), nominated: nominated[m.id] ?? 0, elected: elected[m.id] ?? 0 }))
+    .filter(m => m.elected > 0)
     .sort((a, b) => b.nominated - a.nominated)
 }
 
@@ -356,19 +360,19 @@ export function treemapBookData(
 }
 
 /** Sunburst data: members → their books (leaf value = 1) */
-export function sunburstUserData(
+export function sunburstMemberData(
   books: Book[],
-  users: Member[],
+  members: Member[],
 ): { name: string; children: Array<{ name: string; children: Array<{ name: string; value: number }> }> } {
   return {
     name: 'Все книги',
-    children: users
-      .map(u => {
-        const userBooks = books.filter(b => b.added_by_user_id === u.id)
-        if (!userBooks.length) return null
+    children: members
+      .map(m => {
+        const memberBooks = books.filter(b => b.added_by_member_id === m.id)
+        if (!memberBooks.length) return null
         return {
-          name: u.telegram_fullname ?? u.telegram_username,
-          children: userBooks.map(b => ({ name: b.title.slice(0, 18), value: 1 })),
+          name: memberName(m),
+          children: memberBooks.map(b => ({ name: b.title.slice(0, 18), value: 1 })),
         }
       })
       .filter((x): x is NonNullable<typeof x> => x !== null)

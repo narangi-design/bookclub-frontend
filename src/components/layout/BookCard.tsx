@@ -14,14 +14,14 @@ interface Props {
   book: Book
   showAuthor?: boolean
   authorName?: string
-  showUser?: boolean
-  userName?: string
+  showMember?: boolean
+  memberName?: string
   showBadge?: boolean
   titleBadge?: React.ReactNode
   showStatus?: boolean
 }
 
-export default function BookCard({ book, showAuthor = true, authorName, showUser, userName, showBadge = true, titleBadge, showStatus = true }: Props) {
+export default function BookCard({ book, showAuthor = true, authorName, showMember: showMember, memberName: memberName, showBadge = true, titleBadge, showStatus = true }: Props) {
   const date = book.elected_at
   const addedDate = book.added_at
 
@@ -43,7 +43,7 @@ export default function BookCard({ book, showAuthor = true, authorName, showUser
             ? <span className="book-card-date">{formatDate(date)}</span>
             : addedDate && <span className="book-card-date">добавлена {formatDate(addedDate)}</span>
           }
-          {showUser && userName && <span className="book-card-user">от {userName}</span>}
+          {showMember && memberName && <span className="book-card-member">от {memberName}</span>}
         </div>
       </div>
     </Link>

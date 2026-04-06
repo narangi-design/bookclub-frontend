@@ -1,7 +1,7 @@
 import './BookPage.scss'
 import { useParams, Link } from 'react-router-dom'
 import { useBooks, useMembers, useAuthors, usePolls, usePollVotes, useAwardVotes } from '@/hooks'
-import { formatDate, pollRootAppearances } from '@/utils'
+import { formatDate, pollRootAppearances, memberName } from '@/utils'
 import CoverImage from '@/components/layout/CoverImage'
 
 const STATUS_LABEL: Record<string, string> = {
@@ -28,7 +28,7 @@ export default function BookPage() {
   const memberById = Object.fromEntries(members.map(u => [u.id, u]))
 
   const author = book.author_id != null ? authorById[book.author_id] : null
-  const addedBy = book.added_by_user_id != null ? memberById[book.added_by_user_id] : null
+  const addedBy = book.added_by_member_id != null ? memberById[book.added_by_member_id] : null
 
   const appearances = pollRootAppearances(bookId, pollVotes, polls)
 
@@ -68,8 +68,8 @@ export default function BookPage() {
               <>
                 <dt>Предложил</dt>
                 <dd>
-                  <Link to={`/users/${addedBy.id}`} className="user-link">
-                    {addedBy.telegram_fullname ?? addedBy.telegram_username}
+                  <Link to={`/members/${addedBy.id}`} className="member-link">
+                    {memberName(addedBy)}
                   </Link>
                 </dd>
               </>

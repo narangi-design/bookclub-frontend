@@ -384,14 +384,14 @@ export function GroupedBarChart({ data, xKey, bars, height = 200, barSize = 36, 
   )
 }
 
-// ── Sunburst User Chart ──────────────────────────────────────────────────────
+// ── Sunburst Member Chart ──────────────────────────────────────────────────────
 
-interface SunburstUserChartProps {
+interface SunburstMemberChartProps {
   data: unknown
   height?: number
 }
 
-export function SunburstUserChart({ data, height = 300 }: SunburstUserChartProps) {
+export function SunburstMemberChart({ data, height = 300 }: SunburstMemberChartProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <SunburstChart data={data as never} dataKey="value">

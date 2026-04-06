@@ -1,17 +1,18 @@
-import './UsersPage.scss'
+import './MembersPage.scss'
 import { Link } from 'react-router-dom'
 import { useBooks, useMembers } from '@/hooks'
+import { memberName } from '@/utils'
 
-export default function UsersPage() {
+export default function MembersPage() {
   const { data: members = [] } = useMembers()
   const { data: books = [] } = useBooks()
 
-  const booksByMember = Object.groupBy(books, b => b.added_by_user_id ?? -1)
+  const booksByMember = Object.groupBy(books, b => b.added_by_member_id ?? -1)
 
   const rows = members.map(member => {
     const added = booksByMember[member.id] ?? []
     const read  = added.filter(b => b.status === 'read').length
-    const displayName = member.telegram_fullname ?? member.telegram_username
+    const displayName = memberName(member)
     return { member, displayName, added: added.length, read }
   }).sort((a, b) => b.added - a.added || a.displayName.localeCompare(b.displayName))
 
@@ -21,7 +22,7 @@ export default function UsersPage() {
 
       <div className="usp-list">
         {rows.map(({ member, displayName, added, read }) => (
-          <Link key={member.id} to={`/users/${member.id}`} className="usp-item">
+          <Link key={member.id} to={`/members/${member.id}`} className="usp-item">
             <div className="usp-avatar">{displayName.slice(0, 2).toUpperCase()}</div>
             <div className="usp-info">
               <div className="usp-name">{displayName}</div>

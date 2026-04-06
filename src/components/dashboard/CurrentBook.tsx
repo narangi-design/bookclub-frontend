@@ -1,6 +1,6 @@
 import './CurrentBook.scss'
 import type { Book, Member, Poll, PollVote } from '@/types'
-import { formatDate } from '@/utils'
+import { formatDate, memberName } from '@/utils'
 import VoteBarList, { type VoteEntry } from '@/components/layout/VoteBarList'
 import CoverImage from '@/components/layout/CoverImage'
 import { Link } from 'react-router-dom'
@@ -59,8 +59,8 @@ export default function CurrentBook({ book, authorName, addedByMember, poll, pol
               В списке с {formatDate(book.added_at)}
               {' · '}
               Ведёт книгу {addedByMember && (
-                <Link to={`/users/${addedByMember.id}`} className="user-link">
-                  {addedByMember.telegram_fullname ?? addedByMember.telegram_username}
+                <Link to={`/members/${addedByMember.id}`} className="member-link">
+                  {memberName(addedByMember)}
                 </Link>
               )}
             </div>

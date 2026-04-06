@@ -1,7 +1,7 @@
 export interface Member {
   id: number
-  telegram_username: string
-  telegram_fullname?: string | null
+  telegram_username?: string | null
+  telegram_fullname: string
 }
 
 export interface Author {
@@ -14,7 +14,7 @@ export interface Book {
   title: string
   author_id: number | null
   country: string | null
-  added_by_user_id: number | null
+  added_by_member_id: number | null
   added_at: string | null        // ISO date string
   status: 'to_read' | 'read' | 'removed'
   elected_poll_id: number | null

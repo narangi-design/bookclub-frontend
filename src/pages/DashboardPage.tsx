@@ -1,6 +1,7 @@
 import './DashboardPage.scss'
 import { useBooks, usePolls, useMembers, useAwardVotes, usePollVotes, useAuthors } from '@/hooks'
 import { useAuth } from '@/context/AuthContext'
+import { memberName } from '@/utils'
 import AwardCard from '@/components/dashboard/AwardCard'
 import CurrentBook from '@/components/dashboard/CurrentBook'
 import StatNumberCard from '@/components/layout/StatNumberCard'
@@ -17,7 +18,7 @@ export default function DashboardPage() {
   const { data: authors     = [] } = useAuthors()
 
   const authorById = Object.fromEntries(authors.map(a => [a.id, a.name]))
-  const userById   = Object.fromEntries(members.map(u => [u.id, u.telegram_fullname ?? u.telegram_username]))
+  const memberById   = Object.fromEntries(members.map(m => [m.id, memberName(m)]))
 
   const readBooks   = books.filter(b => b.status === 'read')
   const toReadBooks = books.filter(b => b.status === 'to_read')
@@ -31,7 +32,7 @@ export default function DashboardPage() {
   const currentPoll      = electedPoll?.stage === 2
     ? polls.find(p => p.id === electedPoll.parent_poll_id) ?? electedPoll
     : electedPoll
-  const currentAddedBy   = members.find(u => u.id === currentBook?.added_by_user_id)
+  const currentAddedBy   = members.find(u => u.id === currentBook?.added_by_member_id)
   const currentRunoffPoll = electedPoll?.stage === 2 ? electedPoll : undefined
 
   // Last 5 read books excluding the current one
@@ -77,8 +78,8 @@ export default function DashboardPage() {
             books={recentBooks}
             authorById={authorById}
             showCountry
-            userById={userById}
-            showUser={isAuthed}
+            memberById={memberById}
+            showMember={isAuthed}
           />
         </section>
       )}
@@ -86,9 +87,9 @@ export default function DashboardPage() {
       <section className="section">
         <h2 className="section-title">Премии книжного клуба</h2>
         <div className="awards-grid">
-          <AwardCard year={2025} votes={votes2025} books={books} authorById={authorById} userById={userById} />
-          <AwardCard year={2024} votes={votes2024} books={books} authorById={authorById} userById={userById} />
-          <AwardCard year={2023} votes={votes2023} books={books} authorById={authorById} userById={userById} />
+          <AwardCard year={2025} votes={votes2025} books={books} authorById={authorById} memberById={memberById} />
+          <AwardCard year={2024} votes={votes2024} books={books} authorById={authorById} memberById={memberById} />
+          <AwardCard year={2023} votes={votes2023} books={books} authorById={authorById} memberById={memberById} />
         </div>
       </section>
     </div>

@@ -14,7 +14,7 @@ import {
   stageDepthDistribution,
   mostNominatedUnelected,
   topBooksByVotes,
-  booksByUser,
+  booksByMember as booksByMember,
   pollPredictabilityData,
 } from './index'
 import type { Book, Poll, PollVote } from '@/types'
@@ -25,7 +25,7 @@ function makeBook(overrides: Partial<Book> & { id: number; title: string }): Boo
   return {
     author_id: null,
     country: null,
-    added_by_user_id: null,
+    added_by_member_id: null,
     added_at: null,
     status: 'to_read',
     elected_poll_id: null,
@@ -320,22 +320,22 @@ describe('topBooksByVotes', () => {
   })
 })
 
-// ─── booksByUser ─────────────────────────────────────────────────────────────
+// ─── booksByMember ─────────────────────────────────────────────────────────────
 
-describe('booksByUser', () => {
-  const users = [
-    { id: 1, telegram_username: 'alice' },
-    { id: 2, telegram_username: 'bob' },
-    { id: 3, telegram_username: 'carol' }, // no books
+describe('booksByMember', () => {
+  const members = [
+    { id: 1, telegram_username: 'alice', telegram_fullname: 'alice' },
+    { id: 2, telegram_username: 'bob', telegram_fullname: 'bob' },
+    { id: 3, telegram_username: 'carol', telegram_fullname: 'carol' }, // no books
   ]
   const books = [
-    makeBook({ id: 1, title: 'A', added_by_user_id: 1 }),
-    makeBook({ id: 2, title: 'B', added_by_user_id: 1 }),
-    makeBook({ id: 3, title: 'C', added_by_user_id: 2 }),
+    makeBook({ id: 1, title: 'A', added_by_member_id: 1 }),
+    makeBook({ id: 2, title: 'B', added_by_member_id: 1 }),
+    makeBook({ id: 3, title: 'C', added_by_member_id: 2 }),
   ]
 
-  it('counts books per user, sorted descending, excludes users with 0', () => {
-    const result = booksByUser(books, users)
+  it('counts books per member, sorted descending, excludes members with 0', () => {
+    const result = booksByMember(books, members)
     expect(result).toEqual([
       { name: 'alice', count: 2 },
       { name: 'bob', count: 1 },

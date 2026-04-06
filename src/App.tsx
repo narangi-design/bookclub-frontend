@@ -7,8 +7,8 @@ import BooksPage from '@/pages/BooksPage'
 import BookPage from '@/pages/BookPage'
 import AuthorPage from '@/pages/AuthorPage'
 import AuthorsPage from '@/pages/AuthorsPage'
-import UsersPage from '@/pages/UsersPage'
-import UserPage from '@/pages/UserPage'
+import MembersPage from '@/pages/MembersPage'
+import MemberPage from '@/pages/MemberPage'
 import PollsPage from '@/pages/PollsPage'
 import StatsPage from '@/pages/StatsPage'
 import LoginPage from '@/pages/LoginPage'
@@ -36,8 +36,8 @@ export default function App() {
               <Route path="authors/:id" element={<AuthorPage />} />
               <Route path="polls" element={<PollsPage />} />
               <Route element={<PrivateRoute />}>
-                <Route path="users" element={<UsersPage />} />
-                <Route path="users/:id" element={<UserPage />} />
+                <Route path="members" element={<MembersPage />} />
+                <Route path="members/:id" element={<MemberPage />} />
                 <Route path="stats" element={<StatsPage />} />
               </Route>
             </Route>

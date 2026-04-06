@@ -9,13 +9,13 @@ interface Props {
   votes: AwardVote[]
   books: Book[]
   authorById?: Record<number, string>
-  userById?: Record<number, string>
+  memberById?: Record<number, string>
 }
 
 const TOP_N = 10
 const MEDALS = ['🥇', '🥈', '🥉']
 
-export default function AwardCard({ year, votes, books, authorById, userById }: Props) {
+export default function AwardCard({ year, votes, books, authorById, memberById: memberById }: Props) {
   const { isAuthed } = useAuth()
   const bookById = Object.fromEntries(books.map(b => [b.id, b]))
 
@@ -63,8 +63,8 @@ export default function AwardCard({ year, votes, books, authorById, userById }: 
                   book={book}
                   showAuthor={true}
                   authorName={book.author_id != null ? authorById?.[book.author_id] : undefined}
-                  showUser={isAuthed}
-                  userName={book.added_by_user_id != null ? userById?.[book.added_by_user_id] : undefined}
+                  showMember={isAuthed}
+                  memberName={book.added_by_member_id != null ? memberById?.[book.added_by_member_id] : undefined}
                   titleBadge={<span className="podium-medal">{MEDALS[rank - 1]}</span>}
                   showStatus={false}
                 />

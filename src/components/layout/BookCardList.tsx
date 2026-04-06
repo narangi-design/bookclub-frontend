@@ -6,9 +6,9 @@ interface Props {
   books: Book[]
   authorById?: Record<number, string>
   showCountry?: boolean
-  userById?: Record<number, string>
+  memberById?: Record<number, string>
   showAuthor?: boolean
-  showUser?: boolean
+  showMember?: boolean
   getBadge?: (book: Book) => React.ReactNode
 }
 
@@ -16,9 +16,9 @@ export default function BookCardList({
   books,
   authorById,
   showCountry,
-  userById,
+  memberById: memberById,
   showAuthor,
-  showUser,
+  showMember: showMember,
   getBadge,
 }: Props) {
   return (
@@ -35,8 +35,8 @@ export default function BookCardList({
             book={book}
             authorName={parts.length > 0 ? parts.join(' · ') : undefined}
             showAuthor={showAuthor}
-            showUser={showUser}
-            userName={book.added_by_user_id != null ? userById?.[book.added_by_user_id] : undefined}
+            showMember={showMember}
+            memberName={book.added_by_member_id != null ? memberById?.[book.added_by_member_id] : undefined}
             titleBadge={getBadge?.(book)}
           />
         )

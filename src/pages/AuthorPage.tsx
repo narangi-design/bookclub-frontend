@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { useBooks, useAuthors, useMembers, usePollVotes, useAwardVotes } from '@/hooks'
 import BookCardList from '@/components/layout/BookCardList'
 import { useAuth } from '@/context/AuthContext'
+import { memberName } from '@/utils'
 
 export default function AuthorPage() {
   const { isAuthed } = useAuth()
@@ -15,7 +16,7 @@ export default function AuthorPage() {
   const { data: pollVotes = [] } = usePollVotes()
   const { data: awardVotes = [] } = useAwardVotes()
 
-  const userById = Object.fromEntries(members.map(u => [u.id, u.telegram_fullname ?? u.telegram_username]))
+  const memberById = Object.fromEntries(members.map(m => [m.id, memberName(m)]))
 
   const author = authors.find(a => a.id === authorId)
   if (!author) return <div className="page"><p className="ap-not-found">Автор не найден</p></div>
@@ -75,8 +76,8 @@ export default function AuthorPage() {
       <BookCardList
         books={sorted}
         showAuthor={false}
-        userById={userById}
-        showUser={isAuthed}
+        memberById={memberById}
+        showMember={isAuthed}
         getBadge={book => {
           const award = awardVotes.find(v => v.book_id === book.id && v.is_winner)
           return award ? <span className="ap-book-award">★ {award.year}</span> : undefined
