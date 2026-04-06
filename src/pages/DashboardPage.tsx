@@ -1,5 +1,6 @@
 import './DashboardPage.scss'
 import { useBooks, usePolls, useUsers, useAwardVotes, usePollVotes, useAuthors } from '@/hooks'
+import { useAuth } from '@/context/AuthContext'
 import AwardCard from '@/components/dashboard/AwardCard'
 import CurrentBook from '@/components/dashboard/CurrentBook'
 import StatNumberCard from '@/components/layout/StatNumberCard'
@@ -7,6 +8,7 @@ import BookCardList from '@/components/layout/BookCardList'
 
 
 export default function DashboardPage() {
+  const { isAuthed } = useAuth()
   const { data: books       = [] } = useBooks()
   const { data: polls       = [] } = usePolls()
   const { data: users       = [] } = useUsers()
@@ -76,7 +78,7 @@ export default function DashboardPage() {
             authorById={authorById}
             showCountry
             userById={userById}
-            showUser
+            showUser={isAuthed}
           />
         </section>
       )}
