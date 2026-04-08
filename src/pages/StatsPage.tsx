@@ -2,16 +2,13 @@ import './StatsPage.scss'
 import {
   topBooksByVotes, memberActivityData,
   booksAddedByMonth, avgDaysToElect, medianDaysToElect,
-  pollParticipationTimeline, mostNominatedUnelected, winRateScatterData,
-  pollCompetitivenessData, stageDepthDistribution,
-  pollGapTimeline, radarTopBooksData,
+  pollParticipationTimeline,
 } from '@/utils'
 import { useBooks, usePollVotes, useMembers, usePolls } from '@/hooks'
 import {
   diagramColors,
-  HBarChart, SimpleLineChart, DonutChart, SimpleBarChart,
-  WinRateScatter, CompetitivenessChart, StageDepthFunnel,
-  GroupedBarChart, SimpleAreaChart, RadarMultiChart,
+  HBarChart, SimpleLineChart, DonutChart,
+  SimpleBarChart, GroupedBarChart,
 } from '@/components/charts'
 
 function SectionTitle({ children }: { children: string }) {
@@ -51,20 +48,12 @@ export default function StatsPage() {
   // ── Section: Голосования ─────────────────────────────────────────────────
   const topVoted       = topBooksByVotes(books, pollVotes, 10)
   const participation  = pollParticipationTimeline(polls)
-  const unelected      = mostNominatedUnelected(books, pollVotes, 12)
-  const scatterData    = winRateScatterData(books, pollVotes)
-  const competitiveness = pollCompetitivenessData(polls, pollVotes)
-  const stageDepth     = stageDepthDistribution(polls)
+
   // ── Section: Участники ───────────────────────────────────────────────────
   const memberActivity = memberActivityData(books, members)
 
-  // ── Section: Разное ──────────────────────────────────────────────────────
-  const gaps      = pollGapTimeline(polls)
-  const radarData = radarTopBooksData(books, pollVotes, 6)
-  const radarKeys = radarData.length > 0 ? Object.keys(radarData[0]).filter(k => k !== 'subject') : []
-
   return (
-    <div className="page">
+    <div className="page stats-page">
       <h1 className="page-title">Всякая стата</h1>
 
       <SectionTitle>Книги</SectionTitle>
@@ -87,7 +76,6 @@ export default function StatsPage() {
             <span className="big-stat-number">{avgDays}</span>
             <span className="big-stat-label">дней</span>
           </div>
-          <p className="big-stat-sub">среднее для прочитанных книг</p>
         </ChartCard>
 
         <ChartCard title="Медианное время от добавления до выбора">
@@ -95,7 +83,6 @@ export default function StatsPage() {
             <span className="big-stat-number">{medianDays}</span>
             <span className="big-stat-label">дней</span>
           </div>
-          <p className="big-stat-sub">медиана для прочитанных книг</p>
         </ChartCard>
 
       </div>
@@ -119,25 +106,6 @@ export default function StatsPage() {
           />
         </ChartCard>
 
-        <ChartCard title="Самые обойдённые (номинаций без победы)">
-          <HBarChart
-            data={unelected.map(x => ({ name: x.book.title, n: x.nominations }))}
-            dataKey="n" color={diagramColors[4]} valueLabel="Номинаций"
-          />
-        </ChartCard>
-
-        <ChartCard title="Голоса vs Номинации (победители выделены)">
-          <WinRateScatter data={scatterData} />
-        </ChartCard>
-
-        <ChartCard title="Конкурентность голосований (2-е место / 1-е место)">
-          <CompetitivenessChart data={competitiveness} />
-        </ChartCard>
-
-        <ChartCard title="Глубина голосований">
-          <StageDepthFunnel data={stageDepth} />
-        </ChartCard>
-
       </div>
 
       <SectionTitle>Участники</SectionTitle>
@@ -157,18 +125,6 @@ export default function StatsPage() {
 
       </div>
 
-      <SectionTitle>Разное</SectionTitle>
-      <div className="charts-grid">
-
-        <ChartCard title="Интервалы между голосованиями (дни)" wide>
-          <SimpleAreaChart data={gaps} xKey="date" yKey="gap" xInterval={9} valueLabel="Дней" />
-        </ChartCard>
-
-        <ChartCard title="Профиль топ-6 книг (Radar)">
-          <RadarMultiChart data={radarData} keys={radarKeys} />
-        </ChartCard>
-
-      </div>
     </div>
   )
 }

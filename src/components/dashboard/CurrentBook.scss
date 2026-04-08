@@ -1,5 +1,9 @@
 .card {
-  padding: var(--sp-6);
+  padding: var(--sp-3) var(--sp-4);
+
+  @media (min-width: 640px) {
+    padding: var(--sp-6);
+  }
   display: flex;
   gap: var(--sp-7);
 }

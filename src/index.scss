@@ -134,23 +134,39 @@ button {
 .page {
   max-width: var(--page-width);
   margin: 0 auto;
-  padding: var(--sp-8);
+  padding: var(--sp-4);
+
+  @media (min-width: 640px) {
+    padding: var(--sp-8);
+  }
 }
 
 .page-title {
   font-size: var(--text-2xl);
   font-weight: 700;
-  margin: 0 0 var(--sp-6);
+  margin: 0 0 var(--sp-4);
+
+  @media (min-width: 640px) {
+    margin: 0 0 var(--sp-6);
+  }
 }
 
 .section {
-  margin-bottom: var(--sp-8);
+  margin-bottom: var(--sp-5);
+
+  @media (min-width: 640px) {
+    margin-bottom: var(--sp-8);
+  }
 }
 
 .section-title {
   font-size: var(--text-lg);
   font-weight: 600;
-  margin: 0 0 var(--sp-4);
+  margin: 0 0 var(--sp-3);
+
+  @media (min-width: 640px) {
+    margin: 0 0 var(--sp-4);
+  }
 }
 
 // ─── Card surface ─────────────────────────────────────────────────────────────
