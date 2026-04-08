@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import './LoginPage.scss'
 
@@ -8,6 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
 export default function LoginPage() {
   const { login, isAuthed } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -39,10 +40,22 @@ export default function LoginPage() {
     }
   }
 
+  const canGoBack = location.key !== 'default'
+
   return (
     <div className="login-page">
+      <nav className="login-nav">
+        {canGoBack && (
+          <button className="login-nav-back" onClick={() => navigate(-1)}>← Назад</button>
+        )}
+        <Link to="/dashboard" className="login-nav-home">На главную</Link>
+      </nav>
+
       <div className="login-card">
-        <h1 className="login-title">Книжный клуб</h1>
+        <div className="login-header">
+          <h1 className="login-title">Книжный клуб</h1>
+          <p className="login-subtitle">Войдите, чтобы видеть имена участников</p>
+        </div>
         <form className="login-form" onSubmit={handleSubmit}>
           <input
             className="login-input"

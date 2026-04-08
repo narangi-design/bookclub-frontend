@@ -49,7 +49,10 @@ export default function Layout() {
             </div>
           </div>
         ) : (
-          <Link to="/login" className="login-link">Войти</Link>
+          <div className="auth-hint">
+            <p className="auth-hint-text">Без авторизации мы не показываем имена участников</p>
+            <Link to="/login" className="login-link">Войти</Link>
+          </div>
         )}
       </aside>
       <main className="main">

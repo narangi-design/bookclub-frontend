@@ -52,7 +52,7 @@ export default function DashboardPage() {
         <StatNumberCard value={books.length}       label="Книг в списке"      />
         <StatNumberCard value={readBooks.length}   label="Прочитано"          />
         <StatNumberCard value={toReadBooks.length} label="Предстоит прочитать"/>
-        <StatNumberCard value={members.length}     label="Активных участников"/>
+        <StatNumberCard value={members.length}     label="Активных участников" blur={memberVisibility === 'blur'} />
       </div>
 
       {currentBook && (

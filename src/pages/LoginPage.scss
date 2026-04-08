@@ -1,21 +1,57 @@
 .login-page {
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   background: var(--color-bg);
 }
 
+.login-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.login-nav-back {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--color-text);
+  }
+}
+
+.login-nav-home {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--color-text);
+  }
+}
+
 .login-card {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
-  padding: 2.5rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  max-width: 360px;
-  width: 100%;
+  justify-content: center;
+  gap: var(--sp-6);
+  padding: var(--sp-10) var(--sp-4);
+}
+
+.login-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
 }
 
 .login-title {
@@ -26,21 +62,29 @@
   margin: 0;
 }
 
+.login-subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--sp-3);
   width: 100%;
+  max-width: 320px;
 }
 
 .login-input {
   width: 100%;
-  padding: 0.625rem 0.875rem;
-  background: var(--color-bg);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   color: var(--color-text);
   font-size: var(--text-sm);
   box-sizing: border-box;
+  transition: border-color var(--transition-fast);
 
   &:focus {
     outline: none;
@@ -50,13 +94,18 @@
 
 .login-button {
   width: 100%;
-  padding: 0.625rem;
-  background: var(--color-text);
+  padding: var(--sp-3);
+  background: var(--color-accent);
   color: var(--color-bg);
   border: none;
   font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
+  transition: opacity var(--transition-fast);
+
+  &:hover:not(:disabled) {
+    opacity: 0.88;
+  }
 
   &:disabled {
     opacity: 0.6;
@@ -68,4 +117,6 @@
   font-size: var(--text-sm);
   color: var(--color-error, #e53e3e);
   margin: 0;
+  max-width: 320px;
+  text-align: center;
 }
