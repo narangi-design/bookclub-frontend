@@ -9,8 +9,12 @@
   display: flex;
   align-items: center;
   gap: var(--sp-4);
-  padding: var(--sp-4) var(--sp-6);
+  padding: var(--sp-3) var(--sp-4);
   border-bottom: 1px solid var(--color-border);
+
+  @media (min-width: 640px) {
+    padding: var(--sp-4) var(--sp-6);
+  }
 }
 
 .login-nav-back {
@@ -44,7 +48,11 @@
   align-items: center;
   justify-content: center;
   gap: var(--sp-6);
-  padding: var(--sp-10) var(--sp-4);
+  padding: var(--sp-8) var(--sp-4);
+
+  @media (min-width: 640px) {
+    padding: var(--sp-10) var(--sp-4);
+  }
 }
 
 .login-header {
@@ -82,9 +90,13 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   color: var(--color-text);
-  font-size: var(--text-sm);
+  font-size: 16px; // prevents iOS auto-zoom on focus
   box-sizing: border-box;
   transition: border-color var(--transition-fast);
+
+  @media (min-width: 640px) {
+    font-size: var(--text-sm);
+  }
 
   &:focus {
     outline: none;
@@ -95,6 +107,7 @@
 .login-button {
   width: 100%;
   padding: var(--sp-3);
+  min-height: 44px; // accessible touch target
   background: var(--color-accent);
   color: var(--color-bg);
   border: none;

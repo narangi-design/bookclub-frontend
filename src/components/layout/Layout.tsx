@@ -13,10 +13,23 @@ const navItems = [
   { to: '/polls', label: 'Голосования' },
 ]
 
+const bottomMainItems = [
+  { to: '/dashboard', label: 'Главная' },
+  { to: '/books', label: 'Книги' },
+  { to: '/authors', label: 'Авторы' },
+]
+
+const bottomDrawerItems = [
+  { to: '/members', label: 'Участники' },
+  { to: '/stats', label: 'Всякая стата' },
+  { to: '/polls', label: 'Голосования' },
+]
+
 export default function Layout() {
   const { user, isAuthed, logout } = useAuth()
   const navigate = useNavigate()
   const [showAccount, setShowAccount] = useState(false)
+  const [showDrawer, setShowDrawer] = useState(false)
 
   function handleLogout() {
     logout()
@@ -55,9 +68,63 @@ export default function Layout() {
           </div>
         )}
       </aside>
+
       <main className="main">
         <Outlet />
       </main>
+
+      {/* Mobile bottom nav */}
+      <nav className="bottom-nav">
+        {bottomMainItems.map(({ to, label }) => (
+          <NavLink
+            key={to}
+            to={to}
+            className={({ isActive }) =>
+              `bottom-nav-item${isActive ? ' bottom-nav-item--active' : ''}`
+            }
+          >
+            {label}
+          </NavLink>
+        ))}
+
+        <button
+          className={`bottom-nav-item bottom-nav-item--burger${showDrawer ? ' bottom-nav-item--active' : ''}`}
+          onClick={() => setShowDrawer(v => !v)}
+        >
+          ☰
+        </button>
+
+        {isAuthed ? (
+          <button className="bottom-nav-item bottom-nav-item--auth" onClick={() => setShowAccount(true)}>
+            <span className="bottom-nav-auth-name">{user?.name}</span>
+          </button>
+        ) : (
+          <Link to="/login" className="bottom-nav-item">
+            Войти
+          </Link>
+        )}
+      </nav>
+
+      {/* Burger drawer */}
+      {showDrawer && (
+        <div className="drawer-overlay" onClick={() => setShowDrawer(false)}>
+          <div className="drawer" onClick={e => e.stopPropagation()}>
+            {bottomDrawerItems.map(({ to, label }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  `drawer-link${isActive ? ' drawer-link--active' : ''}`
+                }
+                onClick={() => setShowDrawer(false)}
+              >
+                {label}
+              </NavLink>
+            ))}
+          </div>
+        </div>
+      )}
+
       {showAccount && <AccountModal onClose={() => setShowAccount(false)} />}
     </div>
   )

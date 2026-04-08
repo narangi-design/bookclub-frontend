@@ -3,6 +3,7 @@
   min-height: 100vh;
 }
 
+// ── Desktop sidebar ──────────────────────────────────────────
 .navigation {
   width: var(--desktop-sidebar-width);
   flex-shrink: 0;
@@ -15,6 +16,10 @@
   top: 0;
   height: 100vh;
   overflow-y: auto;
+
+  @media (max-width: 639px) {
+    display: none;
+  }
 }
 
 .brand {
@@ -118,7 +123,117 @@
   }
 }
 
+// ── Main content ─────────────────────────────────────────────
 .main {
   flex: 1;
   min-width: 0;
+
+  @media (max-width: 639px) {
+    padding-bottom: 60px; // clear bottom nav
+  }
+}
+
+// ── Mobile bottom nav ─────────────────────────────────────────
+.bottom-nav {
+  display: none;
+
+  @media (max-width: 639px) {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    z-index: 100;
+  }
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 var(--sp-1);
+  text-align: center;
+  transition: color var(--transition-fast);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--color-text);
+  }
+
+  &--active {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  &--burger {
+    font-size: var(--text-base);
+  }
+
+  &--auth {
+    min-width: 0;
+    padding: 0 var(--sp-2);
+  }
+}
+
+.bottom-nav-auth-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 64px;
+}
+
+// ── Burger drawer ─────────────────────────────────────────────
+.drawer-overlay {
+  display: none;
+
+  @media (max-width: 639px) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+  }
+}
+
+.drawer {
+  position: absolute;
+  bottom: 60px; // sit right above bottom nav
+  left: auto;
+  right: 0;
+  width: 200px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-bottom: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer-link {
+  padding: var(--sp-4) var(--sp-5);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+  transition: color var(--transition-fast), background var(--transition-fast);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+
+  &--active {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
 }

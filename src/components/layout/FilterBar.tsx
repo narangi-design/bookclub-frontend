@@ -1,3 +1,5 @@
+import './FilterBar.scss'
+
 interface Option {
   key: string
   label: string

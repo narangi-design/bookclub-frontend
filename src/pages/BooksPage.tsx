@@ -62,7 +62,7 @@ export default function BooksPage() {
 
   return (
     <div className="page">
-      <h1 className="page-title">Books</h1>
+      <h1 className="page-title">Книги</h1>
 
       <SearchBar
         value={search}
