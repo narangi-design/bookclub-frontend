@@ -1,5 +1,5 @@
 import './BookCardList.scss'
-import type { Book } from '@/types'
+import type { Book, MemberVisibility } from '@/types'
 import BookCard from './BookCard'
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
   showCountry?: boolean
   memberById?: Record<number, string>
   showAuthor?: boolean
-  showMember?: boolean
+  showMember?: MemberVisibility
   getBadge?: (book: Book) => React.ReactNode
 }
 

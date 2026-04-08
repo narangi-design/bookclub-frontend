@@ -28,11 +28,14 @@ export default function AccountModal({ onClose }: Props) {
     setError(null)
     setSuccess(false)
 
+    const token = localStorage.getItem('bookclub_token')
     const res = await fetch(`${API_URL}/api/auth/me`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
       body: JSON.stringify({
-        user_id: user!.user_id,
         current_password: currentPassword,
         new_username: newUsername || undefined,
         new_password: newPassword || undefined,

@@ -2,7 +2,7 @@ import './AwardCard.scss'
 import type { AwardVote, Book } from '@/types'
 import VoteBarList, { type VoteEntry } from '@/components/layout/VoteBarList'
 import BookCard from '@/components/layout/BookCard'
-import { useAuth } from '@/context/AuthContext'
+import { useMemberVisibility } from '@/hooks'
 
 interface Props {
   year: number
@@ -16,7 +16,7 @@ const TOP_N = 10
 const MEDALS = ['🥇', '🥈', '🥉']
 
 export default function AwardCard({ year, votes, books, authorById, memberById: memberById }: Props) {
-  const { isAuthed } = useAuth()
+  const memberVisibility = useMemberVisibility()
   const bookById = Object.fromEntries(books.map(b => [b.id, b]))
 
   const sorted = [...votes]
@@ -63,7 +63,7 @@ export default function AwardCard({ year, votes, books, authorById, memberById: 
                   book={book}
                   showAuthor={true}
                   authorName={book.author_id != null ? authorById?.[book.author_id] : undefined}
-                  showMember={isAuthed}
+                  showMember={memberVisibility}
                   memberName={book.added_by_member_id != null ? memberById?.[book.added_by_member_id] : undefined}
                   titleBadge={<span className="podium-medal">{MEDALS[rank - 1]}</span>}
                   showStatus={false}

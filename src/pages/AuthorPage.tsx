@@ -1,12 +1,11 @@
 import './AuthorPage.scss'
 import { useParams, Link } from 'react-router-dom'
-import { useBooks, useAuthors, useMembers, usePollVotes, useAwardVotes } from '@/hooks'
+import { useBooks, useAuthors, useMembers, usePollVotes, useAwardVotes, useMemberVisibility } from '@/hooks'
 import BookCardList from '@/components/layout/BookCardList'
-import { useAuth } from '@/context/AuthContext'
 import { memberName } from '@/utils'
 
 export default function AuthorPage() {
-  const { isAuthed } = useAuth()
+  const memberVisibility = useMemberVisibility()
   const { id } = useParams<{ id: string }>()
   const authorId = Number(id)
 
@@ -77,7 +76,7 @@ export default function AuthorPage() {
         books={sorted}
         showAuthor={false}
         memberById={memberById}
-        showMember={isAuthed}
+        showMember={memberVisibility}
         getBadge={book => {
           const award = awardVotes.find(v => v.book_id === book.id && v.is_winner)
           return award ? <span className="ap-book-award">★ {award.year}</span> : undefined

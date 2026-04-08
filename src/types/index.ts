@@ -1,3 +1,5 @@
+export type MemberVisibility = 'visible' | 'blur'
+
 export interface Member {
   id: number
   telegram_username?: string | null

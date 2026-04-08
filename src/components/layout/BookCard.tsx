@@ -1,6 +1,6 @@
 import './BookCard.scss'
 import { Link } from 'react-router-dom'
-import type { Book } from '@/types'
+import type { Book, MemberVisibility } from '@/types'
 import { formatDate } from '@/utils'
 import CoverImage from './CoverImage'
 
@@ -14,7 +14,7 @@ interface Props {
   book: Book
   showAuthor?: boolean
   authorName?: string
-  showMember?: boolean
+  showMember?: MemberVisibility
   memberName?: string
   showBadge?: boolean
   titleBadge?: React.ReactNode
@@ -43,7 +43,8 @@ export default function BookCard({ book, showAuthor = true, authorName, showMemb
             ? <span className="book-card-date">{formatDate(date)}</span>
             : addedDate && <span className="book-card-date">добавлена {formatDate(addedDate)}</span>
           }
-          {showMember && memberName && <span className="book-card-member">от {memberName}</span>}
+          {showMember === 'visible' && memberName && <span className="book-card-member">от {memberName}</span>}
+          {showMember === 'blur' && book.added_by_member_id !== null && <span className="book-card-member member-blur">от Участник</span>}
         </div>
       </div>
     </Link>

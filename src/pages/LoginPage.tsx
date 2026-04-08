@@ -32,7 +32,7 @@ export default function LoginPage() {
 
     if (res.ok) {
       const data = await res.json()
-      login({ user_id: data.user_id, name: data.name })
+      login({ user_id: data.user_id, name: data.name }, data.access_token)
       navigate('/dashboard', { replace: true })
     } else {
       setError('Неверный логин или пароль')

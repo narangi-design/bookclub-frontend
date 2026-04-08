@@ -1,4 +1,7 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
+const TOKEN_KEY = 'bookclub_token'
 
 interface AuthUser {
   user_id: number
@@ -7,39 +10,52 @@ interface AuthUser {
 
 interface AuthContextType {
   isAuthed: boolean
+  isLoading: boolean
+  hasToken: boolean
   user: AuthUser | null
-  login: (user: AuthUser) => void
+  login: (user: AuthUser, token: string) => void
   logout: () => void
   updateUser: (user: AuthUser) => void
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-const STORAGE_KEY = 'bookclub_auth'
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    return stored ? JSON.parse(stored) : null
-  })
+  const [user, setUser] = useState<AuthUser | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [hasToken] = useState(() => !!localStorage.getItem(TOKEN_KEY))
 
-  function login(user: AuthUser) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
+  useEffect(() => {
+    const token = localStorage.getItem(TOKEN_KEY)
+    if (!token) {
+      setIsLoading(false)
+      return
+    }
+    fetch(`${API_URL}/api/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => res.ok ? res.json() : Promise.reject())
+      .then((data: AuthUser) => setUser(data))
+      .catch(() => localStorage.removeItem(TOKEN_KEY))
+      .finally(() => setIsLoading(false))
+  }, [])
+
+  function login(user: AuthUser, token: string) {
+    localStorage.setItem(TOKEN_KEY, token)
     setUser(user)
   }
 
   function logout() {
-    localStorage.removeItem(STORAGE_KEY)
+    localStorage.removeItem(TOKEN_KEY)
     setUser(null)
   }
 
   function updateUser(user: AuthUser) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
     setUser(user)
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthed: user !== null, user, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ isAuthed: user !== null, isLoading, hasToken, user, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   )

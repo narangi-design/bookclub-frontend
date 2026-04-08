@@ -1,6 +1,5 @@
 import './DashboardPage.scss'
-import { useBooks, usePolls, useMembers, useAwardVotes, usePollVotes, useAuthors } from '@/hooks'
-import { useAuth } from '@/context/AuthContext'
+import { useBooks, usePolls, useMembers, useAwardVotes, usePollVotes, useAuthors, useMemberVisibility } from '@/hooks'
 import { memberName } from '@/utils'
 import AwardCard from '@/components/dashboard/AwardCard'
 import CurrentBook from '@/components/dashboard/CurrentBook'
@@ -9,7 +8,7 @@ import BookCardList from '@/components/layout/BookCardList'
 
 
 export default function DashboardPage() {
-  const { isAuthed } = useAuth()
+  const memberVisibility = useMemberVisibility()
   const { data: books       = [] } = useBooks()
   const { data: polls       = [] } = usePolls()
   const { data: members     = [] } = useMembers()
@@ -63,6 +62,7 @@ export default function DashboardPage() {
             book={currentBook}
             authorName={currentBook.author_id != null ? authorById[currentBook.author_id] : undefined}
             addedByMember={currentAddedBy}
+            memberVisibility={memberVisibility}
             poll={currentPoll}
             pollVotes={pollVotes}
             runoffPoll={currentRunoffPoll}
@@ -79,7 +79,7 @@ export default function DashboardPage() {
             authorById={authorById}
             showCountry
             memberById={memberById}
-            showMember={isAuthed}
+            showMember={memberVisibility}
           />
         </section>
       )}

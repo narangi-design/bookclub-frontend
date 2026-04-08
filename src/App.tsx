@@ -16,7 +16,8 @@ import LoginPage from '@/pages/LoginPage'
 const queryClient = new QueryClient()
 
 function PrivateRoute() {
-  const { isAuthed } = useAuth()
+  const { isAuthed, isLoading } = useAuth()
+  if (isLoading) return null
   return isAuthed ? <Outlet /> : <Navigate to="/login" replace />
 }
 

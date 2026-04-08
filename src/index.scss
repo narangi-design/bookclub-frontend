@@ -226,3 +226,9 @@ button {
     color: var(--color-accent);
   }
 }
+
+.member-blur {
+  filter: blur(4px);
+  user-select: none;
+  pointer-events: none;
+}

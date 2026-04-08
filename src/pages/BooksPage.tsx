@@ -2,7 +2,7 @@ import './BooksPage.scss'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { Member } from '@/types'
-import { useBooks, useMembers, useAuthors } from '@/hooks'
+import { useBooks, useMembers, useAuthors, useMemberVisibility } from '@/hooks'
 import { memberName } from '@/utils'
 import FilterBar from '@/components/layout/FilterBar'
 import SearchBar from '@/components/layout/SearchBar'
@@ -19,6 +19,7 @@ type Filter = 'all' | 'read' | 'to_read' | 'removed'
 const STATUS_ORDER: Record<string, number> = { read: 0, to_read: 1, removed: 2 }
 
 export default function BooksPage() {
+  const memberVisibility = useMemberVisibility()
   const { data: books   = [] } = useBooks()
   const { data: members = [] } = useMembers()
   const { data: authors = [] } = useAuthors()
@@ -94,7 +95,6 @@ export default function BooksPage() {
           <tbody>
             {visible.map(book => {
               const m = book.added_by_member_id != null ? memberById[book.added_by_member_id] : null
-              const addedByName = m ? memberName(m) : '—'
               return (
                 <tr key={book.id} className="tr">
                   <td className="td">
@@ -108,7 +108,14 @@ export default function BooksPage() {
                       ? <Link to={`/authors/${book.author_id}`} className="author-link">{authorById[book.author_id]}</Link>
                       : '—'}
                   </td>
-                  <td className="td muted">{addedByName}</td>
+                  <td className="td muted">
+                    {book.added_by_member_id === null
+                      ? '—'
+                      : memberVisibility === 'visible' && m
+                        ? memberName(m)
+                        : <span className="member-blur">Участник</span>
+                    }
+                  </td>
                   <td className="td muted td--right">
                     {book.added_at ? formatDate(book.added_at) : '—'}
                   </td>

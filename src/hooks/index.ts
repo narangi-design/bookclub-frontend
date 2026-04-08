@@ -1,5 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { fetchMembers, fetchBooks, fetchPolls, fetchPollVotes, fetchAwardVotes, fetchAuthors } from '@/api'
+import { useAuth } from '@/context/AuthContext'
+import type { MemberVisibility } from '@/types'
+
+export function useMemberVisibility(): MemberVisibility {
+  const { hasToken } = useAuth()
+  return hasToken ? 'visible' : 'blur'
+}
 
 export function useMembers() {
   return useQuery({ queryKey: ['members'], queryFn: fetchMembers })

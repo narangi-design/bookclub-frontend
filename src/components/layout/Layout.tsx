@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import AccountModal from './AccountModal'
 import './Layout.scss'
@@ -14,7 +14,7 @@ const navItems = [
 ]
 
 export default function Layout() {
-  const { user, logout } = useAuth()
+  const { user, isAuthed, logout } = useAuth()
   const navigate = useNavigate()
   const [showAccount, setShowAccount] = useState(false)
 
@@ -40,13 +40,17 @@ export default function Layout() {
             </NavLink>
           ))}
         </nav>
-        <div className="account-bar">
-          <span className="account-name">{user?.name}</span>
-          <div className="account-actions">
-            <button className="account-btn" onClick={() => setShowAccount(true)} title="Настройки">⚙</button>
-            <button className="account-btn" onClick={handleLogout} title="Выйти">→</button>
+        {isAuthed ? (
+          <div className="account-bar">
+            <span className="account-name">{user?.name}</span>
+            <div className="account-actions">
+              <button className="account-btn" onClick={() => setShowAccount(true)} title="Настройки">⚙</button>
+              <button className="account-btn" onClick={handleLogout} title="Выйти">→</button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <Link to="/login" className="login-link">Войти</Link>
+        )}
       </aside>
       <main className="main">
         <Outlet />

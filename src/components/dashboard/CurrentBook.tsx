@@ -1,5 +1,5 @@
 import './CurrentBook.scss'
-import type { Book, Member, Poll, PollVote } from '@/types'
+import type { Book, Member, Poll, PollVote, MemberVisibility } from '@/types'
 import { formatDate, memberName } from '@/utils'
 import VoteBarList, { type VoteEntry } from '@/components/layout/VoteBarList'
 import CoverImage from '@/components/layout/CoverImage'
@@ -9,6 +9,7 @@ interface Props {
   book: Book
   authorName?: string
   addedByMember?: Member
+  memberVisibility?: MemberVisibility
   poll?: Poll
   pollVotes: PollVote[]
   runoffPoll?: Poll
@@ -17,7 +18,7 @@ interface Props {
 
 const TOP_VOTES = 10
 
-export default function CurrentBook({ book, authorName, addedByMember, poll, pollVotes, runoffPoll, allBooks }: Props) {
+export default function CurrentBook({ book, authorName, addedByMember, memberVisibility, poll, pollVotes, runoffPoll, allBooks }: Props) {
   const bookById = Object.fromEntries(allBooks.map(b => [b.id, b]))
 
   const stage1Votes = pollVotes
@@ -54,15 +55,15 @@ export default function CurrentBook({ book, authorName, addedByMember, poll, pol
             {authorName && book.country && <span className="dot">·</span>}
             {book.country && <span>{book.country}</span>}
           </div>
-          {addedByMember && book.added_at && (
+          {book.added_at && (memberVisibility === 'visible' ? addedByMember : book.added_by_member_id !== null) && (
             <div className="added-by">
               В списке с {formatDate(book.added_at)}
               {' · '}
-              Ведёт книгу {addedByMember && (
-                <Link to={`/members/${addedByMember.id}`} className="member-link">
-                  {memberName(addedByMember)}
-                </Link>
-              )}
+              Ведёт книгу{' '}
+              {memberVisibility === 'visible' && addedByMember
+                ? <Link to={`/members/${addedByMember.id}`} className="member-link">{memberName(addedByMember)}</Link>
+                : <span className="member-blur">Участник</span>
+              }
             </div>
           )}
         </div>

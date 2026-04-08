@@ -1,6 +1,6 @@
 import './BookPage.scss'
 import { useParams, Link } from 'react-router-dom'
-import { useBooks, useMembers, useAuthors, usePolls, usePollVotes, useAwardVotes } from '@/hooks'
+import { useBooks, useMembers, useAuthors, usePolls, usePollVotes, useAwardVotes, useMemberVisibility } from '@/hooks'
 import { formatDate, pollRootAppearances, memberName } from '@/utils'
 import CoverImage from '@/components/layout/CoverImage'
 
@@ -14,6 +14,7 @@ export default function BookPage() {
   const { id } = useParams<{ id: string }>()
   const bookId = Number(id)
 
+  const memberVisibility = useMemberVisibility()
   const { data: books = [] } = useBooks()
   const { data: members = [] } = useMembers()
   const { data: authors = [] } = useAuthors()
@@ -64,13 +65,14 @@ export default function BookPage() {
           {book.country && <p className="bp-country">{book.country}</p>}
 
           <dl className="bp-meta">
-            {addedBy && (
+            {(memberVisibility === 'visible' ? addedBy : book.added_by_member_id !== null) && (
               <>
                 <dt>Предложил</dt>
                 <dd>
-                  <Link to={`/members/${addedBy.id}`} className="member-link">
-                    {memberName(addedBy)}
-                  </Link>
+                  {memberVisibility === 'visible' && addedBy
+                    ? <Link to={`/members/${addedBy.id}`} className="member-link">{memberName(addedBy)}</Link>
+                    : <span className="member-blur">Участник</span>
+                  }
                 </dd>
               </>
             )}
