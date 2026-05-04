@@ -1,6 +1,7 @@
 import './BookPage.scss'
 import { useParams, Link } from 'react-router-dom'
 import { useBooks, useMembers, useAuthors, usePolls, usePollVotes, useAwardVotes, useMemberVisibility } from '@/hooks'
+import { useAuth } from '@/context/AuthContext'
 import { formatDate, pollRootAppearances, memberName } from '@/utils'
 import CoverImage from '@/components/layout/CoverImage'
 
@@ -14,6 +15,7 @@ export default function BookPage() {
   const { id } = useParams<{ id: string }>()
   const bookId = Number(id)
 
+  const { isAuthed } = useAuth()
   const memberVisibility = useMemberVisibility()
   const { data: books = [] } = useBooks()
   const { data: members = [] } = useMembers()
@@ -67,7 +69,7 @@ export default function BookPage() {
           <dl className="bp-meta">
             {(memberVisibility === 'visible' ? addedBy : book.added_by_member_id !== null) && (
               <>
-                <dt>Предложил</dt>
+                <dt>В списке благодаря</dt>
                 <dd>
                   {memberVisibility === 'visible' && addedBy
                     ? <Link to={`/members/${addedBy.id}`} className="member-link">{memberName(addedBy)}</Link>
@@ -78,7 +80,7 @@ export default function BookPage() {
             )}
             {book.added_at && (
               <>
-                <dt>В списке с</dt>
+                <dt>Добавлена</dt>
                 <dd>{formatDate(book.added_at)}</dd>
               </>
             )}
@@ -96,7 +98,7 @@ export default function BookPage() {
             )}
           </dl>
 
-          {book.discussion_url && (
+          {book.discussion_url && isAuthed && (
             <a href={book.discussion_url} className="bp-discussion-link" target="_blank" rel="noopener noreferrer">
               Запись обсуждения →
             </a>
