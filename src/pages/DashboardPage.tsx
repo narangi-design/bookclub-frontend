@@ -1,5 +1,5 @@
 import './DashboardPage.scss'
-import { useBooks, usePolls, useMembers, useAwardVotes, usePollVotes, useAuthors, useMemberVisibility } from '@/hooks'
+import { useBooks, usePolls, useMembers, useAwardVotes, useAwardEvents, usePollVotes, useAuthors, useMemberVisibility } from '@/hooks'
 import { memberName } from '@/utils'
 import AwardCard from '@/components/dashboard/AwardCard'
 import CurrentBook from '@/components/dashboard/CurrentBook'
@@ -13,6 +13,7 @@ export default function DashboardPage() {
   const { data: polls       = [] } = usePolls()
   const { data: members     = [] } = useMembers()
   const { data: awardVotes  = [] } = useAwardVotes()
+  const { data: awardEvents = [] } = useAwardEvents()
   const { data: pollVotes   = [] } = usePollVotes()
   const { data: authors     = [] } = useAuthors()
 
@@ -67,6 +68,7 @@ export default function DashboardPage() {
             pollVotes={pollVotes}
             runoffPoll={currentRunoffPoll}
             allBooks={books}
+            authorById={authorById}
           />
         </section>
       )}
@@ -87,9 +89,9 @@ export default function DashboardPage() {
       <section className="section">
         <h2 className="section-title">Премии книжного клуба</h2>
         <div className="awards-grid">
-          <AwardCard year={2025} votes={votes2025} books={books} authorById={authorById} memberById={memberById} />
-          <AwardCard year={2024} votes={votes2024} books={books} authorById={authorById} memberById={memberById} />
-          <AwardCard year={2023} votes={votes2023} books={books} authorById={authorById} memberById={memberById} />
+          <AwardCard year={2025} votes={votes2025} books={books} authorById={authorById} memberById={memberById} totalVoters={awardEvents.find(e => e.year === 2025)?.total_voters ?? null} />
+          <AwardCard year={2024} votes={votes2024} books={books} authorById={authorById} memberById={memberById} totalVoters={awardEvents.find(e => e.year === 2024)?.total_voters ?? null} />
+          <AwardCard year={2023} votes={votes2023} books={books} authorById={authorById} memberById={memberById} totalVoters={awardEvents.find(e => e.year === 2023)?.total_voters ?? null} />
         </div>
       </section>
     </div>

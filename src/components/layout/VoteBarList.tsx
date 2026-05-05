@@ -3,43 +3,39 @@ import './VoteBarList.scss'
 export interface VoteEntry {
   key: string | number
   title: string
-  subtitle?: string   // e.g. author name
+  subtitle?: string
   value: number
 }
 
 interface Props {
   entries: VoteEntry[]
   winnerKey?: string | number | null
-  accentWinner?: boolean   // subtle background on winner row
+  accentWinner?: boolean
+  totalVoters?: number | null
 }
 
-export default function VoteBarList({ entries, winnerKey, accentWinner = false }: Props) {
+export default function VoteBarList({ entries, winnerKey, totalVoters }: Props) {
   const total = entries.reduce((s, e) => s + e.value, 0)
+  const barBase = totalVoters ?? Math.max(...entries.map(e => e.value))
 
   return (
     <div className="vote-bar-list">
       {entries.map(entry => {
         const isWinner = entry.key === winnerKey
-        const pct = total > 0 ? (entry.value / total) * 100 : 0
-        const countStr = `${entry.value} · ${total > 0 ? Math.round((entry.value / total) * 100) : 0}%`
+        const barPct = barBase > 0 ? (entry.value / barBase) * 100 : 0
+        const pct = barBase > 0 ? Math.round((entry.value / barBase) * 100) : 0
+
         return (
-          <div
-            key={entry.key}
-            className={`vbl-entry${isWinner && accentWinner ? ' vbl-entry--accent' : ''}`}
-          >
-            <div className="vbl-legend">
-              <div className={`vbl-count${isWinner ? ' vbl-count--winner' : ''}`}>{countStr}</div>
-              <div className={`vbl-title${isWinner ? ' vbl-title--winner' : ''}`}>
-                {entry.title}
-                {entry.subtitle && <span className="vbl-subtitle">{entry.subtitle}</span>}
-                {isWinner && <span className="vbl-trophy"> ★</span>}
-              </div>
-            </div>
+          <div key={entry.key} className={`vbl-row${isWinner ? ' vbl-row--winner' : ''}`}>
             <div className="vbl-bar-wrap">
-              <div
-                className={`vbl-bar${isWinner ? ' vbl-bar--winner' : ''}`}
-                style={{ width: `${pct}%` }}
-              />
+              <div className="vbl-bar" style={{ width: `${barPct}%` }} />
+              <span className="vbl-inner">
+                <span className="vbl-count">{entry.value} · {pct}%</span>
+                <span className="vbl-title">
+                  {entry.title}
+                  {isWinner && <span className="vbl-trophy"> ★</span>}
+                </span>
+              </span>
             </div>
           </div>
         )

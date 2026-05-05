@@ -41,6 +41,11 @@ export interface PollVote {
   votes_count: number
 }
 
+export interface AwardEvent {
+  year: number
+  total_voters: number | null
+}
+
 export interface AwardVote {
   id: number
   year: number

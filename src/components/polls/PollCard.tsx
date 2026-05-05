@@ -1,8 +1,8 @@
 import './PollCard.scss'
 import { useState } from 'react'
-import { formatDate } from '@/utils'
+import { formatDate, pollVotesToEntries } from '@/utils'
 import type { Book, Poll, PollVote } from '@/types'
-import VoteBarList, { type VoteEntry } from '@/components/layout/VoteBarList'
+import VoteBarList from '@/components/layout/VoteBarList'
 
 interface Props {
   stage1: Poll
@@ -27,15 +27,7 @@ export default function PollCard({ stage1, stage2, winner_book_id, bookById, aut
 
   const totalCandidates = new Set([...s1Votes, ...s2Votes].map(v => v.book_id)).size
 
-  const toEntries = (vs: PollVote[]): VoteEntry[] => vs.map(v => {
-    const book = bookById[v.book_id]
-    return {
-      key: v.id,
-      title: book?.title ?? `#${v.book_id}`,
-      subtitle: book?.author_id != null ? authorById[book.author_id] : undefined,
-      value: v.votes_count,
-    }
-  })
+  const toEntries = (vs: PollVote[]) => pollVotesToEntries(vs, bookById, authorById)
 
   return (
     <div className={`poll-card${isOpen ? ' poll-card--open' : ''}`}>
@@ -64,16 +56,16 @@ export default function PollCard({ stage1, stage2, winner_book_id, bookById, aut
 
       {isOpen && (
         <div className="poll-card-body">
-          {stage1.total_voters != null && (
-            <span className="poll-card-meta">{stage1.total_voters} человек голосовало</span>
-          )}
-          <span className="poll-card-meta">Выбор из {totalCandidates} книг</span>
+          <span className="poll-card-meta">
+            {stage1.total_voters != null && <>{stage1.total_voters} человек голосовало · </>}
+            Выбор из {totalCandidates} книг
+          </span>
           <div className="poll-card-section">
             {stage2 && <div className="poll-card-section-label">1 тур</div>}
             <VoteBarList
               entries={toEntries(s1Votes)}
               winnerKey={stage2 ? undefined : winner_book_id ?? undefined}
-              accentWinner
+              totalVoters={stage1.total_voters}
             />
           </div>
           {stage2 && s2Votes.length > 0 && (
@@ -82,7 +74,7 @@ export default function PollCard({ stage1, stage2, winner_book_id, bookById, aut
               <VoteBarList
                 entries={toEntries(s2Votes)}
                 winnerKey={winner_book_id ?? undefined}
-                accentWinner
+                totalVoters={stage2.total_voters}
               />
             </div>
           )}

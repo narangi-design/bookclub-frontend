@@ -10,12 +10,13 @@ interface Props {
   books: Book[]
   authorById?: Record<number, string>
   memberById?: Record<number, string>
+  totalVoters?: number | null
 }
 
 const TOP_N = 10
 const MEDALS = ['🥇', '🥈', '🥉']
 
-export default function AwardCard({ year, votes, books, authorById, memberById: memberById }: Props) {
+export default function AwardCard({ year, votes, books, authorById, memberById, totalVoters }: Props) {
   const memberVisibility = useMemberVisibility()
   const bookById = Object.fromEntries(books.map(b => [b.id, b]))
 
@@ -25,15 +26,21 @@ export default function AwardCard({ year, votes, books, authorById, memberById: 
 
   const winnerId = votes.find(v => v.is_winner)?.book_id ?? null
 
+  const toTitle = (bookId: number) => {
+    const book = bookById[bookId]
+    const author = book?.author_id != null ? authorById?.[book.author_id] : null
+    return book ? `«${book.title}»${author ? `, ${author}` : ''}` : `#${bookId}`
+  }
+
   const mainEntries: VoteEntry[] = sorted
-    .map(v => ({ key: v.book_id, title: bookById[v.book_id]?.title ?? `#${v.book_id}`, value: v.liked_votes }))
+    .map(v => ({ key: v.book_id, title: toTitle(v.book_id), value: v.liked_votes }))
 
   const round2Nominees = votes
     .filter(v => v.round2_votes !== null)
     .sort((a, b) => (b.round2_votes ?? 0) - (a.round2_votes ?? 0))
 
   const round2Entries: VoteEntry[] = round2Nominees
-    .map(v => ({ key: v.book_id, title: bookById[v.book_id]?.title ?? `#${v.book_id}`, value: v.round2_votes! }))
+    .map(v => ({ key: v.book_id, title: toTitle(v.book_id), value: v.round2_votes! }))
 
   const winner = votes.find(v => v.is_winner)
   const finalVotes = round2Nominees.length > 0 ? round2Nominees : sorted
@@ -78,12 +85,12 @@ export default function AwardCard({ year, votes, books, authorById, memberById: 
 
       {round2Entries.length > 0 && (
         <>
-          <VoteBarList entries={round2Entries} winnerKey={winnerId} />
+          <VoteBarList entries={round2Entries} winnerKey={winnerId} totalVoters={totalVoters} />
           <hr className="divider" />
           <p className="subtitle">Первые результаты · топ {TOP_N}</p>
         </>
       )}
-      <VoteBarList entries={mainEntries} winnerKey={round2Entries.length === 0 ? winnerId : null} />
+      <VoteBarList entries={mainEntries} winnerKey={round2Entries.length === 0 ? winnerId : null} totalVoters={totalVoters} />
     </div>
   )
 }

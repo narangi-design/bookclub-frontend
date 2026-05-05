@@ -1,7 +1,7 @@
 import './CurrentBook.scss'
 import type { Book, Member, Poll, PollVote, MemberVisibility } from '@/types'
-import { formatDate, memberName } from '@/utils'
-import VoteBarList, { type VoteEntry } from '@/components/layout/VoteBarList'
+import { formatDate, memberName, pollVotesToEntries } from '@/utils'
+import VoteBarList from '@/components/layout/VoteBarList'
 import CoverImage from '@/components/layout/CoverImage'
 import { Link } from 'react-router-dom'
 
@@ -14,11 +14,12 @@ interface Props {
   pollVotes: PollVote[]
   runoffPoll?: Poll
   allBooks: Book[]
+  authorById: Record<number, string>
 }
 
 const TOP_VOTES = 10
 
-export default function CurrentBook({ book, authorName, addedByMember, memberVisibility, poll, pollVotes, runoffPoll, allBooks }: Props) {
+export default function CurrentBook({ book, authorName, addedByMember, memberVisibility, poll, pollVotes, runoffPoll, allBooks, authorById }: Props) {
   const bookById = Object.fromEntries(allBooks.map(b => [b.id, b]))
 
   const stage1Votes = pollVotes
@@ -26,21 +27,14 @@ export default function CurrentBook({ book, authorName, addedByMember, memberVis
     .sort((a, b) => b.votes_count - a.votes_count)
     .slice(0, TOP_VOTES)
 
-  const stage1Entries: VoteEntry[] = stage1Votes.map(v => ({
-    key: v.book_id,
-    title: bookById[v.book_id]?.title ?? `#${v.book_id}`,
-    value: v.votes_count,
-  }))
+  const stage1Entries = pollVotesToEntries(stage1Votes, bookById, authorById)
 
-  const stage2Entries: VoteEntry[] = runoffPoll
-    ? pollVotes
-        .filter(v => v.poll_id === runoffPoll.id)
-        .sort((a, b) => b.votes_count - a.votes_count)
-        .map(v => ({
-          key: v.book_id,
-          title: bookById[v.book_id]?.title ?? `#${v.book_id}`,
-          value: v.votes_count,
-        }))
+  const stage2Entries = runoffPoll
+    ? pollVotesToEntries(
+        pollVotes.filter(v => v.poll_id === runoffPoll.id).sort((a, b) => b.votes_count - a.votes_count),
+        bookById,
+        authorById,
+      )
     : []
 
   return (
@@ -74,17 +68,23 @@ export default function CurrentBook({ book, authorName, addedByMember, memberVis
             <span className="stage-label">
               {runoffPoll ? 'Голосование · Этап I' : 'Голосование'}
             </span>
-            <span className="date">{formatDate(poll.date)}</span>
+            <span className="date">
+              {formatDate(poll.date)}
+              {poll.total_voters != null && <> · {poll.total_voters} чел.</>}
+            </span>
           </div>
-          <VoteBarList entries={stage1Entries} winnerKey={book.id} />
+          <VoteBarList entries={stage1Entries} winnerKey={book.id} totalVoters={poll.total_voters} />
 
           {runoffPoll && stage2Entries.length > 0 && (
             <>
               <div className="stage-header stage-header--runoff">
                 <span className="stage-label">Голосование · Итог</span>
-                <span className="date">{formatDate(runoffPoll.date)}</span>
+                <span className="date">
+                  {formatDate(runoffPoll.date)}
+                  {runoffPoll.total_voters != null && <> · {runoffPoll.total_voters} чел.</>}
+                </span>
               </div>
-              <VoteBarList entries={stage2Entries} winnerKey={book.id} />
+              <VoteBarList entries={stage2Entries} winnerKey={book.id} totalVoters={runoffPoll.total_voters} />
             </>
           )}
         </div>

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { fetchMembers, fetchBooks, fetchPolls, fetchPollVotes, fetchAwardVotes, fetchAuthors } from '@/api'
+import { fetchMembers, fetchBooks, fetchPolls, fetchPollVotes, fetchAwardVotes, fetchAwardEvents, fetchAuthors } from '@/api'
 import { useAuth } from '@/context/AuthContext'
 import type { MemberVisibility } from '@/types'
 
@@ -26,6 +26,10 @@ export function usePollVotes() {
 
 export function useAwardVotes() {
   return useQuery({ queryKey: ['awardVotes'], queryFn: fetchAwardVotes })
+}
+
+export function useAwardEvents() {
+  return useQuery({ queryKey: ['awardEvents'], queryFn: fetchAwardEvents })
 }
 
 export function useAuthors() {

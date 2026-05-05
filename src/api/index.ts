@@ -1,4 +1,4 @@
-import type { Member, Book, Poll, PollVote, AwardVote, Author } from '@/types'
+import type { Member, Book, Poll, PollVote, AwardVote, AwardEvent, Author } from '@/types'
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
 const TOKEN_KEY = 'bookclub_token'
@@ -35,6 +35,10 @@ export function fetchPollVotes(): Promise<PollVote[]> {
 
 export function fetchAwardVotes(): Promise<AwardVote[]> {
   return get('/api/award-votes')
+}
+
+export function fetchAwardEvents(): Promise<AwardEvent[]> {
+  return get('/api/award-events')
 }
 
 export function fetchAuthors(): Promise<Author[]> {

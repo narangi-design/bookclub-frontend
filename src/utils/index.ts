@@ -1,4 +1,18 @@
 import type { Book, Poll, PollVote, Member } from '@/types'
+import type { VoteEntry } from '@/components/layout/VoteBarList'
+
+export function pollVotesToEntries(
+  votes: PollVote[],
+  bookById: Record<number, Book>,
+  authorById: Record<number, string>,
+): VoteEntry[] {
+  return votes.map(v => {
+    const book = bookById[v.book_id]
+    const author = book?.author_id != null ? authorById[book.author_id] : null
+    const title = book ? `«${book.title}»${author ? `, ${author}` : ''}` : `#${v.book_id}`
+    return { key: v.book_id, title, value: v.votes_count }
+  })
+}
 
 export function memberName(m: Pick<Member, 'telegram_username' | 'telegram_fullname'>): string {
   return m.telegram_username ?? m.telegram_fullname

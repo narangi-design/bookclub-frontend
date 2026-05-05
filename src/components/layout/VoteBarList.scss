@@ -1,78 +1,71 @@
 .vote-bar-list {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-4);
+  gap: 3px;
 }
 
-.vbl-entry {
+.vbl-row {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: var(--sp-1);
+}
 
-  &--accent {
-    background: var(--color-accent-subtle);
-    margin: 0 calc(-1 * var(--sp-5));
-    padding: 0.3rem var(--sp-5);
+.vbl-bar-wrap {
+  position: relative;
+  flex: 1;
+  height: 28px;
+  background: color-mix(in srgb, var(--linen-light) 50%, transparent);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.vbl-bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: color-mix(in srgb, var(--linen) 50%, transparent);
+  transition: width var(--transition-slow);
+
+  .vbl-row--winner & {
+    background: var(--wine);
+    opacity: 1;
+  }
+}
+
+.vbl-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-3);
+  min-width: 0;
+}
+
+.vbl-count {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ultra-dark-wine);
+  flex-shrink: 0;
+
+  .vbl-row--winner & {
+    color: var(--color-surface);
   }
 }
 
 .vbl-title {
   font-size: var(--text-sm);
+  color: var(--ultra-dark-wine);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
-  color: var(--color-text-muted);
 
-  &--winner {
-    color: var(--color-accent);
+  .vbl-row--winner & {
+    color: var(--color-surface);
     font-weight: 700;
   }
 }
 
 .vbl-trophy {
   font-size: var(--text-sm);
-}
-
-.vbl-legend {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: start;
-}
-
-.vbl-subtitle {
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  font-weight: 400;
-}
-
-.vbl-count {
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  text-align: left;
-  width: 4rem;
-
-  &--winner {
-    color: var(--color-accent);
-    font-weight: 700;
-  }
-}
-
-.vbl-bar-wrap {
-  height: 4px;
-  background: var(--linen-light);
-  overflow: hidden;
-  width: 100%;
-}
-
-.vbl-bar {
-  height: 100%;
-  background: var(--linen);
-  transition: width var(--transition-slow);
-
-  &--winner {
-    background: var(--wine-muted);
-  }
 }
