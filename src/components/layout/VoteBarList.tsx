@@ -15,7 +15,6 @@ interface Props {
 }
 
 export default function VoteBarList({ entries, winnerKey, totalVoters }: Props) {
-  const total = entries.reduce((s, e) => s + e.value, 0)
   const barBase = totalVoters ?? Math.max(...entries.map(e => e.value))
 
   return (
