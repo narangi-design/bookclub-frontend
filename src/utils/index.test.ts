@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
+  pollVotesToEntries,
   groupBy,
   year,
   totalVotesForPoll,
@@ -47,6 +48,52 @@ function makePoll(overrides: Partial<Poll> & { id: number; date: string }): Poll
 function makeVote(id: number, poll_id: number, book_id: number, votes_count: number): PollVote {
   return { id, poll_id, book_id, votes_count }
 }
+
+// ─── pollVotesToEntries ──────────────────────────────────────────────────────
+
+describe('pollVotesToEntries', () => {
+  const bookById = {
+    1: makeBook({ id: 1, title: 'Мастер и Маргарита', author_id: 10 }),
+    2: makeBook({ id: 2, title: 'Дюна', author_id: null }),
+  }
+  const authorById = { 10: 'Михаил Булгаков' }
+
+  it('formats title with author when author exists', () => {
+    const votes = [makeVote(1, 5, 1, 7)]
+    const entries = pollVotesToEntries(votes, bookById, authorById)
+    expect(entries[0].title).toBe('«Мастер и Маргарита», Михаил Булгаков')
+  })
+
+  it('formats title without author when author_id is null', () => {
+    const votes = [makeVote(1, 5, 2, 3)]
+    const entries = pollVotesToEntries(votes, bookById, authorById)
+    expect(entries[0].title).toBe('«Дюна»')
+  })
+
+  it('falls back to #id when book not found', () => {
+    const votes = [makeVote(1, 5, 99, 2)]
+    const entries = pollVotesToEntries(votes, bookById, authorById)
+    expect(entries[0].title).toBe('#99')
+  })
+
+  it('uses book_id as key and votes_count as value', () => {
+    const votes = [makeVote(1, 5, 1, 7)]
+    const entries = pollVotesToEntries(votes, bookById, authorById)
+    expect(entries[0].key).toBe(1)
+    expect(entries[0].value).toBe(7)
+  })
+
+  it('preserves order of input votes', () => {
+    const votes = [makeVote(1, 5, 2, 3), makeVote(2, 5, 1, 7)]
+    const entries = pollVotesToEntries(votes, bookById, authorById)
+    expect(entries[0].key).toBe(2)
+    expect(entries[1].key).toBe(1)
+  })
+
+  it('returns empty array for empty votes', () => {
+    expect(pollVotesToEntries([], bookById, authorById)).toEqual([])
+  })
+})
 
 // ─── groupBy ─────────────────────────────────────────────────────────────────
 
