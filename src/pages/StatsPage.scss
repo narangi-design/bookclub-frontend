@@ -11,6 +11,7 @@
   margin-bottom: var(--sp-4);
 
   @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--sp-4);
     margin-bottom: var(--sp-6);
   }

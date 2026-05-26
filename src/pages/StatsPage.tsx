@@ -28,33 +28,33 @@ function ChartCard({ title, children, wide }: { title: string; children: React.R
 export default function StatsPage() {
   const [runnerUpFilter, setRunnerUpFilter] = useState<'all' | 'to_read'>('all')
 
-  const { data: books     = [] } = useBooks()
+  const { data: books = [] } = useBooks()
   const { data: pollVotes = [] } = usePollVotes()
-  const { data: members   = [] } = useMembers()
-  const { data: polls     = [] } = usePolls()
-  const { data: authors   = [] } = useAuthors()
+  const { data: members = [] } = useMembers()
+  const { data: polls = [] } = usePolls()
+  const { data: authors = [] } = useAuthors()
 
 
   // ── Section: Книги ───────────────────────────────────────────────────────
-  const addedByMonth  = booksAddedByMonth(books)
-  const avgDays       = avgDaysToElect(books)
-  const medianDays    = medianDaysToElect(books)
-  const readByYear    = ['2022', '2023', '2024'].map(yr => ({
+  const addedByMonth = booksAddedByMonth(books)
+  const avgDays = avgDaysToElect(books)
+  const medianDays = medianDaysToElect(books)
+  const readByYear = ['2022', '2023', '2024'].map(yr => ({
     year: yr,
     count: books.filter(b => b.status === 'read' && b.elected_at?.startsWith(yr)).length,
   }))
-  const statusCounts  = [
-    { name: 'Прочитаны',    value: books.filter(b => b.status === 'read').length,    color: diagramColors[0] },
+  const statusCounts = [
+    { name: 'Прочитаны', value: books.filter(b => b.status === 'read').length, color: diagramColors[0] },
     { name: 'Будем читать', value: books.filter(b => b.status === 'to_read').length, color: diagramColors[4] },
-    { name: 'Выбыли',       value: books.filter(b => b.status === 'removed').length, color: diagramColors[1] },
+    { name: 'Выбыли', value: books.filter(b => b.status === 'removed').length, color: diagramColors[1] },
   ]
 
   // ── Section: Голосования ─────────────────────────────────────────────────
-  const topVoted       = topBooksByVotes(books, pollVotes, 10)
-  const participation  = pollParticipationTimeline(polls)
-  const authorById     = Object.fromEntries(authors.map(a => [a.id, a.name]))
-  const runnerUps      = topRunnerUps(books, polls, pollVotes, 10, runnerUpFilter === 'to_read')
-  const { fastest, slowest } = fastestAndSlowestWins(books, 5)
+  const topVoted = topBooksByVotes(books, pollVotes, 10)
+  const participation = pollParticipationTimeline(polls)
+  const authorById = Object.fromEntries(authors.map(a => [a.id, a.name]))
+  const runnerUps = topRunnerUps(books, polls, pollVotes, 10, runnerUpFilter === 'to_read')
+  const { fastest, slowest } = fastestAndSlowestWins(books, 10)
 
   // ── Section: Участники ───────────────────────────────────────────────────
   const memberActivity = memberActivityData(books, members)
@@ -113,10 +113,23 @@ export default function StatsPage() {
           />
         </ChartCard>
 
-      </div>
+        <ChartCard title="Были выбраны быстрее всех">
+          {fastest.map(({ book, days }) => (
+            <div key={book.id} className="speed-row">
+              <span className="speed-title">{book.title}</span>
+              <span className="speed-days">{days} дн.</span>
+            </div>
+          ))}
+        </ChartCard>
 
-      <SectionTitle>Почти победители</SectionTitle>
-      <div className="charts-grid">
+        <ChartCard title="Дольше всех ждали выбора">
+          {slowest.map(({ book, days }) => (
+            <div key={book.id} className="speed-row">
+              <span className="speed-title">{book.title}</span>
+              <span className="speed-days">{days} дн.</span>
+            </div>
+          ))}
+        </ChartCard>
 
         <ChartCard title="Вторые места" wide>
           <div className="filter-row" style={{ marginBottom: 'var(--sp-3)' }}>
@@ -138,24 +151,6 @@ export default function StatsPage() {
           />
         </ChartCard>
 
-        <ChartCard title="Быстрее всех попали в план">
-          {fastest.map(({ book, days }) => (
-            <div key={book.id} className="speed-row">
-              <span className="speed-title">{book.title}</span>
-              <span className="speed-days">{days} дн.</span>
-            </div>
-          ))}
-        </ChartCard>
-
-        <ChartCard title="Дольше всех ждали выбора">
-          {slowest.map(({ book, days }) => (
-            <div key={book.id} className="speed-row">
-              <span className="speed-title">{book.title}</span>
-              <span className="speed-days">{days} дн.</span>
-            </div>
-          ))}
-        </ChartCard>
-
       </div>
 
       <SectionTitle>Участники</SectionTitle>
@@ -166,8 +161,8 @@ export default function StatsPage() {
             data={memberActivity.slice(0, 10).map(d => ({ ...d, other: d.nominated - d.elected }))}
             xKey="name"
             bars={[
-              { key: 'elected', name: 'Выбрано',    color: diagramColors[0] },
-              { key: 'other',   name: 'Не выбрано', color: diagramColors[4] },
+              { key: 'elected', name: 'Выбрано', color: diagramColors[0] },
+              { key: 'other', name: 'Не выбрано', color: diagramColors[4] },
             ]}
             height={300} stacked
           />
