@@ -17,6 +17,8 @@ import {
   topBooksByVotes,
   booksByMember as booksByMember,
   pollPredictabilityData,
+  topRunnerUps,
+  fastestAndSlowestWins,
 } from './index'
 import type { Book, Poll, PollVote } from '@/types'
 
@@ -409,5 +411,95 @@ describe('pollPredictabilityData', () => {
     const result = pollPredictabilityData(polls, votes, bookById)
     expect(result).toHaveLength(1)
     expect(result[0]).toMatchObject({ date: '2023-01-01', winnerVotes: 5, maxVotes: 8, winner: 'BookB' })
+  })
+})
+
+// ─── topRunnerUps ─────────────────────────────────────────────────────────────
+
+describe('topRunnerUps', () => {
+  const books = [
+    makeBook({ id: 1, title: 'A', status: 'to_read' }),
+    makeBook({ id: 2, title: 'B', status: 'read', elected_poll_id: 10 }),
+    makeBook({ id: 3, title: 'C', status: 'to_read' }),
+  ]
+
+  describe('without runoff', () => {
+    const polls = [makePoll({ id: 10, date: '2023-01-01', stage: 1, winner_book_id: 2 })]
+    const votes = [
+      makeVote(1, 10, 2, 8), // winner
+      makeVote(2, 10, 1, 5), // 2nd
+      makeVote(3, 10, 3, 5), // 2nd (tie)
+    ]
+
+    it('counts tied second-place finishes', () => {
+      const result = topRunnerUps(books, polls, votes)
+      const ids = result.map(x => x.book.id)
+      expect(ids).toContain(1)
+      expect(ids).toContain(3)
+      expect(ids).not.toContain(2)
+    })
+  })
+
+  describe('with runoff', () => {
+    const polls = [
+      makePoll({ id: 10, date: '2023-01-01', stage: 1, winner_book_id: null }),
+      makePoll({ id: 11, date: '2023-01-08', stage: 2, parent_poll_id: 10, winner_book_id: 2 }),
+    ]
+    const votes = [
+      makeVote(1, 10, 1, 6), makeVote(2, 10, 2, 5), makeVote(3, 10, 3, 3),
+      makeVote(4, 11, 1, 4), makeVote(5, 11, 2, 7), // book 2 wins runoff
+    ]
+
+    it('uses runoff participants excluding winner', () => {
+      const result = topRunnerUps(books, polls, votes)
+      expect(result.map(x => x.book.id)).toContain(1)
+      expect(result.map(x => x.book.id)).not.toContain(2)
+    })
+  })
+
+  it('filters to to_read only when onlyToRead=true', () => {
+    const polls = [makePoll({ id: 10, date: '2023-01-01', stage: 1, winner_book_id: 2 })]
+    const votes = [
+      makeVote(1, 10, 2, 8),
+      makeVote(2, 10, 1, 5),
+      makeVote(3, 10, 3, 5),
+    ]
+    const result = topRunnerUps(books, polls, votes, 10, true)
+    expect(result.every(x => x.book.status === 'to_read')).toBe(true)
+  })
+})
+
+// ─── fastestAndSlowestWins ────────────────────────────────────────────────────
+
+describe('fastestAndSlowestWins', () => {
+  const books = [
+    makeBook({ id: 1, title: 'Fast', status: 'read', added_at: '2023-01-01', elected_at: '2023-01-11' }), // 10 days
+    makeBook({ id: 2, title: 'Mid',  status: 'read', added_at: '2023-01-01', elected_at: '2023-02-01' }), // 31 days
+    makeBook({ id: 3, title: 'Slow', status: 'read', added_at: '2023-01-01', elected_at: '2023-06-01' }), // 151 days
+    makeBook({ id: 4, title: 'NoDate', status: 'read', added_at: null, elected_at: null }),
+  ]
+
+  it('fastest is sorted ascending by days', () => {
+    const { fastest } = fastestAndSlowestWins(books)
+    expect(fastest[0].book.title).toBe('Fast')
+    expect(fastest[0].days).toBe(10)
+  })
+
+  it('slowest is sorted descending by days', () => {
+    const { slowest } = fastestAndSlowestWins(books)
+    expect(slowest[0].book.title).toBe('Slow')
+    expect(slowest[0].days).toBe(151)
+  })
+
+  it('excludes books without dates', () => {
+    const { fastest, slowest } = fastestAndSlowestWins(books)
+    const allBooks = [...fastest, ...slowest]
+    expect(allBooks.every(x => x.book.title !== 'NoDate')).toBe(true)
+  })
+
+  it('respects n limit', () => {
+    const { fastest, slowest } = fastestAndSlowestWins(books, 2)
+    expect(fastest).toHaveLength(2)
+    expect(slowest).toHaveLength(2)
   })
 })

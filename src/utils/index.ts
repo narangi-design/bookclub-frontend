@@ -341,6 +341,70 @@ export function pollPredictabilityData(
     })
 }
 
+/** Top N books by runner-up count (2nd place finishes) */
+export function topRunnerUps(
+  books: Book[],
+  polls: Poll[],
+  votes: PollVote[],
+  n = 10,
+  onlyToRead = false,
+): Array<{ book: Book; count: number }> {
+  const bookById = Object.fromEntries(books.map(b => [b.id, b]))
+  const runoffByParent = Object.fromEntries(
+    polls
+      .filter(p => p.stage === 2 && p.parent_poll_id != null)
+      .map(p => [p.parent_poll_id!, p])
+  )
+
+  const counts: Record<number, number> = {}
+
+  for (const poll of polls.filter(p => p.stage === 1)) {
+    const runoff = runoffByParent[poll.id]
+    if (runoff) {
+      const runoffVotes = votes.filter(v => v.poll_id === runoff.id)
+      for (const v of runoffVotes) {
+        if (v.book_id !== runoff.winner_book_id)
+          counts[v.book_id] = (counts[v.book_id] ?? 0) + 1
+      }
+    } else {
+      const sorted = votes.filter(v => v.poll_id === poll.id).sort((a, b) => b.votes_count - a.votes_count)
+      if (sorted.length < 2) continue
+      const secondScore = sorted[1].votes_count
+      for (const v of sorted.slice(1)) {
+        if (v.votes_count === secondScore)
+          counts[v.book_id] = (counts[v.book_id] ?? 0) + 1
+      }
+    }
+  }
+
+  return Object.entries(counts)
+    .map(([id, count]) => ({ book: bookById[Number(id)], count }))
+    .filter(x => x.book != null)
+    .filter(x => !onlyToRead || x.book.status === 'to_read')
+    .sort((a, b) => b.count - a.count)
+    .slice(0, n)
+}
+
+/** Fastest and slowest wins by days from added_at to elected_at */
+export function fastestAndSlowestWins(
+  books: Book[],
+  n = 5,
+): { fastest: Array<{ book: Book; days: number }>; slowest: Array<{ book: Book; days: number }> } {
+  const withDays = books
+    .filter(b => b.status === 'read' && b.added_at && b.elected_at)
+    .map(b => ({
+      book: b,
+      days: Math.round(
+        (new Date(b.elected_at!).getTime() - new Date(b.added_at!).getTime()) / 86_400_000,
+      ),
+    }))
+    .sort((a, b) => a.days - b.days)
+  return {
+    fastest: withDays.slice(0, n),
+    slowest: [...withDays].reverse().slice(0, n),
+  }
+}
+
 /** Days between consecutive polls for gap analysis */
 export function pollGapTimeline(polls: Poll[]): Array<{ date: string; gap: number }> {
   const sorted = sortedPolls(polls)

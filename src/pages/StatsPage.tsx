@@ -1,10 +1,11 @@
 import './StatsPage.scss'
+import { useState } from 'react'
 import {
   topBooksByVotes, memberActivityData,
   booksAddedByMonth, avgDaysToElect, medianDaysToElect,
-  pollParticipationTimeline,
+  pollParticipationTimeline, topRunnerUps, fastestAndSlowestWins,
 } from '@/utils'
-import { useBooks, usePollVotes, useMembers, usePolls } from '@/hooks'
+import { useBooks, usePollVotes, useMembers, usePolls, useAuthors } from '@/hooks'
 import {
   diagramColors,
   HBarChart, SimpleLineChart, DonutChart,
@@ -25,10 +26,13 @@ function ChartCard({ title, children, wide }: { title: string; children: React.R
 }
 
 export default function StatsPage() {
+  const [runnerUpFilter, setRunnerUpFilter] = useState<'all' | 'to_read'>('all')
+
   const { data: books     = [] } = useBooks()
   const { data: pollVotes = [] } = usePollVotes()
   const { data: members   = [] } = useMembers()
   const { data: polls     = [] } = usePolls()
+  const { data: authors   = [] } = useAuthors()
 
 
   // ── Section: Книги ───────────────────────────────────────────────────────
@@ -48,6 +52,9 @@ export default function StatsPage() {
   // ── Section: Голосования ─────────────────────────────────────────────────
   const topVoted       = topBooksByVotes(books, pollVotes, 10)
   const participation  = pollParticipationTimeline(polls)
+  const authorById     = Object.fromEntries(authors.map(a => [a.id, a.name]))
+  const runnerUps      = topRunnerUps(books, polls, pollVotes, 10, runnerUpFilter === 'to_read')
+  const { fastest, slowest } = fastestAndSlowestWins(books, 5)
 
   // ── Section: Участники ───────────────────────────────────────────────────
   const memberActivity = memberActivityData(books, members)
@@ -104,6 +111,49 @@ export default function StatsPage() {
             data={topVoted.map(x => ({ name: x.book.title, votes: x.totalVotes }))}
             dataKey="votes" valueLabel="Голосов"
           />
+        </ChartCard>
+
+      </div>
+
+      <SectionTitle>Почти победители</SectionTitle>
+      <div className="charts-grid">
+
+        <ChartCard title="Вторые места" wide>
+          <div className="filter-row" style={{ marginBottom: 'var(--sp-3)' }}>
+            <button
+              className={`filter-btn${runnerUpFilter === 'all' ? ' filter-btn--active' : ''}`}
+              onClick={() => setRunnerUpFilter('all')}
+            >Все книги</button>
+            <button
+              className={`filter-btn${runnerUpFilter === 'to_read' ? ' filter-btn--active' : ''}`}
+              onClick={() => setRunnerUpFilter('to_read')}
+            >Только в очереди</button>
+          </div>
+          <HBarChart
+            data={runnerUps.map(x => ({
+              name: `${x.book.title}${x.book.author_id != null ? `, ${authorById[x.book.author_id] ?? ''}` : ''}`,
+              votes: x.count,
+            }))}
+            dataKey="votes" valueLabel="Раз"
+          />
+        </ChartCard>
+
+        <ChartCard title="Быстрее всех попали в план">
+          {fastest.map(({ book, days }) => (
+            <div key={book.id} className="speed-row">
+              <span className="speed-title">{book.title}</span>
+              <span className="speed-days">{days} дн.</span>
+            </div>
+          ))}
+        </ChartCard>
+
+        <ChartCard title="Дольше всех ждали выбора">
+          {slowest.map(({ book, days }) => (
+            <div key={book.id} className="speed-row">
+              <span className="speed-title">{book.title}</span>
+              <span className="speed-days">{days} дн.</span>
+            </div>
+          ))}
         </ChartCard>
 
       </div>
