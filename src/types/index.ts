@@ -23,6 +23,7 @@ export interface Book {
   elected_at: string | null      // ISO date string
   annotation?: string | null
   discussion_url?: string | null
+  cover_url?: string | null
 }
 
 export interface Poll {

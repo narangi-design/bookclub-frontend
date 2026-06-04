@@ -39,7 +39,7 @@ export default function StatsPage() {
   const addedByMonth = booksAddedByMonth(books)
   const avgDays = avgDaysToElect(books)
   const medianDays = medianDaysToElect(books)
-  const readByYear = ['2022', '2023', '2024'].map(yr => ({
+  const readByYear = ['2022', '2023', '2024', '2025'].map(yr => ({
     year: yr,
     count: books.filter(b => b.status === 'read' && b.elected_at?.startsWith(yr)).length,
   }))

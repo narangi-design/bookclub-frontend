@@ -45,7 +45,7 @@ export default function BookPage() {
 
       <div className="bp-hero">
         <div className="bp-cover">
-          <CoverImage coverSize="large" bookId={book.id} title={book.title} />
+          <CoverImage coverSize="large" coverUrl={book.cover_url} title={book.title} />
         </div>
 
         <div className="bp-info">

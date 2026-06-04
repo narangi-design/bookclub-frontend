@@ -40,7 +40,7 @@ export default function CurrentBook({ book, authorName, addedByMember, memberVis
   return (
     <div className="card">
       <div className="card-header">
-        <CoverImage coverSize="default" bookId={book.id} title={book.title} />
+        <CoverImage coverSize="default" coverUrl={book.cover_url} title={book.title} />
         <div className="info">
           <div className="badge">Сейчас читаем</div>
           <h2 className="title">{book.title}</h2>

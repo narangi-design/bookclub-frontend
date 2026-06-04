@@ -27,7 +27,7 @@ export default function BookCard({ book, showAuthor = true, authorName, showMemb
 
   return (
     <Link to={`/books/${book.id}`} className={`book-card book-card--${book.status}`}>
-      <CoverImage coverSize="small" bookId={book.id} title={book.title} />
+      <CoverImage coverSize="small" coverUrl={book.cover_url} title={book.title} />
       <div className="book-card-info">
         <div className="book-card-title-row">
           <span className="book-card-title">{book.title}</span>
