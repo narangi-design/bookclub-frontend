@@ -33,14 +33,14 @@ export default function AwardCard({ year, votes, books, authorById, memberById, 
   }
 
   const mainEntries: VoteEntry[] = sorted
-    .map(v => ({ key: v.book_id, title: toTitle(v.book_id), value: v.liked_votes }))
+    .map(v => ({ key: v.book_id, title: toTitle(v.book_id), value: v.liked_votes, href: `/books/${v.book_id}` }))
 
   const round2Nominees = votes
     .filter(v => v.round2_votes !== null)
     .sort((a, b) => (b.round2_votes ?? 0) - (a.round2_votes ?? 0))
 
   const round2Entries: VoteEntry[] = round2Nominees
-    .map(v => ({ key: v.book_id, title: toTitle(v.book_id), value: v.round2_votes! }))
+    .map(v => ({ key: v.book_id, title: toTitle(v.book_id), value: v.round2_votes!, href: `/books/${v.book_id}` }))
 
   const winner = votes.find(v => v.is_winner)
   const finalVotes = round2Nominees.length > 0 ? round2Nominees : sorted

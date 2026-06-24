@@ -10,7 +10,7 @@ export function pollVotesToEntries(
     const book = bookById[v.book_id]
     const author = book?.author_id != null ? authorById[book.author_id] : null
     const title = book ? `«${book.title}»${author ? `, ${author}` : ''}` : `#${v.book_id}`
-    return { key: v.book_id, title, value: v.votes_count }
+    return { key: v.book_id, title, value: v.votes_count, href: `/books/${v.book_id}` }
   })
 }
 

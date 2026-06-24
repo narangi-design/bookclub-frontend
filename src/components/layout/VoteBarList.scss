@@ -7,6 +7,10 @@
 .vbl-row {
   display: flex;
   align-items: center;
+
+  &[href]:hover .vbl-bar-wrap {
+    filter: brightness(0.95);
+  }
 }
 
 .vbl-bar-wrap {

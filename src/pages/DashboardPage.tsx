@@ -50,10 +50,10 @@ export default function DashboardPage() {
       <h1 className="page-title">Привет, мы книжный клуб!</h1>
 
       <div className="stats-row">
-        <StatNumberCard value={books.length}       label="Книг в списке"      />
-        <StatNumberCard value={readBooks.length}   label="Прочитано"          />
-        <StatNumberCard value={toReadBooks.length} label="Предстоит прочитать"/>
-        <StatNumberCard value={members.length}     label="Активных участников" blur={memberVisibility === 'blur'} />
+        <StatNumberCard value={books.length}       label="Книг в списке"       href="/books"                  />
+        <StatNumberCard value={readBooks.length}   label="Прочитано"           href="/books?status=read"      />
+        <StatNumberCard value={toReadBooks.length} label="Предстоит прочитать" href="/books?status=to_read"   />
+        <StatNumberCard value={members.length}     label="Активных участников" href="/members" blur={memberVisibility === 'blur'} />
       </div>
 
       {currentBook && (

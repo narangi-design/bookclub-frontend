@@ -1,6 +1,6 @@
 import './BooksPage.scss'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import type { Member } from '@/types'
 import { useBooks, useMembers, useAuthors, useMemberVisibility } from '@/hooks'
 import { memberName } from '@/utils'
@@ -23,7 +23,8 @@ export default function BooksPage() {
   const { data: books   = [] } = useBooks()
   const { data: members = [] } = useMembers()
   const { data: authors = [] } = useAuthors()
-  const [filter, setFilter] = useState<Filter>('all')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const filter = (searchParams.get('status') ?? 'all') as Filter
   const [search, setSearch] = useState('')
 
   const memberById = Object.fromEntries(members.map((u: Member) => [u.id, u])) as Record<number, Member>
@@ -73,7 +74,7 @@ export default function BooksPage() {
 
       <FilterBar
         value={filter}
-        onChange={f => setFilter(f as Filter)}
+        onChange={f => setSearchParams(f === 'all' ? {} : { status: f })}
         options={(['all', 'read', 'to_read', 'removed'] as Filter[]).map(f => ({
           key: f,
           label: filterLabels[f],

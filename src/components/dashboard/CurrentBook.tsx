@@ -73,7 +73,7 @@ export default function CurrentBook({ book, authorName, addedByMember, memberVis
               {poll.total_voters != null && <> · {poll.total_voters} чел.</>}
             </span>
           </div>
-          <VoteBarList entries={stage1Entries} winnerKey={book.id} totalVoters={poll.total_voters} />
+          <VoteBarList entries={stage1Entries} winnerKey={runoffPoll ? undefined : book.id} totalVoters={poll.total_voters} />
 
           {runoffPoll && stage2Entries.length > 0 && (
             <>
