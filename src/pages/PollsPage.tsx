@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { usePolls, usePollVotes, useBooks, useAuthors } from '@/hooks'
+import { usePolls, usePollVotes, useBooks, useAuthors, usePageTitle } from '@/hooks'
 import type { Poll } from '@/types'
 import PollCard from '@/components/polls/PollCard'
 import FilterBar from '@/components/layout/FilterBar'
@@ -13,6 +13,7 @@ interface Session {
 }
 
 export default function PollsPage() {
+  usePageTitle('Голосования за книги')
   const { data: polls   = [] } = usePolls()
   const { data: votes   = [] } = usePollVotes()
   const { data: books   = [] } = useBooks()

@@ -2,7 +2,7 @@ import './BooksPage.scss'
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import type { Member } from '@/types'
-import { useBooks, useMembers, useAuthors, useMemberVisibility } from '@/hooks'
+import { useBooks, useMembers, useAuthors, useMemberVisibility, usePageTitle } from '@/hooks'
 import { memberName } from '@/utils'
 import FilterBar from '@/components/layout/FilterBar'
 import SearchBar from '@/components/layout/SearchBar'
@@ -19,6 +19,7 @@ type Filter = 'all' | 'read' | 'to_read' | 'removed'
 const STATUS_ORDER: Record<string, number> = { read: 0, to_read: 1, removed: 2 }
 
 export default function BooksPage() {
+  usePageTitle('Список книг | Элитный книжный клуб')
   const memberVisibility = useMemberVisibility()
   const { data: books   = [] } = useBooks()
   const { data: members = [] } = useMembers()

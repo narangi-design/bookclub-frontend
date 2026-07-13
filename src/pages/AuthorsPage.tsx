@@ -1,13 +1,14 @@
 import './AuthorsPage.scss'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useBooks, useAuthors, useAwardVotes } from '@/hooks'
+import { useBooks, useAuthors, useAwardVotes, usePageTitle } from '@/hooks'
 import FilterBar from '@/components/layout/FilterBar'
 import SearchBar from '@/components/layout/SearchBar'
 
 type Filter = 'all' | 'read' | 'unread'
 
 export default function AuthorsPage() {
+  usePageTitle('Авторы | Элитный книжный клуб')
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
 

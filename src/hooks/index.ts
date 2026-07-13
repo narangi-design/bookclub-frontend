@@ -3,6 +3,8 @@ import { fetchMembers, fetchBooks, fetchPolls, fetchPollVotes, fetchAwardVotes, 
 import { useAuth } from '@/context/AuthContext'
 import type { MemberVisibility } from '@/types'
 
+export { usePageTitle } from './usePageTitle'
+
 export function useMemberVisibility(): MemberVisibility {
   const { hasToken } = useAuth()
   return hasToken ? 'visible' : 'blur'

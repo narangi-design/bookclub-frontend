@@ -1,5 +1,5 @@
 import './DashboardPage.scss'
-import { useBooks, usePolls, useMembers, useAwardVotes, useAwardEvents, usePollVotes, useAuthors, useMemberVisibility } from '@/hooks'
+import { useBooks, usePolls, useMembers, useAwardVotes, useAwardEvents, usePollVotes, useAuthors, useMemberVisibility, usePageTitle } from '@/hooks'
 import { memberName } from '@/utils'
 import AwardCard from '@/components/dashboard/AwardCard'
 import CurrentBook from '@/components/dashboard/CurrentBook'
@@ -8,6 +8,7 @@ import BookCardList from '@/components/layout/BookCardList'
 
 
 export default function DashboardPage() {
+  usePageTitle()
   const memberVisibility = useMemberVisibility()
   const { data: books       = [] } = useBooks()
   const { data: polls       = [] } = usePolls()

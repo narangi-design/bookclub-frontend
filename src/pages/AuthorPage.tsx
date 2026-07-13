@@ -1,6 +1,6 @@
 import './AuthorPage.scss'
 import { useParams, Link } from 'react-router-dom'
-import { useBooks, useAuthors, useMembers, usePollVotes, useAwardVotes, useMemberVisibility } from '@/hooks'
+import { useBooks, useAuthors, useMembers, usePollVotes, useAwardVotes, useMemberVisibility, usePageTitle } from '@/hooks'
 import BookCardList from '@/components/layout/BookCardList'
 import { memberName } from '@/utils'
 
@@ -18,6 +18,7 @@ export default function AuthorPage() {
   const memberById = Object.fromEntries(members.map(m => [m.id, memberName(m)]))
 
   const author = authors.find(a => a.id === authorId)
+  usePageTitle(`${author?.name} | Что мы читаем`)
   if (!author) return <div className="page"><p className="ap-not-found">Автор не найден</p></div>
 
   const authorBooks = books.filter(b => b.author_id === authorId)

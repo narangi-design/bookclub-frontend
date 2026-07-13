@@ -1,6 +1,6 @@
 import './BookPage.scss'
 import { useParams, Link } from 'react-router-dom'
-import { useBooks, useMembers, useAuthors, usePolls, usePollVotes, useAwardVotes, useMemberVisibility } from '@/hooks'
+import { useBooks, useMembers, useAuthors, usePolls, usePollVotes, useAwardVotes, useMemberVisibility, usePageTitle } from '@/hooks'
 import { useAuth } from '@/context/AuthContext'
 import { formatDate, pollRootAppearances, memberName } from '@/utils'
 import CoverImage from '@/components/layout/CoverImage'
@@ -26,17 +26,19 @@ export default function BookPage() {
 
   const book = books.find(b => b.id === bookId)
   if (!book) return <div className="page"><p className="bp-not-found">Книга не найдена</p></div>
-
+  
   const authorById = Object.fromEntries(authors.map(a => [a.id, a]))
   const memberById = Object.fromEntries(members.map(u => [u.id, u]))
-
+  
   const author = book.author_id != null ? authorById[book.author_id] : null
   const addedBy = book.added_by_member_id != null ? memberById[book.added_by_member_id] : null
-
+  
   const appearances = pollRootAppearances(bookId, pollVotes, polls)
-
+  
   const award = awardVotes.find(v => v.book_id === bookId && v.is_winner)
-
+  
+  usePageTitle(`«${book?.title}», ${author?.name} | ${STATUS_LABEL[book.status]}`)
+  
   return (
     <div className="page">
       <div className="bp-back">

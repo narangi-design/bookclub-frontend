@@ -5,7 +5,7 @@ import {
   booksAddedByMonth, avgDaysToElect, medianDaysToElect,
   pollParticipationTimeline, topRunnerUps, fastestAndSlowestWins,
 } from '@/utils'
-import { useBooks, usePollVotes, useMembers, usePolls, useAuthors } from '@/hooks'
+import { useBooks, usePollVotes, useMembers, usePolls, useAuthors, usePageTitle } from '@/hooks'
 import {
   diagramColors,
   HBarChart, SimpleLineChart, DonutChart,
@@ -26,6 +26,7 @@ function ChartCard({ title, children, wide }: { title: string; children: React.R
 }
 
 export default function StatsPage() {
+  usePageTitle('Статистика элитного книжного клуба')
   const [runnerUpFilter, setRunnerUpFilter] = useState<'all' | 'to_read'>('all')
 
   const { data: books = [] } = useBooks()

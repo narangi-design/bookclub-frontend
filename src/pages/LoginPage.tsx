@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
+import { usePageTitle } from '@/hooks'
 import './LoginPage.scss'
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
 
 export default function LoginPage() {
+  usePageTitle('Авторизоваться в элитном книжном клубе')
   const { login, isAuthed } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()

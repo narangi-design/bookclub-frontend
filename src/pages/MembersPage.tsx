@@ -1,9 +1,10 @@
 import './MembersPage.scss'
 import { Link } from 'react-router-dom'
-import { useBooks, useMembers } from '@/hooks'
+import { useBooks, useMembers, usePageTitle } from '@/hooks'
 import { memberName } from '@/utils'
 
 export default function MembersPage() {
+  usePageTitle('Участники элитного книжного клуба')
   const { data: members = [] } = useMembers()
   const { data: books = [] } = useBooks()
 

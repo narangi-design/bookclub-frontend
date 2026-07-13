@@ -1,6 +1,6 @@
 import './MemberPage.scss'
 import { useParams, Link } from 'react-router-dom'
-import { useBooks, useMembers, useAuthors } from '@/hooks'
+import { useBooks, useMembers, useAuthors, usePageTitle } from '@/hooks'
 import { memberName } from '@/utils'
 import BookCardList from '@/components/layout/BookCardList'
 
@@ -13,6 +13,7 @@ export default function MemberPage() {
   const { data: authors = [] } = useAuthors()
 
   const member = members.find(u => u.id === memberId)
+  usePageTitle(`${member ? memberName(member) : undefined} | История заявок`)
   if (!member) return <div className="page"><p className="up-not-found">Участник не найден</p></div>
 
   const displayName = memberName(member)
