@@ -1,5 +1,7 @@
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom'
+import { QueryClient } from '@tanstack/react-query'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { AuthProvider, useAuth } from '@/context/AuthContext'
 import Layout from '@/components/layout/Layout'
 import DashboardPage from '@/pages/DashboardPage'
@@ -13,17 +15,27 @@ import PollsPage from '@/pages/PollsPage'
 import StatsPage from '@/pages/StatsPage'
 import LoginPage from '@/pages/LoginPage'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: 1000 * 60 * 60 * 24, // 24h — сколько кеш живёт в localStorage
+      staleTime: 1000 * 60 * 5,    // 5min — когда данные считаются устаревшими
+    },
+  },
+})
+
+const persister = createSyncStoragePersister({ storage: window.localStorage })
 
 function PrivateRoute() {
   const { isAuthed, isLoading } = useAuth()
+  const location = useLocation()
   if (isLoading) return null
-  return isAuthed ? <Outlet /> : <Navigate to="/login" replace />
+  return isAuthed ? <Outlet /> : <Navigate to="/login" state={{ from: location.pathname }} replace />
 }
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
       <AuthProvider>
         <BrowserRouter>
           <Routes>
@@ -45,6 +57,6 @@ export default function App() {
           </Routes>
         </BrowserRouter>
       </AuthProvider>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   )
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '@/context/AuthContext'
 import { usePageTitle } from '@/hooks'
 import './LoginPage.scss'
@@ -11,14 +12,16 @@ export default function LoginPage() {
   const { login, isAuthed } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const queryClient = useQueryClient()
+  const from = (location.state as { from?: string })?.from ?? '/dashboard'
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (isAuthed) navigate('/dashboard', { replace: true })
-  }, [isAuthed, navigate])
+    if (isAuthed) navigate(from, { replace: true })
+  }, [isAuthed, navigate, from])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -36,7 +39,8 @@ export default function LoginPage() {
     if (res.ok) {
       const data = await res.json()
       login({ user_id: data.user_id, name: data.name }, data.access_token)
-      navigate('/dashboard', { replace: true })
+      await queryClient.invalidateQueries()
+      navigate(from, { replace: true })
     } else {
       setError('Неверный логин или пароль')
     }

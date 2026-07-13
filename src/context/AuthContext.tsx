@@ -23,7 +23,7 @@ const AuthContext = createContext<AuthContextType | null>(null)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [hasToken] = useState(() => !!localStorage.getItem(TOKEN_KEY))
+  const [hasToken, setHasToken] = useState(() => !!localStorage.getItem(TOKEN_KEY))
 
   useEffect(() => {
     const token = localStorage.getItem(TOKEN_KEY)
@@ -43,11 +43,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   function login(user: AuthUser, token: string) {
     localStorage.setItem(TOKEN_KEY, token)
     setUser(user)
+    setHasToken(true)
   }
 
   function logout() {
     localStorage.removeItem(TOKEN_KEY)
     setUser(null)
+    setHasToken(false)
   }
 
   function updateUser(user: AuthUser) {
