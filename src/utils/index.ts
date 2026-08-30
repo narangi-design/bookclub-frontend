@@ -1,4 +1,4 @@
-import type { Book, Poll, PollVote, Member } from '@/types'
+import type { Book, Poll, PollVote, PollBookOption, Member } from '@/types'
 import type { VoteEntry } from '@/components/layout/VoteBarList'
 
 export function pollVotesToEntries(
@@ -60,19 +60,18 @@ export function pollAppearances(bookId: number, votes: PollVote[]): number {
 }
 
 /**
- * How many distinct voting events a book participated in.
- * A 2-round poll counts as one event (stage-2 maps back to its parent stage-1 id).
+ * How many stage-1 polls a book appeared in.
  */
 export function pollRootAppearances(bookId: number, votes: PollVote[], polls: Poll[]): number {
   const pollById = Object.fromEntries(polls.map(p => [p.id, p]))
-  const rootIds = new Set<number>()
+  const pollIds = new Set<number>()
   for (const v of votes) {
     if (v.book_id !== bookId) continue
     const poll = pollById[v.poll_id]
-    if (!poll) continue
-    rootIds.add(poll.parent_poll_id ?? poll.id)
+    if (!poll || poll.parent_poll_id !== null) continue
+    pollIds.add(poll.id)
   }
-  return rootIds.size
+  return pollIds.size
 }
 
 /** Average votes a book received across all polls it appeared in */

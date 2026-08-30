@@ -25,19 +25,20 @@ export default function BookPage() {
   const { data: awardVotes = [] } = useAwardVotes()
 
   const book = books.find(b => b.id === bookId)
-  if (!book) return <div className="page"><p className="bp-not-found">Книга не найдена</p></div>
-  
+
   const authorById = Object.fromEntries(authors.map(a => [a.id, a]))
   const memberById = Object.fromEntries(members.map(u => [u.id, u]))
-  
-  const author = book.author_id != null ? authorById[book.author_id] : null
-  const addedBy = book.added_by_member_id != null ? memberById[book.added_by_member_id] : null
-  
+
+  const author = book?.author_id != null ? authorById[book.author_id] : null
+  const addedBy = book?.added_by_member_id != null ? memberById[book.added_by_member_id] : null
+
   const appearances = pollRootAppearances(bookId, pollVotes, polls)
-  
+
   const award = awardVotes.find(v => v.book_id === bookId && v.is_winner)
-  
-  usePageTitle(`«${book?.title}», ${author?.name} | ${STATUS_LABEL[book.status]}`)
+
+  usePageTitle(book ? `«${book.title}», ${author?.name} | ${STATUS_LABEL[book.status]}` : '')
+
+  if (!book) return <div className="page"><p className="bp-not-found">Книга не найдена</p></div>
   
   return (
     <div className="page">
@@ -92,12 +93,10 @@ export default function BookPage() {
                 <dd>{formatDate(book.elected_at)}</dd>
               </>
             )}
-            {appearances > 0 && (
-              <>
-                <dt>Голосований</dt>
-                <dd>{appearances}</dd>
-              </>
-            )}
+            <>
+              <dt>Голосований</dt>
+              <dd>{appearances}</dd>
+            </>
           </dl>
 
           {book.discussion_url && isAuthed && (

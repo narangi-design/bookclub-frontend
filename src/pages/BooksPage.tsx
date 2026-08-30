@@ -87,11 +87,12 @@ export default function BooksPage() {
         <table className="table">
           <thead>
             <tr>
+              <th className="th th--cover" />
               <th className="th">Название</th>
-              <th className="th">Автор</th>
-              <th className="th">Инициатор</th>
-              <th className="th th--right">Добавлена в список</th>
-              <th className="th th--right">Когда выбрана</th>
+              <th className="th th--author">Автор</th>
+              <th className="th th--member">Инициатор</th>
+              <th className="th th--date th--right">В списке с</th>
+              <th className="th th--date th--right">Выбрана</th>
             </tr>
           </thead>
           <tbody>
@@ -99,8 +100,14 @@ export default function BooksPage() {
               const m = book.added_by_member_id != null ? memberById[book.added_by_member_id] : null
               return (
                 <tr key={book.id} className="tr">
+                  <td className="td td--cover">
+                    {book.cover_url && <img src={book.cover_url} alt="" className="cover-thumb" />}
+                  </td>
                   <td className="td">
                     <Link to={`/books/${book.id}`} className="book-title">{book.title}</Link>
+                    {book.discussion_url && (
+                      <a href={book.discussion_url} target="_blank" rel="noreferrer" className="discussion-link" title="Запись заседания">▶</a>
+                    )}
                     {book.status === 'removed' && (
                       <span className="badge">removed</span>
                     )}
