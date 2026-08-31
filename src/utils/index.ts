@@ -1,4 +1,4 @@
-import type { Book, Poll, PollVote, PollBookOption, Member } from '@/types'
+import type { Book, Poll, PollVote, Member } from '@/types'
 import type { VoteEntry } from '@/components/layout/VoteBarList'
 
 export function pollVotesToEntries(
