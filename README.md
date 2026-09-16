@@ -55,7 +55,7 @@ npm run lint     # ESLint
 
 Required `.env.local`:
 ```
-VITE_API_URL=https://your-api.vercel.app
+VITE_API_URL=https://your-api.example.com
 ```
 
 ---
