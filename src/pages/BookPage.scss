@@ -14,14 +14,26 @@
 
 .bp-hero {
   display: flex;
-  gap: var(--sp-8);
-  align-items: flex-start;
-  margin-bottom: var(--sp-8);
+  flex-direction: column;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-6);
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+    gap: var(--sp-8);
+    align-items: flex-start;
+    margin-bottom: var(--sp-8);
+  }
 }
 
 .bp-cover {
   flex-shrink: 0;
   width: 180px;
+  margin: 0 auto;
+
+  @media (min-width: 640px) {
+    margin: 0;
+  }
 }
 
 .bp-info {
@@ -83,6 +95,7 @@
   font-weight: 700;
   line-height: 1.15;
   margin: 0 0 var(--sp-3);
+  overflow-wrap: break-word;
 }
 
 .bp-author {
@@ -132,6 +145,18 @@
   &:hover {
     opacity: 0.75;
   }
+}
+
+.bp-history {
+  margin-top: var(--sp-6);
+  padding-top: var(--sp-6);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.bp-history-title {
+  font-size: var(--text-base);
+  font-weight: 600;
+  margin: 0 0 var(--sp-4);
 }
 
 .bp-annotation {

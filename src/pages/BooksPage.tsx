@@ -62,6 +62,24 @@ export default function BooksPage() {
     removed: 'Выбывшие',
   }
 
+  // Derived once, rendered twice (table row on desktop, card on mobile — CSS
+  // toggles which one is visible) so the two layouts can't drift apart on
+  // what data they show.
+  const rows = visible.map(book => {
+    const m = book.added_by_member_id != null ? memberById[book.added_by_member_id] : null
+    const authorNode = book.author_id != null
+      ? <Link to={`/authors/${book.author_id}`} className="author-link">{authorById[book.author_id]}</Link>
+      : '—'
+    const memberNode = book.added_by_member_id === null
+      ? '—'
+      : memberVisibility === 'visible' && m
+        ? memberName(m)
+        : <span className="member-blur">Участник</span>
+    const addedDateStr = book.added_at ? formatDate(book.added_at) : '—'
+    const electedDateStr = book.elected_at ? formatDate(book.elected_at) : '—'
+    return { book, authorNode, memberNode, addedDateStr, electedDateStr }
+  })
+
   return (
     <div className="page">
       <h1 className="page-title">Книги</h1>
@@ -96,46 +114,62 @@ export default function BooksPage() {
             </tr>
           </thead>
           <tbody>
-            {visible.map(book => {
-              const m = book.added_by_member_id != null ? memberById[book.added_by_member_id] : null
-              return (
-                <tr key={book.id} className="tr">
-                  <td className="td td--cover">
-                    {book.cover_url && <img src={book.cover_url} alt="" className="cover-thumb" />}
-                  </td>
-                  <td className="td">
-                    <Link to={`/books/${book.id}`} className="book-title">{book.title}</Link>
-                    {book.discussion_url && (
-                      <a href={book.discussion_url} target="_blank" rel="noreferrer" className="discussion-link" title="Запись заседания">▶</a>
-                    )}
-                    {book.status === 'removed' && (
-                      <span className="badge">removed</span>
-                    )}
-                  </td>
-                  <td className="td muted">
-                    {book.author_id != null
-                      ? <Link to={`/authors/${book.author_id}`} className="author-link">{authorById[book.author_id]}</Link>
-                      : '—'}
-                  </td>
-                  <td className="td muted">
-                    {book.added_by_member_id === null
-                      ? '—'
-                      : memberVisibility === 'visible' && m
-                        ? memberName(m)
-                        : <span className="member-blur">Участник</span>
-                    }
-                  </td>
-                  <td className="td muted td--right">
-                    {book.added_at ? formatDate(book.added_at) : '—'}
-                  </td>
-                  <td className="td muted td--right">
-                    {book.elected_at ? formatDate(book.elected_at) : '—'}
-                  </td>
-                </tr>
-              )
-            })}
+            {rows.map(({ book, authorNode, memberNode, addedDateStr, electedDateStr }) => (
+              <tr key={book.id} className="tr">
+                <td className="td td--cover">
+                  {book.cover_url && <img src={book.cover_url} alt="" className="cover-thumb" />}
+                </td>
+                <td className="td">
+                  <Link to={`/books/${book.id}`} className="book-title">{book.title}</Link>
+                  {book.discussion_url && (
+                    <a href={book.discussion_url} target="_blank" rel="noreferrer" className="discussion-link" title="Запись заседания">▶</a>
+                  )}
+                  {book.status === 'removed' && (
+                    <span className="badge">removed</span>
+                  )}
+                </td>
+                <td className="td muted">{authorNode}</td>
+                <td className="td muted">{memberNode}</td>
+                <td className="td muted td--right">{addedDateStr}</td>
+                <td className="td muted td--right">{electedDateStr}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="book-list-mobile">
+        {rows.map(({ book, authorNode, memberNode, addedDateStr, electedDateStr }) => (
+          <div key={book.id} className={`book-row-mobile${book.status === 'removed' ? ' book-row-mobile--removed' : ''}`}>
+            <Link to={`/books/${book.id}`} className="book-row-mobile-link" aria-label={book.title} />
+            {book.cover_url && <img src={book.cover_url} alt="" className="book-row-mobile-cover" />}
+            <div className="book-row-mobile-info">
+              <div className="book-row-mobile-title">{book.title}</div>
+              <div className="book-row-mobile-author">{authorNode}</div>
+              <div className="book-row-mobile-line">{memberNode} · {addedDateStr}</div>
+              {book.status === 'read' && (
+                <div className="book-row-mobile-line">Выбрана · {electedDateStr}</div>
+              )}
+              {book.status === 'to_read' && (
+                <div className="book-row-mobile-line">В списке</div>
+              )}
+              {book.status === 'removed' && (
+                <div className="book-row-mobile-line">Выбыла</div>
+              )}
+            </div>
+            {book.discussion_url && (
+              <a
+                href={book.discussion_url}
+                target="_blank"
+                rel="noreferrer"
+                className="book-row-mobile-discussion"
+                title="Запись заседания"
+              >
+                ▶
+              </a>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   )

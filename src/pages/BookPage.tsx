@@ -1,9 +1,10 @@
 import './BookPage.scss'
 import { useParams, Link } from 'react-router-dom'
-import { useBooks, useMembers, useAuthors, usePolls, usePollVotes, useAwardVotes, useMemberVisibility, usePageTitle } from '@/hooks'
+import { useBooks, useMembers, useAuthors, usePolls, usePollVotes, useAwardVotes, useAwardEvents, useMemberVisibility, usePageTitle } from '@/hooks'
 import { useAuth } from '@/context/AuthContext'
-import { formatDate, pollRootAppearances, memberName } from '@/utils'
+import { formatDate, pollRootAppearances, buildBookHistory, memberName } from '@/utils'
 import CoverImage from '@/components/layout/CoverImage'
+import BookTimeline from '@/components/layout/BookTimeline'
 
 const STATUS_LABEL: Record<string, string> = {
   read: 'Прочитана',
@@ -23,11 +24,16 @@ export default function BookPage() {
   const { data: polls = [] } = usePolls()
   const { data: pollVotes = [] } = usePollVotes()
   const { data: awardVotes = [] } = useAwardVotes()
+  const { data: awardEvents = [] } = useAwardEvents()
 
   const book = books.find(b => b.id === bookId)
 
   const authorById = Object.fromEntries(authors.map(a => [a.id, a]))
+  const authorNameById = Object.fromEntries(authors.map(a => [a.id, a.name]))
   const memberById = Object.fromEntries(members.map(u => [u.id, u]))
+  const bookById = Object.fromEntries(books.map(b => [b.id, b]))
+
+  const history = book ? buildBookHistory(book, polls, pollVotes, awardVotes, awardEvents) : []
 
   const author = book?.author_id != null ? authorById[book.author_id] : null
   const addedBy = book?.added_by_member_id != null ? memberById[book.added_by_member_id] : null
@@ -106,6 +112,19 @@ export default function BookPage() {
           )}
         </div>
       </div>
+
+      {history.length > 0 && (
+        <div className="bp-history">
+          <h2 className="bp-history-title">История</h2>
+          <BookTimeline
+            events={history}
+            bookById={bookById}
+            authorById={authorNameById}
+            memberById={memberById}
+            memberVisibility={memberVisibility}
+          />
+        </div>
+      )}
 
       {book.annotation && (
         <div className="bp-annotation">

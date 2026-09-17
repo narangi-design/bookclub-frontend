@@ -1,4 +1,4 @@
-import type { Book, Poll, PollVote, Member } from '@/types'
+import type { Book, Poll, PollVote, Member, AwardVote, AwardEvent, BookHistoryEvent } from '@/types'
 import type { VoteEntry } from '@/components/layout/VoteBarList'
 
 export function pollVotesToEntries(
@@ -72,6 +72,80 @@ export function pollRootAppearances(bookId: number, votes: PollVote[], polls: Po
     pollIds.add(poll.id)
   }
   return pollIds.size
+}
+
+/**
+ * Full history of a book in the club, newest event first: removal (if any) →
+ * award wins → every poll session it got votes in (stage 1 + stage-2 runoff
+ * merged into one point, newest session first) → when it was added.
+ *
+ * Built entirely from data the caller already has cached (no book-specific
+ * fetch) — poll_book_options isn't used since it only covers the ~15 most
+ * recent polls; poll_votes has the full history and is what pollRootAppearances()
+ * above already relies on.
+ */
+export function buildBookHistory(
+  book: Book,
+  polls: Poll[],
+  pollVotes: PollVote[],
+  awardVotes: AwardVote[],
+  awardEvents: AwardEvent[],
+): BookHistoryEvent[] {
+  const pollById = Object.fromEntries(polls.map(p => [p.id, p]))
+  const awardEventByYear = Object.fromEntries(awardEvents.map(e => [e.year, e]))
+
+  const rootIds = new Set<number>()
+  for (const v of pollVotes) {
+    if (v.book_id !== book.id) continue
+    const poll = pollById[v.poll_id]
+    if (!poll) continue
+    rootIds.add(poll.parent_poll_id ?? poll.id)
+  }
+
+  const dated: Array<{ event: BookHistoryEvent; sortDate: string }> = []
+
+  for (const rootId of rootIds) {
+    const stage1 = pollById[rootId]
+    if (!stage1) continue
+    const stage2 = polls.find(p => p.parent_poll_id === rootId) ?? null
+
+    const pollIds = [stage1.id, ...(stage2 ? [stage2.id] : [])]
+    const votes = pollVotes.filter(v => pollIds.includes(v.poll_id))
+    const isWin = stage1.winner_book_id === book.id || (stage2 != null && stage2.winner_book_id === book.id)
+
+    dated.push({
+      event: { type: 'poll', session_id: rootId, date: stage1.date, is_win: isWin, stage1, stage2, votes },
+      sortDate: stage1.date,
+    })
+  }
+
+  for (const av of awardVotes) {
+    if (av.book_id !== book.id || !av.is_winner) continue
+    dated.push({
+      event: {
+        type: 'award',
+        year: av.year,
+        liked_votes: av.liked_votes,
+        disliked_votes: av.disliked_votes,
+        round2_votes: av.round2_votes,
+        total_voters: awardEventByYear[av.year]?.total_voters ?? null,
+      },
+      // No exact date exists for award results, only the year — approximate
+      // with year-end so it sorts after that year's reading polls.
+      sortDate: `${av.year}-12-31`,
+    })
+  }
+
+  dated.sort((a, b) => (a.sortDate < b.sortDate ? 1 : a.sortDate > b.sortDate ? -1 : 0))
+  const events = dated.map(d => d.event)
+
+  if (book.status === 'removed') {
+    events.unshift({ type: 'removed' })
+  }
+
+  events.push({ type: 'added', date: book.added_at, added_by_member_id: book.added_by_member_id })
+
+  return events
 }
 
 /** Average votes a book received across all polls it appeared in */

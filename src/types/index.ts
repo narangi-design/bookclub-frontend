@@ -56,3 +56,39 @@ export interface AwardVote {
   round2_votes: number | null    // null if award had only one round
   is_winner: boolean
 }
+
+export interface BookHistoryPollEvent {
+  type: 'poll'
+  session_id: number       // stage-1 poll id; stage 1 + its stage-2 runoff are one timeline point
+  date: string              // ISO date string, stage1.date
+  is_win: boolean
+  stage1: Poll
+  stage2: Poll | null
+  votes: PollVote[]         // full results for every candidate in the session, both stages
+}
+
+export interface BookHistoryAwardEvent {
+  type: 'award'
+  year: number
+  liked_votes: number
+  disliked_votes: number | null
+  round2_votes: number | null
+  total_voters: number | null
+}
+
+export interface BookHistoryAddedEvent {
+  type: 'added'
+  date: string | null       // ISO date string
+  added_by_member_id: number | null
+}
+
+export interface BookHistoryRemovedEvent {
+  type: 'removed'
+}
+
+// Reverse-chronological order (finish → start), as returned by the API.
+export type BookHistoryEvent =
+  | BookHistoryRemovedEvent
+  | BookHistoryAwardEvent
+  | BookHistoryPollEvent
+  | BookHistoryAddedEvent

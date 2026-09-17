@@ -19,8 +19,9 @@ import {
   pollPredictabilityData,
   topRunnerUps,
   fastestAndSlowestWins,
+  buildBookHistory,
 } from './index'
-import type { Book, Poll, PollVote } from '@/types'
+import type { Book, Poll, PollVote, AwardVote } from '@/types'
 
 // ─── Fixtures ────────────────────────────────────────────────────────────────
 
@@ -49,6 +50,10 @@ function makePoll(overrides: Partial<Poll> & { id: number; date: string }): Poll
 
 function makeVote(id: number, poll_id: number, book_id: number, votes_count: number): PollVote {
   return { id, poll_id, book_id, votes_count }
+}
+
+function makeAwardVote(overrides: Partial<AwardVote> & { id: number; year: number; book_id: number }): AwardVote {
+  return { liked_votes: 0, disliked_votes: null, round2_votes: null, is_winner: false, ...overrides }
 }
 
 // ─── pollVotesToEntries ──────────────────────────────────────────────────────
@@ -501,5 +506,76 @@ describe('fastestAndSlowestWins', () => {
     const { fastest, slowest } = fastestAndSlowestWins(books, 2)
     expect(fastest).toHaveLength(2)
     expect(slowest).toHaveLength(2)
+  })
+})
+
+// ─── buildBookHistory ──────────────────────────────────────────────────────
+
+describe('buildBookHistory', () => {
+  it('returns just "added" for a book with no poll/award activity', () => {
+    const book = makeBook({ id: 1, title: 'Solo', added_at: '2022-01-01', added_by_member_id: 3 })
+    const events = buildBookHistory(book, [], [], [], [])
+    expect(events).toEqual([{ type: 'added', date: '2022-01-01', added_by_member_id: 3 }])
+  })
+
+  it('merges a stage-1 + stage-2 runoff into a single poll event', () => {
+    const book = makeBook({ id: 1, title: 'Runoff Book', status: 'read', added_at: '2022-01-01' })
+    const polls = [
+      makePoll({ id: 10, date: '2022-02-01', stage: 1, winner_book_id: null }),
+      makePoll({ id: 11, date: '2022-02-02', stage: 2, parent_poll_id: 10, winner_book_id: 1 }),
+    ]
+    const votes = [
+      makeVote(1, 10, 1, 5),
+      makeVote(2, 10, 2, 5),
+      makeVote(3, 11, 1, 8),
+      makeVote(4, 11, 2, 4),
+    ]
+    const events = buildBookHistory(book, polls, votes, [], [])
+    expect(events).toHaveLength(2)
+    const pollEvent = events[0]
+    expect(pollEvent).toMatchObject({ type: 'poll', session_id: 10, date: '2022-02-01', is_win: true })
+    if (pollEvent.type !== 'poll') throw new Error('expected poll event')
+    expect(pollEvent.stage2?.id).toBe(11)
+    expect(pollEvent.votes).toHaveLength(4)
+  })
+
+  it('marks a losing session as is_win: false and orders sessions newest first', () => {
+    const book = makeBook({ id: 1, title: 'Loser', added_at: '2022-01-01' })
+    const polls = [
+      makePoll({ id: 20, date: '2022-03-01', winner_book_id: 2 }),
+      makePoll({ id: 21, date: '2022-05-01', winner_book_id: 3 }),
+    ]
+    const votes = [
+      makeVote(1, 20, 1, 3), makeVote(2, 20, 2, 7),
+      makeVote(3, 21, 1, 2), makeVote(4, 21, 3, 9),
+    ]
+    const events = buildBookHistory(book, polls, votes, [], [])
+    expect(events.map(e => e.type)).toEqual(['poll', 'poll', 'added'])
+    if (events[0].type !== 'poll' || events[1].type !== 'poll') throw new Error('expected poll events')
+    expect(events[0].session_id).toBe(21) // newer session first
+    expect(events[0].is_win).toBe(false)
+    expect(events[1].session_id).toBe(20)
+  })
+
+  it('puts "removed" first for a removed book', () => {
+    const book = makeBook({ id: 1, title: 'Gone', status: 'removed', added_at: '2022-01-01' })
+    const events = buildBookHistory(book, [], [], [], [])
+    expect(events[0]).toEqual({ type: 'removed' })
+    expect(events[events.length - 1].type).toBe('added')
+  })
+
+  it('includes an award event only when the book won that year, sorted after poll sessions', () => {
+    const book = makeBook({ id: 1, title: 'Winner', added_at: '2022-01-01' })
+    const polls = [makePoll({ id: 30, date: '2022-06-01', winner_book_id: 1 })]
+    const votes = [makeVote(1, 30, 1, 5)]
+    const awardVotes = [
+      makeAwardVote({ id: 1, year: 2022, book_id: 1, liked_votes: 4, is_winner: true }),
+      makeAwardVote({ id: 2, year: 2022, book_id: 99, liked_votes: 9, is_winner: true }), // other book, ignored
+      makeAwardVote({ id: 3, year: 2021, book_id: 1, liked_votes: 1, is_winner: false }), // not a win, ignored
+    ]
+    const awardEvents = [{ year: 2022, total_voters: 8 }]
+    const events = buildBookHistory(book, polls, votes, awardVotes, awardEvents)
+    expect(events.map(e => e.type)).toEqual(['award', 'poll', 'added'])
+    expect(events[0]).toMatchObject({ type: 'award', year: 2022, liked_votes: 4, total_voters: 8 })
   })
 })
