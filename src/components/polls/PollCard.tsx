@@ -2,7 +2,7 @@ import './PollCard.scss'
 import { useState } from 'react'
 import { formatDate, pollVotesToEntries } from '@/utils'
 import type { Book, Poll, PollVote } from '@/types'
-import VoteBarList from '@/components/layout/VoteBarList'
+import VoteRounds from '@/components/layout/VoteRounds'
 
 interface Props {
   stage1: Poll
@@ -38,7 +38,6 @@ export default function PollCard({ stage1, stage2, winner_book_id, bookById, aut
         <div className="poll-card-left">
           <span className="date">{formatDate(stage1.date)}</span>
           <span className="poll-card-id">#{stage1.id}</span>
-          {stage2 && <span className="poll-card-badge">2 тура</span>}
         </div>
 
         <div className="poll-card-center">
@@ -46,6 +45,7 @@ export default function PollCard({ stage1, stage2, winner_book_id, bookById, aut
             ? <span className="poll-card-winner">{winner.title}</span>
             : <span className="poll-card-no-winner">без победителя</span>
           }
+          {stage2 && <span className="poll-card-badge">2 тура</span>}
         </div>
 
         <div className="poll-card-right">
@@ -60,24 +60,24 @@ export default function PollCard({ stage1, stage2, winner_book_id, bookById, aut
             {stage1.total_voters != null && <>{stage1.total_voters} человек голосовало · </>}
             Выбор из {totalCandidates} книг
           </span>
-          <div className="poll-card-section">
-            {stage2 && <div className="poll-card-section-label">1 тур</div>}
-            <VoteBarList
-              entries={toEntries(s1Votes)}
-              winnerKey={stage2 ? undefined : winner_book_id ?? undefined}
-              totalVoters={stage1.total_voters}
-            />
-          </div>
-          {stage2 && s2Votes.length > 0 && (
-            <div className="poll-card-section poll-card-section--accent">
-              <div className="poll-card-section-label">Финал</div>
-              <VoteBarList
-                entries={toEntries(s2Votes)}
-                winnerKey={winner_book_id ?? undefined}
-                totalVoters={stage2.total_voters}
-              />
-            </div>
-          )}
+          <VoteRounds
+            rounds={[
+              {
+                key: 's1',
+                entries: toEntries(s1Votes),
+                winnerKey: stage2 ? undefined : winner_book_id ?? undefined,
+                totalVoters: stage1.total_voters,
+              },
+              ...(stage2 && s2Votes.length > 0
+                ? [{
+                    key: 's2',
+                    entries: toEntries(s2Votes),
+                    winnerKey: winner_book_id ?? undefined,
+                    totalVoters: stage2.total_voters,
+                  }]
+                : []),
+            ]}
+          />
         </div>
       )}
     </div>

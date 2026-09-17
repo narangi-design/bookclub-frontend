@@ -23,12 +23,14 @@ export default function PollsPage() {
   const bookById   = Object.fromEntries(books.map(b => [b.id, b]))
   const authorById = Object.fromEntries(authors.map(a => [a.id, a.name]))
 
+  const pollIdsWithVotes = new Set(votes.map(v => v.poll_id))
+
   const stage2ByParent: Record<number, Poll> = {}
   for (const p of polls.filter(p => p.stage === 2)) {
     if (p.parent_poll_id != null) stage2ByParent[p.parent_poll_id] = p
   }
   const sessions: Session[] = polls
-    .filter(p => p.stage === 1)
+    .filter(p => p.stage === 1 && pollIdsWithVotes.has(p.id))
     .sort((a, b) => b.date.localeCompare(a.date))
     .map(s1 => {
       const s2 = stage2ByParent[s1.id] ?? null

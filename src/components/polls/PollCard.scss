@@ -34,8 +34,11 @@
   display: flex;
   align-items: baseline;
   gap: var(--sp-2);
-  min-width: 160px;
   flex-shrink: 0;
+}
+
+.poll-card-left .date {
+  width: 9.5em;
 }
 
 .poll-card-id {
@@ -44,6 +47,7 @@
 }
 
 .poll-card-badge {
+  flex-shrink: 0;
   font-size: var(--text-2xs);
   font-weight: 700;
   text-transform: uppercase;
@@ -58,10 +62,13 @@
 .poll-card-center {
   flex: 1;
   min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
 }
 
 .poll-card-winner {
-  display: block;
+  min-width: 0;
   font-size: var(--text-sm);
   font-weight: 500;
   white-space: nowrap;
@@ -109,23 +116,6 @@
   margin-bottom: var(--sp-2);
 }
 
-.poll-card-section {
-  padding: var(--sp-2) var(--sp-5);
-
-  & + & {
-    border-top: 1px solid var(--color-border-subtle);
-  }
-
-  &--accent {
-    background: var(--color-bg);
-  }
-}
-
-.poll-card-section-label {
-  font-size: var(--text-xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-text-muted);
-  margin-bottom: var(--sp-2);
+.poll-card-body .vote-rounds {
+  padding: 0 var(--sp-5);
 }

@@ -1,6 +1,7 @@
 import './AwardCard.scss'
 import type { AwardVote, Book } from '@/types'
-import VoteBarList, { type VoteEntry } from '@/components/layout/VoteBarList'
+import { type VoteEntry } from '@/components/layout/VoteBarList'
+import VoteRounds from '@/components/layout/VoteRounds'
 import BookCard from '@/components/layout/BookCard'
 import { useMemberVisibility } from '@/hooks'
 
@@ -83,14 +84,24 @@ export default function AwardCard({ year, votes, books, authorById, memberById, 
 
       <p className="label">Итоги</p>
 
-      {round2Entries.length > 0 && (
-        <>
-          <VoteBarList entries={round2Entries} winnerKey={winnerId} totalVoters={totalVoters} />
-          <hr className="divider" />
-          <p className="subtitle">Первые результаты · топ {TOP_N}</p>
-        </>
-      )}
-      <VoteBarList entries={mainEntries} winnerKey={round2Entries.length === 0 ? winnerId : null} totalVoters={totalVoters} />
+      <VoteRounds
+        rounds={[
+          {
+            key: 'main',
+            entries: mainEntries,
+            winnerKey: round2Entries.length === 0 ? winnerId : null,
+            totalVoters,
+          },
+          ...(round2Entries.length > 0
+            ? [{
+                key: 'round2',
+                entries: round2Entries,
+                winnerKey: winnerId,
+                totalVoters,
+              }]
+            : []),
+        ]}
+      />
     </div>
   )
 }

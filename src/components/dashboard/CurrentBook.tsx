@@ -1,7 +1,7 @@
 import './CurrentBook.scss'
 import type { Book, Member, Poll, PollVote, MemberVisibility } from '@/types'
 import { formatDate, memberName, pollVotesToEntries } from '@/utils'
-import VoteBarList from '@/components/layout/VoteBarList'
+import VoteRounds from '@/components/layout/VoteRounds'
 import CoverImage from '@/components/layout/CoverImage'
 import { Link } from 'react-router-dom'
 
@@ -42,7 +42,6 @@ export default function CurrentBook({ book, authorName, addedByMember, memberVis
       <div className="card-header">
         <CoverImage coverSize="default" coverUrl={book.cover_url} title={book.title} />
         <div className="info">
-          <div className="badge">Сейчас читаем</div>
           <h2 className="title">{book.title}</h2>
           <div className="meta">
             {authorName && <span>{authorName}</span>}
@@ -64,29 +63,26 @@ export default function CurrentBook({ book, authorName, addedByMember, memberVis
       </div>
       {poll && stage1Entries.length > 0 && (
         <div className="poll">
-          <div className="stage-header">
-            <span className="stage-label">
-              {runoffPoll ? 'Голосование · Этап I' : 'Голосование'}
-            </span>
-            <span className="date">
-              {formatDate(poll.date)}
-              {poll.total_voters != null && <> · {poll.total_voters} чел.</>}
-            </span>
-          </div>
-          <VoteBarList entries={stage1Entries} winnerKey={runoffPoll ? undefined : book.id} totalVoters={poll.total_voters} />
-
-          {runoffPoll && stage2Entries.length > 0 && (
-            <>
-              <div className="stage-header stage-header--runoff">
-                <span className="stage-label">Голосование · Итог</span>
-                <span className="date">
-                  {formatDate(runoffPoll.date)}
-                  {runoffPoll.total_voters != null && <> · {runoffPoll.total_voters} чел.</>}
-                </span>
-              </div>
-              <VoteBarList entries={stage2Entries} winnerKey={book.id} totalVoters={runoffPoll.total_voters} />
-            </>
-          )}
+          <VoteRounds
+            rounds={[
+              {
+                key: 'stage1',
+                entries: stage1Entries,
+                winnerKey: runoffPoll ? undefined : book.id,
+                totalVoters: poll.total_voters,
+                meta: <>{formatDate(poll.date)}{poll.total_voters != null && <> · {poll.total_voters} чел.</>}</>,
+              },
+              ...(runoffPoll && stage2Entries.length > 0
+                ? [{
+                    key: 'stage2',
+                    entries: stage2Entries,
+                    winnerKey: book.id,
+                    totalVoters: runoffPoll.total_voters,
+                    meta: <>{formatDate(runoffPoll.date)}{runoffPoll.total_voters != null && <> · {runoffPoll.total_voters} чел.</>}</>,
+                  }]
+                : []),
+            ]}
+          />
         </div>
       )}
     </div>
