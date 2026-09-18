@@ -21,7 +21,7 @@ npm run test:ui   # vitest with the browser UI
 
 To run a single test file: `npx vitest run src/utils/index.test.ts`. There is currently one test file, covering `src/utils/index.ts`.
 
-Requires a `.env.local` with `VITE_API_URL=<bookclub-api base URL>` (falls back to `http://localhost:8000` if unset).
+Requires a `.env.local` with `VITE_API_URL=<bookclub-api base URL>` (falls back to `http://localhost:8000` if unset). `VITE_TELEGRAM_BOT_USERNAME=<bot @username>` enables the Telegram Login Widget on `/login`; unset hides it and leaves only the password form. The widget only works on a domain registered with `@BotFather` via `/setdomain` — not on localhost without a tunnel.
 
 ## Architecture
 
@@ -38,6 +38,8 @@ Query caching is global in [App.tsx](src/App.tsx): a single `QueryClient` (`stal
 ### Auth
 
 [AuthContext](src/context/AuthContext.tsx) owns the JWT (`localStorage['bookclub_token']`) and current user. On mount it validates any stored token against `/api/auth/me` and clears it on failure. `PrivateRoute` in [App.tsx](src/App.tsx) gates `/members`, `/members/:id`, and `/stats` behind `isAuthed`, redirecting to `/login` with the origin path in router state. `hasToken` (token present, not yet validated) is distinct from `isAuthed` (validated) — `useMemberVisibility` intentionally uses the weaker `hasToken` check to decide whether to blur member names.
+
+[LoginPage](src/pages/LoginPage.tsx) offers two ways in, both ending in the same `login()` call: the Telegram Login Widget (primary, gated on `VITE_TELEGRAM_BOT_USERNAME` being set — posts to `/api/auth/telegram-login`) and the original username/password form (fallback, posts to `/api/auth/login`) — the backend keeps both live in parallel for now. `AuthUser.auth_method` (`'password' | 'telegram'`) tracks which one issued the session; [AccountModal](src/components/layout/AccountModal.tsx) uses it to hide the password-change form for Telegram sessions, since there's no password to change.
 
 ### Computation lives in utils, not components
 

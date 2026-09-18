@@ -84,6 +84,50 @@
   max-width: 320px;
 }
 
+.login-telegram-widget {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 320px;
+
+  iframe {
+    max-width: 100%;
+  }
+}
+
+.login-tg-status {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+  margin: 0;
+}
+
+.login-tg-status--success {
+  color: var(--color-success, #38a169);
+}
+
+.login-tg-status--error {
+  color: var(--color-error, #e53e3e);
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  width: 100%;
+  max-width: 320px;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
+  }
+}
+
 .login-input {
   width: 100%;
   padding: var(--sp-3) var(--sp-4);

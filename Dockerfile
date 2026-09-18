@@ -11,6 +11,11 @@ COPY . .
 ARG VITE_API_URL=http://localhost:8000
 ENV VITE_API_URL=$VITE_API_URL
 
+# Telegram Login Widget needs the bot's @username. Unset/empty hides the
+# widget on LoginPage.tsx, leaving only the password form.
+ARG VITE_TELEGRAM_BOT_USERNAME=
+ENV VITE_TELEGRAM_BOT_USERNAME=$VITE_TELEGRAM_BOT_USERNAME
+
 RUN npm run build
 
 FROM nginx:1.27-alpine AS runtime

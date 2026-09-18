@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from 'react'
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
 const TOKEN_KEY = 'bookclub_token'
@@ -6,6 +6,7 @@ const TOKEN_KEY = 'bookclub_token'
 interface AuthUser {
   user_id: number
   name: string
+  auth_method: 'password' | 'telegram'
 }
 
 interface AuthContextType {
@@ -37,24 +38,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setIsLoading(false))
   }, [])
 
-  function login(user: AuthUser, token: string) {
+  const login = useCallback((user: AuthUser, token: string) => {
     localStorage.setItem(TOKEN_KEY, token)
     setUser(user)
     setHasToken(true)
-  }
+  }, [])
 
-  function logout() {
+  const logout = useCallback(() => {
     localStorage.removeItem(TOKEN_KEY)
     setUser(null)
     setHasToken(false)
-  }
+  }, [])
 
-  function updateUser(user: AuthUser) {
+  const updateUser = useCallback((user: AuthUser) => {
     setUser(user)
-  }
+  }, [])
+
+  const value = useMemo(
+    () => ({ isAuthed: user !== null, isLoading, hasToken, user, login, logout, updateUser }),
+    [user, isLoading, hasToken, login, logout, updateUser]
+  )
 
   return (
-    <AuthContext.Provider value={{ isAuthed: user !== null, isLoading, hasToken, user, login, logout, updateUser }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   )

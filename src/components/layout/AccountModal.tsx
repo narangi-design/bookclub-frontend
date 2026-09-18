@@ -46,7 +46,7 @@ export default function AccountModal({ onClose }: Props) {
 
     if (res.ok) {
       const data = await res.json()
-      updateUser({ user_id: data.user_id, name: data.name })
+      updateUser({ user_id: data.user_id, name: data.name, auth_method: 'password' })
       setSuccess(true)
       setNewUsername('')
       setNewPassword('')
@@ -65,47 +65,51 @@ export default function AccountModal({ onClose }: Props) {
           <button className="modal-close" onClick={onClose}>✕</button>
         </div>
 
-        <form className="modal-form" onSubmit={handleSubmit}>
-          <label className="modal-label">
-            Новый никнейм
-            <input
-              className="modal-input"
-              type="text"
-              value={newUsername}
-              onChange={e => setNewUsername(e.target.value)}
-              placeholder={user?.name}
-            />
-          </label>
+        {user?.auth_method === 'telegram' ? (
+          <p className="modal-info">Вы вошли через Telegram — менять здесь нечего, логин и пароль не используются.</p>
+        ) : (
+          <form className="modal-form" onSubmit={handleSubmit}>
+            <label className="modal-label">
+              Новый никнейм
+              <input
+                className="modal-input"
+                type="text"
+                value={newUsername}
+                onChange={e => setNewUsername(e.target.value)}
+                placeholder={user?.name}
+              />
+            </label>
 
-          <label className="modal-label">
-            Новый пароль
-            <input
-              className="modal-input"
-              type="password"
-              value={newPassword}
-              onChange={e => setNewPassword(e.target.value)}
-              placeholder="Оставьте пустым, чтобы не менять"
-            />
-          </label>
+            <label className="modal-label">
+              Новый пароль
+              <input
+                className="modal-input"
+                type="password"
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                placeholder="Оставьте пустым, чтобы не менять"
+              />
+            </label>
 
-          <label className="modal-label">
-            Текущий пароль <span className="modal-required">*</span>
-            <input
-              className="modal-input"
-              type="password"
-              value={currentPassword}
-              onChange={e => setCurrentPassword(e.target.value)}
-              required
-            />
-          </label>
+            <label className="modal-label">
+              Текущий пароль <span className="modal-required">*</span>
+              <input
+                className="modal-input"
+                type="password"
+                value={currentPassword}
+                onChange={e => setCurrentPassword(e.target.value)}
+                required
+              />
+            </label>
 
-          {error && <p className="modal-error">{error}</p>}
-          {success && <p className="modal-success">Сохранено</p>}
+            {error && <p className="modal-error">{error}</p>}
+            {success && <p className="modal-success">Сохранено</p>}
 
-          <button className="modal-button" type="submit" disabled={loading}>
-            {loading ? 'Сохраняем...' : 'Сохранить'}
-          </button>
-        </form>
+            <button className="modal-button" type="submit" disabled={loading}>
+              {loading ? 'Сохраняем...' : 'Сохранить'}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   )
