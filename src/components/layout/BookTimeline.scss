@@ -68,9 +68,13 @@
 .bt-date {
   flex-shrink: 0;
   font-size: var(--text-xs);
-  color: var(--color-text-subtle);
-  width: 9.5em;
+  color: var(--color-text-muted);
   white-space: nowrap;
+  width: 7.5em;
+
+  @media (min-width: 640px) {
+    width: 9.5em;
+  }
 }
 
 .bt-label {

@@ -22,15 +22,12 @@ const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(() => !!localStorage.getItem(TOKEN_KEY))
   const [hasToken, setHasToken] = useState(() => !!localStorage.getItem(TOKEN_KEY))
 
   useEffect(() => {
     const token = localStorage.getItem(TOKEN_KEY)
-    if (!token) {
-      setIsLoading(false)
-      return
-    }
+    if (!token) return
     fetch(`${API_URL}/api/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })

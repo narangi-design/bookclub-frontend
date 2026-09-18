@@ -23,8 +23,8 @@
 }
 
 .large-book-cover {
+  aspect-ratio: 2 / 3;
   width: 10rem;
-  height: fit-content;
   display: block;
   object-fit: cover;
 }

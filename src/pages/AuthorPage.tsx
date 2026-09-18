@@ -1,5 +1,6 @@
 import './AuthorPage.scss'
 import { useParams, Link } from 'react-router-dom'
+import type { Book } from '@/types'
 import { useBooks, useAuthors, useMembers, usePollVotes, useAwardVotes, useMemberVisibility, usePageTitle } from '@/hooks'
 import BookCardList from '@/components/layout/BookCardList'
 import { memberName } from '@/utils'
@@ -29,14 +30,21 @@ export default function AuthorPage() {
     return sum + pollVotes.filter(v => v.book_id === book.id).reduce((s, v) => s + v.votes_count, 0)
   }, 0)
 
-  const sorted = [...authorBooks].sort((a, b) => {
-    const order = { read: 0, to_read: 1, removed: 2 } as Record<string, number>
-    const so = order[a.status] - order[b.status]
-    if (so !== 0) return so
-    const dateA = a.elected_at ?? a.added_at ?? ''
-    const dateB = b.elected_at ?? b.added_at ?? ''
-    return dateB.localeCompare(dateA)
-  })
+  const proposedBooks = authorBooks
+    .filter(b => b.status === 'to_read')
+    .sort((a, b) => (b.added_at ?? '').localeCompare(a.added_at ?? ''))
+
+  const removedBooks = authorBooks
+    .filter(b => b.status === 'removed')
+    .sort((a, b) => (b.added_at ?? '').localeCompare(a.added_at ?? ''))
+
+  const sortedReadBooks = [...readBooks]
+    .sort((a, b) => (b.elected_at ?? b.added_at ?? '').localeCompare(a.elected_at ?? a.added_at ?? ''))
+
+  const getBadge = (book: Book) => {
+    const award = awardVotes.find(v => v.book_id === book.id && v.is_winner)
+    return award ? <span className="ap-book-award">★ {award.year}</span> : undefined
+  }
 
   return (
     <div className="page">
@@ -73,16 +81,44 @@ export default function AuthorPage() {
         </div>
       </div>
 
-      <BookCardList
-        books={sorted}
-        showAuthor={false}
-        memberById={memberById}
-        showMember={memberVisibility}
-        getBadge={book => {
-          const award = awardVotes.find(v => v.book_id === book.id && v.is_winner)
-          return award ? <span className="ap-book-award">★ {award.year}</span> : undefined
-        }}
-      />
+      {sortedReadBooks.length > 0 && (
+        <section className="section">
+          <h2 className="section-title">Прочитанные книги</h2>
+          <BookCardList
+            books={sortedReadBooks}
+            showAuthor={false}
+            memberById={memberById}
+            showMember={memberVisibility}
+            getBadge={getBadge}
+          />
+        </section>
+      )}
+
+      {proposedBooks.length > 0 && (
+        <section className="section">
+          <h2 className="section-title">Предложенные книги</h2>
+          <BookCardList
+            books={proposedBooks}
+            showAuthor={false}
+            memberById={memberById}
+            showMember={memberVisibility}
+            getBadge={getBadge}
+          />
+        </section>
+      )}
+
+      {removedBooks.length > 0 && (
+        <section className="section">
+          <h2 className="section-title">Выбывшие книги</h2>
+          <BookCardList
+            books={removedBooks}
+            showAuthor={false}
+            memberById={memberById}
+            showMember={memberVisibility}
+            getBadge={getBadge}
+          />
+        </section>
+      )}
     </div>
   )
 }

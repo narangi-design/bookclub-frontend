@@ -26,11 +26,15 @@
 
 .podium {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   align-items: flex-start;
   justify-content: space-around;
   gap: var(--sp-2);
   padding: var(--sp-2) 0;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .podium-slot {

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { QueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
@@ -26,6 +27,14 @@ const queryClient = new QueryClient({
 
 const persister = createSyncStoragePersister({ storage: window.localStorage })
 
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+  return null
+}
+
 function PrivateRoute() {
   const { isAuthed, isLoading } = useAuth()
   const location = useLocation()
@@ -38,6 +47,7 @@ export default function App() {
     <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
       <AuthProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/" element={<Layout />}>

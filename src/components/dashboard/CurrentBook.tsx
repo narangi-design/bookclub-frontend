@@ -1,7 +1,6 @@
 import './CurrentBook.scss'
-import type { Book, Member, Poll, PollVote, MemberVisibility } from '@/types'
-import { formatDate, memberName, pollVotesToEntries } from '@/utils'
-import VoteRounds from '@/components/layout/VoteRounds'
+import type { Book, Member, MemberVisibility } from '@/types'
+import { formatDate, memberName } from '@/utils'
 import CoverImage from '@/components/layout/CoverImage'
 import { Link } from 'react-router-dom'
 
@@ -10,33 +9,9 @@ interface Props {
   authorName?: string
   addedByMember?: Member
   memberVisibility?: MemberVisibility
-  poll?: Poll
-  pollVotes: PollVote[]
-  runoffPoll?: Poll
-  allBooks: Book[]
-  authorById: Record<number, string>
 }
 
-const TOP_VOTES = 10
-
-export default function CurrentBook({ book, authorName, addedByMember, memberVisibility, poll, pollVotes, runoffPoll, allBooks, authorById }: Props) {
-  const bookById = Object.fromEntries(allBooks.map(b => [b.id, b]))
-
-  const stage1Votes = pollVotes
-    .filter(v => v.poll_id === poll?.id)
-    .sort((a, b) => b.votes_count - a.votes_count)
-    .slice(0, TOP_VOTES)
-
-  const stage1Entries = pollVotesToEntries(stage1Votes, bookById, authorById)
-
-  const stage2Entries = runoffPoll
-    ? pollVotesToEntries(
-        pollVotes.filter(v => v.poll_id === runoffPoll.id).sort((a, b) => b.votes_count - a.votes_count),
-        bookById,
-        authorById,
-      )
-    : []
-
+export default function CurrentBook({ book, authorName, addedByMember, memberVisibility }: Props) {
   return (
     <div className="card">
       <div className="card-header">
@@ -61,30 +36,6 @@ export default function CurrentBook({ book, authorName, addedByMember, memberVis
           )}
         </div>
       </div>
-      {poll && stage1Entries.length > 0 && (
-        <div className="poll">
-          <VoteRounds
-            rounds={[
-              {
-                key: 'stage1',
-                entries: stage1Entries,
-                winnerKey: runoffPoll ? undefined : book.id,
-                totalVoters: poll.total_voters,
-                meta: <>{formatDate(poll.date)}{poll.total_voters != null && <> · {poll.total_voters} чел.</>}</>,
-              },
-              ...(runoffPoll && stage2Entries.length > 0
-                ? [{
-                    key: 'stage2',
-                    entries: stage2Entries,
-                    winnerKey: book.id,
-                    totalVoters: runoffPoll.total_voters,
-                    meta: <>{formatDate(runoffPoll.date)}{runoffPoll.total_voters != null && <> · {runoffPoll.total_voters} чел.</>}</>,
-                  }]
-                : []),
-            ]}
-          />
-        </div>
-      )}
     </div>
   )
 }

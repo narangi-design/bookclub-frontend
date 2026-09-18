@@ -9,6 +9,7 @@ interface Props {
   memberById?: Record<number, string>
   showAuthor?: boolean
   showMember?: MemberVisibility
+  showDiscussionLink?: boolean
   getBadge?: (book: Book) => React.ReactNode
 }
 
@@ -19,6 +20,7 @@ export default function BookCardList({
   memberById: memberById,
   showAuthor,
   showMember: showMember,
+  showDiscussionLink,
   getBadge,
 }: Props) {
   return (
@@ -36,6 +38,7 @@ export default function BookCardList({
             authorName={parts.length > 0 ? parts.join(' · ') : undefined}
             showAuthor={showAuthor}
             showMember={showMember}
+            showDiscussionLink={showDiscussionLink}
             memberName={book.added_by_member_id != null ? memberById?.[book.added_by_member_id] : undefined}
             titleBadge={getBadge?.(book)}
           />

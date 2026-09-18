@@ -74,7 +74,6 @@ export default function AwardCard({ year, votes, books, authorById, memberById, 
                   showMember={memberVisibility}
                   memberName={book.added_by_member_id != null ? memberById?.[book.added_by_member_id] : undefined}
                   titleBadge={<span className="podium-medal">{MEDALS[rank - 1]}</span>}
-                  showStatus={false}
                 />
               </div>
             )

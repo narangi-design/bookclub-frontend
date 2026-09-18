@@ -38,7 +38,11 @@
 }
 
 .poll-card-left .date {
-  width: 9.5em;
+  width: 8em;
+
+  @media (min-width: 640px) {
+    width: 9.5em;
+  }
 }
 
 .poll-card-id {

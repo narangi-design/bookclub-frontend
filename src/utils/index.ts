@@ -360,12 +360,11 @@ export function sankeyNominationData(
   const runoffPollIds = new Set(polls.filter(p => p.stage === 2).map(p => p.id))
   const runoffBookIds = new Set(votes.filter(v => runoffPollIds.has(v.poll_id)).map(v => v.book_id))
 
-  let nominated = 0, wonStage1 = 0, reachedRunoff = 0, wonRunoff = 0, neverWon = 0
+  let wonStage1 = 0, reachedRunoff = 0, wonRunoff = 0, neverWon = 0
 
   for (const book of books) {
     const appeared = pollAppearances(book.id, votes) > 0
     if (!appeared) continue
-    nominated++
     if (book.elected_poll_id !== null) {
       if (runoffPollIds.has(book.elected_poll_id)) wonRunoff++
       else wonStage1++

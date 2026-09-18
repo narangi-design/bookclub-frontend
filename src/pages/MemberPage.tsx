@@ -26,12 +26,12 @@ export default function MemberPage() {
     .sort((a, b) => (b.elected_at ?? b.added_at ?? '').localeCompare(a.elected_at ?? a.added_at ?? ''))
 
   const proposedBooks = allAdded
-    .filter(b => b.status !== 'read')
-    .sort((a, b) => {
-      if (a.status === 'removed' && b.status !== 'removed') return 1
-      if (a.status !== 'removed' && b.status === 'removed') return -1
-      return (b.added_at ?? '').localeCompare(a.added_at ?? '')
-    })
+    .filter(b => b.status === 'to_read')
+    .sort((a, b) => (b.added_at ?? '').localeCompare(a.added_at ?? ''))
+
+  const removedBooks = allAdded
+    .filter(b => b.status === 'removed')
+    .sort((a, b) => (b.added_at ?? '').localeCompare(a.added_at ?? ''))
 
   return (
     <div className="page">
@@ -54,9 +54,9 @@ export default function MemberPage() {
                 <span className="up-stat-label">прочитано</span>
               </div>
             )}
-            {proposedBooks.filter(b => b.status === 'to_read').length > 0 && (
+            {proposedBooks.length > 0 && (
               <div className="up-stat">
-                <span className="up-stat-value">{proposedBooks.filter(b => b.status === 'to_read').length}</span>
+                <span className="up-stat-value">{proposedBooks.length}</span>
                 <span className="up-stat-label">в списке</span>
               </div>
             )}
@@ -75,6 +75,13 @@ export default function MemberPage() {
         <section className="section">
           <h2 className="section-title">Предложенные книги</h2>
           <BookCardList books={proposedBooks} authorById={authorById} />
+        </section>
+      )}
+
+      {removedBooks.length > 0 && (
+        <section className="section">
+          <h2 className="section-title">Выбывшие книги</h2>
+          <BookCardList books={removedBooks} authorById={authorById} />
         </section>
       )}
     </div>

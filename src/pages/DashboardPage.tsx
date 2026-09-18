@@ -1,5 +1,5 @@
 import './DashboardPage.scss'
-import { useBooks, usePolls, useMembers, useAwardVotes, useAwardEvents, usePollVotes, useAuthors, useMemberVisibility, usePageTitle } from '@/hooks'
+import { useBooks, useMembers, useAwardVotes, useAwardEvents, useAuthors, useMemberVisibility, usePageTitle } from '@/hooks'
 import { memberName } from '@/utils'
 import AwardCard from '@/components/dashboard/AwardCard'
 import CurrentBook from '@/components/dashboard/CurrentBook'
@@ -11,11 +11,9 @@ export default function DashboardPage() {
   usePageTitle()
   const memberVisibility = useMemberVisibility()
   const { data: books       = [] } = useBooks()
-  const { data: polls       = [] } = usePolls()
   const { data: members     = [] } = useMembers()
   const { data: awardVotes  = [] } = useAwardVotes()
   const { data: awardEvents = [] } = useAwardEvents()
-  const { data: pollVotes   = [] } = usePollVotes()
   const { data: authors     = [] } = useAuthors()
 
   const authorById = Object.fromEntries(authors.map(a => [a.id, a.name]))
@@ -28,13 +26,7 @@ export default function DashboardPage() {
   const currentBook      = readBooks
     .filter(b => b.elected_at !== null)
     .sort((a, b) => (b.elected_at ?? '').localeCompare(a.elected_at ?? ''))[0]
-  const electedPoll      = polls.find(p => p.id === currentBook?.elected_poll_id)
-  // If elected via runoff (stage 2), resolve to parent stage-1 poll for stage1Votes
-  const currentPoll      = electedPoll?.stage === 2
-    ? polls.find(p => p.id === electedPoll.parent_poll_id) ?? electedPoll
-    : electedPoll
   const currentAddedBy   = members.find(u => u.id === currentBook?.added_by_member_id)
-  const currentRunoffPoll = electedPoll?.stage === 2 ? electedPoll : undefined
 
   // Last 5 read books excluding the current one
   const recentBooks = readBooks
@@ -65,11 +57,6 @@ export default function DashboardPage() {
             authorName={currentBook.author_id != null ? authorById[currentBook.author_id] : undefined}
             addedByMember={currentAddedBy}
             memberVisibility={memberVisibility}
-            poll={currentPoll}
-            pollVotes={pollVotes}
-            runoffPoll={currentRunoffPoll}
-            allBooks={books}
-            authorById={authorById}
           />
         </section>
       )}
@@ -83,6 +70,7 @@ export default function DashboardPage() {
             showCountry
             memberById={memberById}
             showMember={memberVisibility}
+            showDiscussionLink
           />
         </section>
       )}

@@ -6,6 +6,7 @@ import { useBooks, useMembers, useAuthors, useMemberVisibility, usePageTitle } f
 import { memberName } from '@/utils'
 import FilterBar from '@/components/layout/FilterBar'
 import SearchBar from '@/components/layout/SearchBar'
+import DiscussionLink from '@/components/layout/DiscussionLink'
 function formatDate(iso: string) {
   const d = new Date(iso)
   const dd = String(d.getDate()).padStart(2, '0')
@@ -121,9 +122,7 @@ export default function BooksPage() {
                 </td>
                 <td className="td">
                   <Link to={`/books/${book.id}`} className="book-title">{book.title}</Link>
-                  {book.discussion_url && (
-                    <a href={book.discussion_url} target="_blank" rel="noreferrer" className="discussion-link" title="Запись заседания">▶</a>
-                  )}
+                  {book.discussion_url && <DiscussionLink url={book.discussion_url} />}
                   {book.status === 'removed' && (
                     <span className="badge">removed</span>
                   )}
@@ -157,17 +156,7 @@ export default function BooksPage() {
                 <div className="book-row-mobile-line">Выбыла</div>
               )}
             </div>
-            {book.discussion_url && (
-              <a
-                href={book.discussion_url}
-                target="_blank"
-                rel="noreferrer"
-                className="book-row-mobile-discussion"
-                title="Запись заседания"
-              >
-                ▶
-              </a>
-            )}
+            {book.discussion_url && <DiscussionLink url={book.discussion_url} variant="boxed" />}
           </div>
         ))}
       </div>
