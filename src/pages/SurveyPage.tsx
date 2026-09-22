@@ -168,11 +168,11 @@ export default function SurveyPage() {
 
   const authorById = Object.fromEntries(authors.map(a => [a.id, a.name]))
 
-  if (user && user.auth_method !== 'telegram') {
+  if (user && !user.member_id) {
     return (
       <div className="page survey-page">
         <h1 className="page-title">Книга года</h1>
-        <p>Опрос доступен только тем, кто входит через Telegram — перезайди через Telegram, чтобы поучаствовать.</p>
+        <p>Опрос доступен только участникам клуба.</p>
       </div>
     )
   }

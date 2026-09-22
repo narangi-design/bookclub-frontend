@@ -46,7 +46,7 @@ export default function AccountModal({ onClose }: Props) {
 
     if (res.ok) {
       const data = await res.json()
-      updateUser({ user_id: data.user_id, name: data.name, auth_method: 'password' })
+      updateUser({ user_id: data.user_id, name: data.name, auth_method: 'password', member_id: data.member_id })
       setSuccess(true)
       setNewUsername('')
       setNewPassword('')

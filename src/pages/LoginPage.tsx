@@ -117,7 +117,7 @@ export default function LoginPage() {
       if (res.ok) {
         const data = await res.json()
         setTgStatus('success')
-        login({ user_id: data.user_id, name: data.name, auth_method: 'telegram' }, data.access_token)
+        login({ user_id: data.user_id, name: data.name, auth_method: 'telegram', member_id: data.member_id }, data.access_token)
         await queryClient.invalidateQueries()
         navigate(from, { replace: true })
       } else {
@@ -179,7 +179,7 @@ export default function LoginPage() {
       if (res.ok) {
         const data = await res.json()
         setTgStatus('success')
-        login({ user_id: data.user_id, name: data.name, auth_method: 'telegram' }, data.access_token)
+        login({ user_id: data.user_id, name: data.name, auth_method: 'telegram', member_id: data.member_id }, data.access_token)
         await queryClient.invalidateQueries()
         navigate(from, { replace: true })
       } else {
@@ -224,7 +224,7 @@ export default function LoginPage() {
 
     if (res.ok) {
       const data = await res.json()
-      login({ user_id: data.user_id, name: data.name, auth_method: 'password' }, data.access_token)
+      login({ user_id: data.user_id, name: data.name, auth_method: 'password', member_id: data.member_id }, data.access_token)
       await queryClient.invalidateQueries()
       navigate(from, { replace: true })
     } else {

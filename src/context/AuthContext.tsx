@@ -7,6 +7,12 @@ interface AuthUser {
   user_id: number
   name: string
   auth_method: 'password' | 'telegram'
+  // The club member behind this session, resolved the same way regardless
+  // of auth_method — null means this login isn't recognized as a member
+  // (e.g. a password account with no matching Telegram identity yet).
+  // Member-gated features (the survey, etc.) should check this, never
+  // auth_method directly.
+  member_id: number | null
 }
 
 interface AuthContextType {
