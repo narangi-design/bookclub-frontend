@@ -15,6 +15,8 @@ import MemberPage from '@/pages/MemberPage'
 import PollsPage from '@/pages/PollsPage'
 import StatsPage from '@/pages/StatsPage'
 import LoginPage from '@/pages/LoginPage'
+import SurveyPage from '@/pages/SurveyPage'
+import SurveyResultsPage from '@/pages/SurveyResultsPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -58,10 +60,12 @@ export default function App() {
               <Route path="authors" element={<AuthorsPage />} />
               <Route path="authors/:id" element={<AuthorPage />} />
               <Route path="polls" element={<PollsPage />} />
+              <Route path="survey/results" element={<SurveyResultsPage />} />
               <Route element={<PrivateRoute />}>
                 <Route path="members" element={<MembersPage />} />
                 <Route path="members/:id" element={<MemberPage />} />
                 <Route path="stats" element={<StatsPage />} />
+                <Route path="survey" element={<SurveyPage />} />
               </Route>
             </Route>
           </Routes>

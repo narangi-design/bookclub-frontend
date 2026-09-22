@@ -1,0 +1,95 @@
+// Reserves room above the track for the value bubble that follows the thumb.
+.range-slider-track-wrap {
+  position: relative;
+  padding-top: 26px;
+}
+
+$thumb: 20px;
+
+.range-slider-bubble {
+  position: absolute;
+  top: 0;
+  left: calc(#{$thumb} / 2 + (100% - #{$thumb}) * var(--range-fill-frac, 0));
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--amber);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+// Native range inputs render as a near-invisible hairline on their own —
+// style the track/thumb explicitly (with the vendor-prefixed pseudo-elements
+// each engine actually uses) so it reads as a slider, not a stray line.
+// --range-fill (0%–100%) draws the filled portion of the track; the thumb
+// is square (site has no rounded corners) with a gold glow, matching the
+// selected-state styling of the book-picker checkboxes.
+.range-slider-input {
+  display: block;
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  background: linear-gradient(
+    to right,
+    var(--amber) var(--range-fill, 0%),
+    var(--color-border-subtle) var(--range-fill, 0%)
+  );
+  outline: none;
+  cursor: pointer;
+
+  &::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    height: 8px;
+    background: transparent;
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: $thumb;
+    height: $thumb;
+    margin-top: calc((#{$thumb} - 8px) / -2);
+    border-radius: 0;
+    background: var(--amber);
+    border: 2px solid var(--cream);
+    box-shadow: 0 0 8px 1px var(--amber-light);
+    cursor: pointer;
+    transition: transform var(--transition-base);
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  &::-moz-range-track {
+    height: 8px;
+    background: var(--color-border-subtle);
+  }
+
+  &::-moz-range-progress {
+    height: 8px;
+    background: var(--amber);
+  }
+
+  &::-moz-range-thumb {
+    width: $thumb;
+    height: $thumb;
+    border-radius: 0;
+    background: var(--amber);
+    border: 2px solid var(--cream);
+    box-shadow: 0 0 8px 1px var(--amber-light);
+    cursor: pointer;
+    transition: transform var(--transition-base);
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 4px;
+  }
+}

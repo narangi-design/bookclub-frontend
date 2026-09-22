@@ -52,9 +52,31 @@ export interface AwardVote {
   year: number
   book_id: number
   liked_votes: number
-  disliked_votes: number | null  // null for 2023 (no disliked question that year)
-  round2_votes: number | null    // null if award had only one round
+  disliked_votes: number | null      // null for 2023 (no disliked question that year)
+  round2_votes: number | null        // null if the "Книга года" race had only one round
+  anti_round2_votes: number | null   // null if the "Антикнига года" race had only one round
   is_winner: boolean
+}
+
+export interface SurveyMeta {
+  year: number
+  deadline: string           // ISO datetime string
+  candidate_count: number
+  is_closed: boolean
+}
+
+export interface SurveyResponse {
+  favorite_book_ids: number[]
+  least_favorite_book_ids: number[]
+  books_read_count: number | null
+  open_text: string | null
+}
+
+export interface Tiebreak {
+  category: 'favorite' | 'least_favorite'
+  deadline: string            // ISO datetime string
+  candidate_book_ids: number[]
+  resolved: boolean
 }
 
 export interface BookHistoryPollEvent {

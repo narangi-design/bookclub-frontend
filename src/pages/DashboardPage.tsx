@@ -34,9 +34,8 @@ export default function DashboardPage() {
     .sort((a, b) => (b.elected_at ?? '').localeCompare(a.elected_at ?? ''))
     .slice(0, 6)
 
-  const votes2023 = awardVotes.filter(v => v.year === 2023)
-  const votes2024 = awardVotes.filter(v => v.year === 2024)
-  const votes2025 = awardVotes.filter(v => v.year === 2025)
+  const awardYears = [...new Set([...awardVotes.map(v => v.year), ...awardEvents.map(e => e.year)])]
+    .sort((a, b) => b - a)
 
   return (
     <div className="page">
@@ -78,9 +77,17 @@ export default function DashboardPage() {
       <section className="section">
         <h2 className="section-title">Премии книжного клуба</h2>
         <div className="awards-grid">
-          <AwardCard year={2025} votes={votes2025} books={books} authorById={authorById} memberById={memberById} totalVoters={awardEvents.find(e => e.year === 2025)?.total_voters ?? null} />
-          <AwardCard year={2024} votes={votes2024} books={books} authorById={authorById} memberById={memberById} totalVoters={awardEvents.find(e => e.year === 2024)?.total_voters ?? null} />
-          <AwardCard year={2023} votes={votes2023} books={books} authorById={authorById} memberById={memberById} totalVoters={awardEvents.find(e => e.year === 2023)?.total_voters ?? null} />
+          {awardYears.map(year => (
+            <AwardCard
+              key={year}
+              year={year}
+              votes={awardVotes.filter(v => v.year === year)}
+              books={books}
+              authorById={authorById}
+              memberById={memberById}
+              totalVoters={awardEvents.find(e => e.year === year)?.total_voters ?? null}
+            />
+          ))}
         </div>
       </section>
     </div>

@@ -1,0 +1,55 @@
+.survey-hero {
+  padding: var(--sp-6);
+  margin-bottom: var(--sp-6);
+  background: linear-gradient(135deg, var(--wine-subtle), var(--amber-subtle));
+  border: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.survey-hero-eyebrow {
+  display: inline-block;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: var(--sp-2);
+}
+
+.survey-results-placeholder {
+  padding: var(--sp-12) var(--sp-6);
+  margin: var(--sp-8) 0;
+  background: linear-gradient(135deg, var(--wine-subtle), var(--amber-subtle));
+  border: 1px solid var(--color-border);
+  text-align: center;
+
+  p {
+    color: var(--color-text-muted);
+    font-size: var(--text-lg);
+  }
+}
+
+.survey-results-tiebreak-banner {
+  padding: var(--sp-4);
+  margin-bottom: var(--sp-6);
+  background: var(--amber-subtle);
+  border: 1px solid var(--amber);
+  color: var(--color-text);
+  font-weight: 600;
+  text-align: center;
+}
+
+.survey-results-page {
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--sp-3);
+    margin-bottom: var(--sp-6);
+  }
+
+  .card + .card,
+  .card + .anti-award-card,
+  .anti-award-card {
+    margin-bottom: var(--sp-6);
+  }
+}

@@ -53,7 +53,7 @@ function makeVote(id: number, poll_id: number, book_id: number, votes_count: num
 }
 
 function makeAwardVote(overrides: Partial<AwardVote> & { id: number; year: number; book_id: number }): AwardVote {
-  return { liked_votes: 0, disliked_votes: null, round2_votes: null, is_winner: false, ...overrides }
+  return { liked_votes: 0, disliked_votes: null, round2_votes: null, anti_round2_votes: null, is_winner: false, ...overrides }
 }
 
 // ─── pollVotesToEntries ──────────────────────────────────────────────────────
