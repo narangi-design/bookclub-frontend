@@ -84,11 +84,36 @@
   max-width: 320px;
 }
 
+.login-telegram-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 320px;
+  padding: var(--sp-3);
+  min-height: 44px; // accessible touch target
+  background: #54a9eb;
+  color: #fff;
+  border: none;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: opacity var(--transition-fast);
+
+  &:hover {
+    opacity: 0.88;
+  }
+}
+
 .login-telegram-widget {
   display: flex;
   justify-content: center;
   width: 100%;
   max-width: 320px;
+  transform: scale(0.85);
+  transform-origin: top center;
 
   iframe {
     max-width: 100%;

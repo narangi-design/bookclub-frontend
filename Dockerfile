@@ -16,6 +16,11 @@ ENV VITE_API_URL=$VITE_API_URL
 ARG VITE_TELEGRAM_BOT_USERNAME=
 ENV VITE_TELEGRAM_BOT_USERNAME=$VITE_TELEGRAM_BOT_USERNAME
 
+# Public bot id (not a secret), only used by the experimental "через
+# редирект" test link in LoginPage.tsx — unset hides that link.
+ARG VITE_TELEGRAM_BOT_ID=
+ENV VITE_TELEGRAM_BOT_ID=$VITE_TELEGRAM_BOT_ID
+
 RUN npm run build
 
 FROM nginx:1.27-alpine AS runtime
