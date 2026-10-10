@@ -33,8 +33,10 @@ Part of the [Book Club](https://github.com/stars/narangi-design/lists/book-club)
 | `/members/:id` | Individual member page |
 | `/polls` | Voting history — single-round and runoff polls, winners highlighted |
 | `/stats` | 19 charts covering books, polls, and members |
+| `/survey` | Book of the Year survey (logged in) |
+| `/survey/results` | Book of the Year results and tiebreaks |
 
-Member pages show personal voting history and stats and are only accessible when logged in. Login is handled via `/login` with a JWT token stored in context.
+Member pages show personal voting history and stats and are only accessible when logged in. Login is handled via `/login` — Telegram login (club chat members only) with a password form as fallback — and a JWT token stored in context.
 
 ---
 
@@ -53,10 +55,14 @@ npm run preview  # preview the build
 npm run lint     # ESLint
 ```
 
-Required `.env.local`:
+For local dev, `.env.local`:
 ```
 VITE_API_URL=https://your-api.example.com
+VITE_TELEGRAM_BOT_USERNAME=   # optional, enables Telegram login
+VITE_TELEGRAM_BOT_ID=         # optional, enables the redirect login (else widget popup only)
 ```
+
+In production the app is built and served by nginx as the `frontend` service of the project's `docker compose` stack on a VPS; the `VITE_*` values are passed as Docker build args.
 
 ---
 
@@ -100,6 +106,5 @@ src/
 
 ## Future improvements
 
-- Mobile responsive layout
 - Sortable and filterable book table
 - Pagination or virtual scroll for long lists

@@ -11,13 +11,15 @@ COPY . .
 ARG VITE_API_URL=http://localhost:8000
 ENV VITE_API_URL=$VITE_API_URL
 
-# Telegram Login Widget needs the bot's @username. Unset/empty hides the
-# widget on LoginPage.tsx, leaving only the password form.
+# Bot @username for Telegram login (redirect + Login Widget fallback).
+# Unset/empty hides Telegram login on LoginPage.tsx, leaving only the
+# password form.
 ARG VITE_TELEGRAM_BOT_USERNAME=
 ENV VITE_TELEGRAM_BOT_USERNAME=$VITE_TELEGRAM_BOT_USERNAME
 
-# Public bot id (not a secret), only used by the experimental "через
-# редирект" test link in LoginPage.tsx — unset hides that link.
+# Public bot id (not a secret), needed for the redirect-based Telegram login
+# (oauth.telegram.org) in LoginPage.tsx — unset falls back to the Login
+# Widget popup only.
 ARG VITE_TELEGRAM_BOT_ID=
 ENV VITE_TELEGRAM_BOT_ID=$VITE_TELEGRAM_BOT_ID
 

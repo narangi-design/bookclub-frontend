@@ -26,7 +26,7 @@ export default function SurveyResultsPage() {
   const yearVotes = awardVotes.filter(v => v.year === year)
   const unresolvedTiebreaks = tiebreaks.filter(t => !t.resolved)
 
-  // No award_events row yet means close_survey.py hasn't run — the results
+  // No award_events row yet means finalize_survey.py hasn't run — the results
   // page should look like it doesn't exist yet, not like a broken empty page.
   if (!yearEvent) {
     return (

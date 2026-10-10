@@ -134,24 +134,41 @@ function SurveyReadOnly({ candidates, authorById, response }: { candidates: Book
 
   return (
     <>
-      <h3 className="survey-readonly-subtitle">Любимые книги</h3>
-      <BookMultiSelect
-        books={candidates.filter(b => response.favorite_book_ids.includes(b.id))}
-        selectedIds={response.favorite_book_ids}
-        onChange={() => {}}
-        authorById={authorById}
-        disabled
-      />
-      <h3 className="survey-readonly-subtitle">Нелюбимые книги</h3>
-      <BookMultiSelect
-        books={candidates.filter(b => response.least_favorite_book_ids.includes(b.id))}
-        selectedIds={response.least_favorite_book_ids}
-        onChange={() => {}}
-        authorById={authorById}
-        disabled
-      />
-      {response.books_read_count != null && <p>Прочитано книг: {response.books_read_count}</p>}
-      {response.open_text && <p className="survey-readonly-text">«{response.open_text}»</p>}
+      <section className="section">
+        <h2 className="section-title">Любимые книги года</h2>
+        <BookMultiSelect
+          books={candidates.filter(b => response.favorite_book_ids.includes(b.id))}
+          selectedIds={response.favorite_book_ids}
+          onChange={() => {}}
+          authorById={authorById}
+          disabled
+        />
+      </section>
+
+      <section className="section">
+        <h2 className="section-title">Нелюбимые книги года</h2>
+        <BookMultiSelect
+          books={candidates.filter(b => response.least_favorite_book_ids.includes(b.id))}
+          selectedIds={response.least_favorite_book_ids}
+          onChange={() => {}}
+          authorById={authorById}
+          disabled
+        />
+      </section>
+
+      {response.books_read_count != null && (
+        <section className="section">
+          <h2 className="section-title">Сколько книг вы прочитали в этом году?</h2>
+          <p>{response.books_read_count}</p>
+        </section>
+      )}
+
+      {response.open_text && (
+        <section className="section">
+          <h2 className="section-title">Открытое обращение</h2>
+          <p className="survey-readonly-text">«{response.open_text}»</p>
+        </section>
+      )}
     </>
   )
 }
@@ -194,15 +211,16 @@ export default function SurveyPage() {
         <TiebreakBlock key={tb.category} tiebreak={tb} candidates={candidates} authorById={authorById} />
       ))}
 
-      {!meta.is_closed && response !== undefined && (
+      {/* Round 1 stays editable only while it's genuinely still open — once any
+          tiebreak exists for the year, round 1 is over regardless of what
+          meta.is_closed (a pure deadline check) says, since a tiebreak only
+          ever gets created by finalizing round 1. */}
+      {!meta.is_closed && unresolvedTiebreaks.length === 0 && response !== undefined && (
         <SurveyForm candidates={candidates} authorById={authorById} candidateCount={meta.candidate_count} deadline={meta.deadline} initial={response} />
       )}
 
-      {meta.is_closed && unresolvedTiebreaks.length === 0 && (
-        <section className="section survey-readonly">
-          <h2 className="section-title">Твой ответ</h2>
-          {response !== undefined && <SurveyReadOnly candidates={candidates} authorById={authorById} response={response} />}
-        </section>
+      {(meta.is_closed || unresolvedTiebreaks.length > 0) && response !== undefined && (
+        <SurveyReadOnly candidates={candidates} authorById={authorById} response={response} />
       )}
 
       {resultsReady && (

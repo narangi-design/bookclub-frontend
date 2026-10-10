@@ -26,7 +26,11 @@ export default function BookMultiSelect({ books, selectedIds, onChange, authorBy
   return (
     <div className="book-picker-grid">
       {books.map(book => {
-        const selected = selectedIds.includes(book.id)
+        // disabled is used for the read-only "your round-1 answer" display —
+        // every book shown there is already one of the picks, so the
+        // checkbox badge and selected glow would be redundant chrome, not a
+        // meaningful signal.
+        const selected = !disabled && selectedIds.includes(book.id)
         return (
           <button
             key={book.id}
@@ -37,7 +41,7 @@ export default function BookMultiSelect({ books, selectedIds, onChange, authorBy
             aria-pressed={selected}
           >
             <span className="book-picker-cover">
-              <span className="book-picker-mark">{selected ? '✓' : ''}</span>
+              {!disabled && <span className="book-picker-mark">{selected ? '✓' : ''}</span>}
               <CoverImage coverSize="default" coverUrl={book.cover_url} title={book.title} />
             </span>
             <span className="book-picker-info">
