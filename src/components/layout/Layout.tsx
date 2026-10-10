@@ -11,6 +11,7 @@ const navItems = [
   { to: '/members', label: 'Участники' },
   { to: '/stats', label: 'Всякая стата' },
   { to: '/polls', label: 'Голосования' },
+  { to: '/recommendations', label: 'Рекомендации' },
 ]
 
 const bottomMainItems = [
@@ -23,6 +24,7 @@ const bottomDrawerItems = [
   { to: '/members', label: 'Участники' },
   { to: '/stats', label: 'Всякая стата' },
   { to: '/polls', label: 'Голосования' },
+  { to: '/recommendations', label: 'Рекомендации' },
 ]
 
 export default function Layout() {

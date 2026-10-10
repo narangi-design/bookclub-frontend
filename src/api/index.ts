@@ -1,4 +1,4 @@
-import type { Member, Book, Poll, PollVote, AwardVote, AwardEvent, Author, SurveyMeta, SurveyResponse, Tiebreak } from '@/types'
+import type { Member, Book, Poll, PollVote, AwardVote, AwardEvent, Author, SurveyMeta, SurveyResponse, Tiebreak, Recommendation } from '@/types'
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
 const TOKEN_KEY = 'bookclub_token'
@@ -30,6 +30,10 @@ async function authPut<T>(path: string, body: unknown): Promise<T> {
 
 export function fetchMembers(): Promise<Member[]> {
   return authGet('/api/members')
+}
+
+export function fetchRecommendations(): Promise<Recommendation[]> {
+  return authGet('/api/recommendations')
 }
 
 export function fetchBooks(): Promise<Book[]> {

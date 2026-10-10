@@ -19,7 +19,7 @@ npm test          # vitest (watch mode)
 npm run test:ui   # vitest with the browser UI
 ```
 
-Run all tests once (no watch): `npx vitest run`. Single file: `npx vitest run src/utils/index.test.ts`. There is currently one test file, covering `src/utils/index.ts`.
+Run all tests once (no watch): `npx vitest run`. Single file: `npx vitest run src/utils/index.test.ts`. Test files: `src/utils/index.test.ts`, `src/utils/entities.test.ts`.
 
 **Production** is this VPS (see the root `../CLAUDE.md`): the `frontend` service of the `docker compose` stack builds the bundle in a Node stage and serves `dist/` from an nginx container (`nginx.conf`, SPA fallback to `index.html`); host nginx in front of it serves `https://bookclub.narangi.design`, which also proxies `/api` and `/covers` to the api. Deploy: `cd .. && docker compose build frontend && docker compose up -d frontend`.
 
@@ -31,7 +31,7 @@ Run all tests once (no watch): `npx vitest run`. Single file: `npx vitest run sr
 
 Every resource (`books`, `polls`, `poll-votes`, `award-votes`, `award-events`, `members`, `authors`) follows a strict three-layer pipeline, each layer in a single `index.ts`/`index.tsx` (not one file per resource):
 
-- **`src/api/index.ts`** — raw `fetch` wrappers, one function per endpoint (`fetchBooks`, `fetchPolls`, ...). Two helpers underpin them: `get` (public) and `authGet` (attaches `Authorization: Bearer <token>` from `localStorage['bookclub_token']`, throws on non-OK). `members` and the survey endpoints use `authGet`; everything else is public.
+- **`src/api/index.ts`** — raw `fetch` wrappers, one function per endpoint (`fetchBooks`, `fetchPolls`, ...). Two helpers underpin them: `get` (public) and `authGet` (attaches `Authorization: Bearer <token>` from `localStorage['bookclub_token']`, throws on non-OK). `members`, `recommendations` and the survey endpoints use `authGet`; everything else is public.
 - **`src/hooks/index.ts`** — one TanStack Query hook per fetch function (`useBooks`, `usePolls`, ...), each with a fixed `queryKey`. `useMemberVisibility()` (blur vs visible) derives from `useAuth().hasToken`.
 - **Components/pages** consume only the hooks — never call `api/` or `fetch` directly.
 
@@ -39,7 +39,7 @@ Query caching is global in [App.tsx](src/App.tsx): a single `QueryClient` (`stal
 
 ### Auth
 
-[AuthContext](src/context/AuthContext.tsx) owns the JWT (`localStorage['bookclub_token']`) and current user. On mount it validates any stored token against `/api/auth/me` and clears it on failure. `PrivateRoute` in [App.tsx](src/App.tsx) gates `/members`, `/members/:id`, `/stats` and `/survey` behind `isAuthed`, redirecting to `/login` with the origin path in router state. `hasToken` (token present, not yet validated) is distinct from `isAuthed` (validated) — `useMemberVisibility` intentionally uses the weaker `hasToken` check to decide whether to blur member names.
+[AuthContext](src/context/AuthContext.tsx) owns the JWT (`localStorage['bookclub_token']`) and current user. On mount it validates any stored token against `/api/auth/me` and clears it on failure. `PrivateRoute` in [App.tsx](src/App.tsx) gates `/members`, `/members/:id`, `/stats`, `/survey` and `/recommendations` behind `isAuthed`, redirecting to `/login` with the origin path in router state. `hasToken` (token present, not yet validated) is distinct from `isAuthed` (validated) — `useMemberVisibility` intentionally uses the weaker `hasToken` check to decide whether to blur member names.
 
 [LoginPage](src/pages/LoginPage.tsx) offers two ways in, both ending in the same `login()` call: Telegram (primary) and the original username/password form (fallback, posts to `/api/auth/login`) — the backend keeps both live in parallel for now. `AuthUser.auth_method` (`'password' | 'telegram'`) tracks which one issued the session; [AccountModal](src/components/layout/AccountModal.tsx) uses it to hide the password-change form for Telegram sessions, since there's no password to change.
 

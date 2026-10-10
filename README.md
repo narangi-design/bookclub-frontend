@@ -35,6 +35,7 @@ Part of the [Book Club](https://github.com/stars/narangi-design/lists/book-club)
 | `/stats` | 19 charts covering books, polls, and members |
 | `/survey` | Book of the Year survey (logged in) |
 | `/survey/results` | Book of the Year results and tiebreaks |
+| `/recommendations` | Recommendations saved from the club chat via the bot's `/recommend` (logged in) |
 
 Member pages show personal voting history and stats and are only accessible when logged in. Login is handled via `/login` — Telegram login (club chat members only) with a password form as fallback — and a JWT token stored in context.
 

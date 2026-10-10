@@ -1,4 +1,4 @@
-import type { Book, Poll, PollVote, Member, AwardVote, AwardEvent, BookHistoryEvent } from '@/types'
+import type { Book, Poll, PollVote, Member, AwardVote, AwardEvent, BookHistoryEvent, TelegramEntity } from '@/types'
 import type { VoteEntry } from '@/components/layout/VoteBarList'
 
 export function pollVotesToEntries(
@@ -553,4 +553,43 @@ export function radarTopBooksData(
     }
     return row
   })
+}
+
+
+// ─── Telegram-formatted text (recommendations) ───────────────────────────────
+
+export type EntityNode = string | { entity: TelegramEntity; children: EntityNode[] }
+
+/**
+ * Turn Telegram's flat entity list into a tree for rendering. Telegram
+ * guarantees entities either nest or don't touch, so sorting by offset
+ * (longest first on ties) puts each parent right before its children.
+ * Offsets are UTF-16 units — the same units JS string indices use.
+ */
+export function buildEntityTree(text: string, entities: TelegramEntity[]): EntityNode[] {
+  const sorted = entities
+    .filter(e => e.length > 0)
+    .sort((a, b) => a.offset - b.offset || b.length - a.length)
+  return entityNodes(text, sorted, 0, text.length)
+}
+
+function entityNodes(text: string, ents: TelegramEntity[], start: number, end: number): EntityNode[] {
+  const out: EntityNode[] = []
+  let pos = start
+  let i = 0
+  while (i < ents.length) {
+    const e = ents[i]
+    const eEnd = Math.min(e.offset + e.length, end)
+    let j = i + 1
+    while (j < ents.length && ents[j].offset < eEnd) j++
+    // An entity overlapping the previous one shouldn't happen — skip rather than duplicate text
+    if (e.offset >= pos) {
+      if (e.offset > pos) out.push(text.slice(pos, e.offset))
+      out.push({ entity: e, children: entityNodes(text, ents.slice(i + 1, j), e.offset, eEnd) })
+      pos = eEnd
+    }
+    i = j
+  }
+  if (pos < end) out.push(text.slice(pos, end))
+  return out
 }

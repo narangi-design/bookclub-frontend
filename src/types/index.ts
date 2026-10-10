@@ -114,3 +114,22 @@ export type BookHistoryEvent =
   | BookHistoryAwardEvent
   | BookHistoryPollEvent
   | BookHistoryAddedEvent
+
+/** Telegram MessageEntity as stored by the bot — offsets are UTF-16 code units, same as JS strings */
+export interface TelegramEntity {
+  type: string
+  offset: number
+  length: number
+  url?: string
+}
+
+export interface Recommendation {
+  id: number
+  message_url: string
+  author_member_id: number
+  saved_by_member_id: number | null
+  text: string
+  entities: TelegramEntity[]
+  message_date: string
+  created_at: string
+}

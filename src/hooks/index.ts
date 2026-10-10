@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   fetchMembers, fetchBooks, fetchPolls, fetchPollVotes, fetchAwardVotes, fetchAwardEvents, fetchAuthors,
   fetchSurveyMeta, fetchSurveyCandidates, fetchSurveyResponse, submitSurveyResponse,
-  fetchSurveyOpenTexts, fetchTiebreaks, fetchTiebreakVote, submitTiebreakVote,
+  fetchSurveyOpenTexts, fetchTiebreaks, fetchTiebreakVote, submitTiebreakVote, fetchRecommendations,
 } from '@/api'
 import { useAuth } from '@/context/AuthContext'
 import type { MemberVisibility, SurveyResponse, Tiebreak } from '@/types'
@@ -16,6 +16,10 @@ export function useMemberVisibility(): MemberVisibility {
 
 export function useMembers() {
   return useQuery({ queryKey: ['members'], queryFn: fetchMembers })
+}
+
+export function useRecommendations() {
+  return useQuery({ queryKey: ['recommendations'], queryFn: fetchRecommendations })
 }
 
 export function useBooks() {

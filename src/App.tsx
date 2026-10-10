@@ -17,6 +17,7 @@ import StatsPage from '@/pages/StatsPage'
 import LoginPage from '@/pages/LoginPage'
 import SurveyPage from '@/pages/SurveyPage'
 import SurveyResultsPage from '@/pages/SurveyResultsPage'
+import RecommendationsPage from '@/pages/RecommendationsPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -65,6 +66,7 @@ export default function App() {
                 <Route path="members" element={<MembersPage />} />
                 <Route path="members/:id" element={<MemberPage />} />
                 <Route path="stats" element={<StatsPage />} />
+                <Route path="recommendations" element={<RecommendationsPage />} />
                 <Route path="survey" element={<SurveyPage />} />
               </Route>
             </Route>

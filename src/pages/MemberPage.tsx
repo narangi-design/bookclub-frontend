@@ -1,8 +1,9 @@
 import './MemberPage.scss'
 import { useParams, Link } from 'react-router-dom'
-import { useBooks, useMembers, useAuthors, usePageTitle } from '@/hooks'
+import { useBooks, useMembers, useAuthors, useRecommendations, usePageTitle } from '@/hooks'
 import { memberName } from '@/utils'
 import BookCardList from '@/components/layout/BookCardList'
+import RecommendationCard from '@/components/recommendations/RecommendationCard'
 
 export default function MemberPage() {
   const { id } = useParams<{ id: string }>()
@@ -11,6 +12,7 @@ export default function MemberPage() {
   const { data: members = [] } = useMembers()
   const { data: books   = [] } = useBooks()
   const { data: authors = [] } = useAuthors()
+  const { data: recommendations = [] } = useRecommendations()
 
   const member = members.find(u => u.id === memberId)
   usePageTitle(`${member ? memberName(member) : undefined} | История заявок`)
@@ -18,6 +20,13 @@ export default function MemberPage() {
 
   const displayName = memberName(member)
   const authorById = Object.fromEntries(authors.map(a => [a.id, a.name]))
+
+  const nameById = Object.fromEntries(members.map(m => [m.id, memberName(m)]))
+
+  // Their own messages that someone saved via /recommend — not ones they saved
+  const memberRecommendations = recommendations
+    .filter(r => r.author_member_id === memberId)
+    .toSorted((a, b) => Date.parse(b.message_date) - Date.parse(a.message_date))
 
   const allAdded = books.filter(b => b.added_by_member_id === memberId)
 
@@ -82,6 +91,17 @@ export default function MemberPage() {
         <section className="section">
           <h2 className="section-title">Выбывшие книги</h2>
           <BookCardList books={removedBooks} authorById={authorById} />
+        </section>
+      )}
+
+      {memberRecommendations.length > 0 && (
+        <section className="section">
+          <h2 className="section-title">Рекомендации</h2>
+          <div className="rcp-list">
+            {memberRecommendations.map(r => (
+              <RecommendationCard key={r.id} rec={r} nameById={nameById} />
+            ))}
+          </div>
         </section>
       )}
     </div>
